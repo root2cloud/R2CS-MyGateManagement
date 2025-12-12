@@ -1,0 +1,38 @@
+<!-- filename: views/helpdesk_dashboard_views.xml -->
+<odoo>
+    <!-- Action -->
+    <record id="action_helpdesk_dashboard" model="ir.actions.act_window">
+        <field name="name">Helpdesk Dashboard</field>
+        <field name="res_model">helpdesk.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu (adjust parent to your module's main menu, e.g., under Helpdesk) -->
+<!--    <menuitem id="menu_helpdesk_dashboard_root" name="Dashboard" sequence="1" parent="menu_helpdesk"/>-->
+    <menuitem id="menu_helpdesk_dashboard" name="Helpdesk Dashboard" parent="menu_helpdesk" action="action_helpdesk_dashboard" sequence="0"/>
+
+    <!-- Form View -->
+    <record id="view_helpdesk_dashboard_form" model="ir.ui.view">
+        <field name="name">helpdesk.dashboard.form</field>
+        <field name="model">helpdesk.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Helpdesk Dashboard">
+                <header>
+                    <button name="action_refresh_dashboard" type="object" string="Refresh" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="team_id" options="{'no_create': True, 'no_edit': True}"/>
+                        </group>
+                        <group>
+                            <field name="ticket_id" options="{'no_create': True, 'no_edit': True}"/>
+                        </group>
+                    </group>
+                    <field name="dashboard_html" nolabel="1" widget="html" options="{'height': '800px'}"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

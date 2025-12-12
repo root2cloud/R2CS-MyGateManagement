@@ -57,6 +57,7 @@
         'views/ticket_stage_views.xml',
         'views/website_form.xml',
         'views/helpdesk_menu_views.xml',
+        'views/helpdesk_dashboard_views.xml',
     ],
     'assets': {
         'web.assets_frontend': [

@@ -32,3 +32,4 @@ from . import team_helpdesk
 from . import ticket_helpdesk
 from . import ticket_stage
 from . import website_menu
+from . import helpdesk_dashboard

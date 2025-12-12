@@ -22,3 +22,7 @@ access_helpdesk_category_manager,access_helpdesk_category,model_helpdesk_categor
 
 merge_tickets,merge.ticket,model_merge_ticket,odoo_website_helpdesk.helpdesk_manager,1,1,1,1
 support_tickets,support.ticket,model_support_ticket,odoo_website_helpdesk.helpdesk_manager,1,1,1,1
+
+
+access_helpdesk_dashboard_user,helpdesk.dashboard.user,model_helpdesk_dashboard,base.group_user,1,1,1,0
+access_helpdesk_dashboard_manager,helpdesk.dashboard.manager,model_helpdesk_dashboard,base.group_system,1,1,1,1
