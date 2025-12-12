@@ -1,0 +1,116 @@
+<odoo>
+    <!-- Form View with Buttons -->
+    <record id="view_form_customer_inquiry" model="ir.ui.view">
+        <field name="name">customer.inquiry.form</field>
+        <field name="model">customer.inquiry</field>
+        <field name="arch" type="xml">
+            <form string="Customer Inquiry">
+                <header>
+                    <button name="action_in_progress" string="Mark In Progress" type="object" class="btn-primary" invisible="status != 'new'"/>
+                    <button name="action_resolved" string="Mark Resolved" type="object" class="btn-success" invisible="status not in ['new', 'in_progress']"/>
+                    <button name="action_closed" string="Close Inquiry" type="object" class="btn-secondary" invisible="status == 'closed'"/>
+                    <button name="action_reset_to_new" string="Reset to New" type="object" class="btn-warning" invisible="status == 'new'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="new,in_progress,resolved,closed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </group>
+                        <group>
+                            <field name="subject"/>
+                            <field name="inquiry_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_customer_inquiry" model="ir.ui.view">
+        <field name="name">customer.inquiry.list</field>
+        <field name="model">customer.inquiry</field>
+        <field name="arch" type="xml">
+            <list string="Customer Inquiries">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="subject"/>
+                <field name="inquiry_date"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_customer_inquiry" model="ir.ui.view">
+        <field name="name">customer.inquiry.kanban</field>
+        <field name="model">customer.inquiry</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="subject"/>
+                <field name="inquiry_date"/>
+                <field name="status"/>
+                <field name="message"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                                <br/>
+                                <span>
+                                    <i class="fa fa-envelope"/>
+                                    <field name="email"/>
+                                </span>
+                                <br/>
+                                <span>
+                                    <i class="fa fa-phone"/>
+                                    <field name="phone"/>
+                                </span>
+                                <br/>
+                                <span class="badge badge-info">
+                                    <field name="subject"/>
+                                </span>
+                                <br/>
+                                <span class="text-muted">
+                                    <field name="inquiry_date"/>
+                                </span>
+                                <br/>
+                                <span t-attf-class="badge badge-pill badge-#{record.status.raw_value == 'new' ? 'primary' : record.status.raw_value == 'in_progress' ? 'warning' : record.status.raw_value == 'resolved' ? 'success' : 'secondary'}">
+                                    <field name="status"/>
+                                </span>
+                                <br/>
+                                <div t-if="record.message.raw_value" class="text-muted mt-2">
+                                    <field name="message"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_customer_inquiry" model="ir.actions.act_window">
+        <field name="name">Customer Inquiries</field>
+        <field name="res_model">customer.inquiry</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_customer_inquiry" name="Customer Inquiries" parent="menu_community_management_root"
+              action="action_customer_inquiry" sequence="10"/>
+</odoo>

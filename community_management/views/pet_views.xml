@@ -1,0 +1,231 @@
+<odoo>
+    <!-- Form View with Status Bar -->
+    <record id="view_form_pet_management" model="ir.ui.view">
+        <field name="name">pet.management.form</field>
+        <field name="model">pet.management</field>
+        <field name="arch" type="xml">
+            <form string="Pet">
+                <header>
+                    <field name="vaccination_status" widget="statusbar"
+                           statusbar_visible="not_vaccinated,up_to_date,due_soon,overdue"
+                           readonly="1"/>
+                </header>
+                <sheet>
+                    <field name="photo" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Pet Name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Basic Information">
+                            <field name="pet_type"/>
+                            <field name="breed"/>
+                            <field name="color"/>
+                            <field name="gender"/>
+                        </group>
+                        <group string="Owner Information">
+                            <field name="tenant_id"/>
+                            <field name="flat_id"/>
+                            <field name="building_id"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Physical Details">
+                            <field name="date_of_birth"/>
+                            <field name="age"/>
+                            <field name="weight"/>
+                        </group>
+                        <group string="Identification">
+                            <field name="microchip_number"/>
+                            <field name="license_number"/>
+                        </group>
+                    </group>
+
+                    <group string="Vaccination Status">
+                        <group>
+                            <field name="last_vaccination_date"/>
+                            <field name="next_vaccination_date"/>
+                            <field name="days_until_vaccination"/>
+                        </group>
+                        <group>
+                            <field name="veterinarian"/>
+                            <field name="vet_phone"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Vaccination Records">
+                            <field name="vaccination_ids">
+                                <list editable="bottom">
+                                    <field name="vaccine_name"/>
+                                    <field name="vaccination_date"/>
+                                    <field name="next_due_date"/>
+                                    <field name="veterinarian"/>
+                                    <field name="batch_number"/>
+                                </list>
+                                <form string="Vaccination Record">
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="vaccine_name"/>
+                                                <field name="vaccination_date"/>
+                                                <field name="next_due_date"/>
+                                            </group>
+                                            <group>
+                                                <field name="veterinarian"/>
+                                                <field name="batch_number"/>
+                                            </group>
+                                        </group>
+                                        <group>
+                                            <field name="certificate" filename="certificate_filename"/>
+                                            <field name="certificate_filename" invisible="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="notes" placeholder="Additional notes..."/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page string="Health Information">
+                            <group>
+                                <field name="medical_conditions" placeholder="List any medical conditions..."/>
+                                <field name="allergies" placeholder="List any allergies..."/>
+                                <field name="special_needs" placeholder="Describe any special needs..."/>
+                            </group>
+                        </page>
+
+                        <page string="Additional Notes">
+                            <field name="notes" placeholder="Additional information about the pet..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_pet_management" model="ir.ui.view">
+        <field name="name">pet.management.list</field>
+        <field name="model">pet.management</field>
+        <field name="arch" type="xml">
+            <list string="Pets">
+                <field name="photo" widget="image" options="{'size': [50, 50]}"/>
+                <field name="name"/>
+                <field name="pet_type"/>
+                <field name="breed"/>
+                <field name="age"/>
+                <field name="vaccination_status" widget="badge"
+                       decoration-success="vaccination_status == 'up_to_date'"
+                       decoration-warning="vaccination_status == 'due_soon'"
+                       decoration-danger="vaccination_status == 'overdue'"/>
+                <field name="days_until_vaccination"/>
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <field name="building_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_pet_management" model="ir.ui.view">
+        <field name="name">pet.management.kanban</field>
+        <field name="model">pet.management</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="photo"/>
+                <field name="name"/>
+                <field name="pet_type"/>
+                <field name="breed"/>
+                <field name="age"/>
+                <field name="vaccination_status"/>
+                <field name="days_until_vaccination"/>
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <div style="text-align: center; margin-bottom: 10px;">
+                                    <t t-if="record.photo.raw_value">
+                                        <img t-att-src="kanban_image('pet.management', 'photo', record.id.raw_value)"
+                                             style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;"/>
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-paw" style="font-size: 100px; color: #ccc;"/>
+                                    </t>
+                                </div>
+                                <strong><field name="name"/></strong><br/>
+                                <span class="badge badge-primary"><field name="pet_type"/></span>
+                                <span t-attf-class="badge badge-#{record.vaccination_status.raw_value == 'up_to_date' ? 'success' : record.vaccination_status.raw_value == 'due_soon' ? 'warning' : record.vaccination_status.raw_value == 'overdue' ? 'danger' : 'secondary'}">
+                                    <field name="vaccination_status"/>
+                                </span><br/>
+                                <span t-if="record.breed.raw_value"><i class="fa fa-tag"/> <field name="breed"/></span><br/>
+                                <span t-if="record.age.raw_value"><i class="fa fa-birthday-cake"/> <field name="age"/> years</span><br/>
+                                <t t-if="record.days_until_vaccination.raw_value != 0">
+                                    <span t-if="record.days_until_vaccination.raw_value &gt; 0">
+                                        <i class="fa fa-calendar"/> In <field name="days_until_vaccination"/> days
+                                    </span>
+                                    <span t-else="">
+                                        <i class="fa fa-exclamation-triangle"/> Overdue by <t t-esc="Math.abs(record.days_until_vaccination.raw_value)"/> days
+                                    </span>
+                                    <br/>
+                                </t>
+                                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+                                    <span><i class="fa fa-user"/> <field name="tenant_id"/></span><br/>
+                                    <span t-if="record.flat_id.raw_value"><i class="fa fa-home"/> <field name="flat_id"/></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_search_pet_management" model="ir.ui.view">
+        <field name="name">pet.management.search</field>
+        <field name="model">pet.management</field>
+        <field name="arch" type="xml">
+            <search string="Pets">
+                <field name="name"/>
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <field name="building_id"/>
+                <filter name="filter_up_to_date" string="Up to Date" domain="[('vaccination_status', '=', 'up_to_date')]"/>
+                <filter name="filter_due" string="Due Soon" domain="[('vaccination_status', '=', 'due_soon')]"/>
+                <filter name="filter_overdue" string="Overdue" domain="[('vaccination_status', '=', 'overdue')]"/>
+                <filter name="filter_not_vaccinated" string="Not Vaccinated" domain="[('vaccination_status', '=', 'not_vaccinated')]"/>
+                <separator/>
+                <filter name="filter_dog" string="Dogs" domain="[('pet_type', '=', 'dog')]"/>
+                <filter name="filter_cat" string="Cats" domain="[('pet_type', '=', 'cat')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_pet_type" string="Pet Type" context="{'group_by': 'pet_type'}"/>
+                    <filter name="group_vaccination_status" string="Vaccination Status" context="{'group_by': 'vaccination_status'}"/>
+                    <filter name="group_tenant" string="Tenant" context="{'group_by': 'tenant_id'}"/>
+                    <filter name="group_flat" string="Flat" context="{'group_by': 'flat_id'}"/>
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_pet_management" model="ir.actions.act_window">
+        <field name="name">Pets</field>
+        <field name="res_model">pet.management</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_pet_management"
+              name="Pets"
+              parent="tenant_details_menu"
+              action="action_pet_management"
+              sequence="7"/>
+</odoo>

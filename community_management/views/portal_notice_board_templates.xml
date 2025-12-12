@@ -1,0 +1,222 @@
+<!-- File: community_management/views/templates/portal_notice_board_templates.xml -->
+<odoo>
+    <template id="portal_notice_board" name="Notice Board - Light &amp; Modern">
+        <t t-call="website.layout">
+            <style>
+                :root {
+                    --card-bg: rgba(255, 255, 255, 0.92);
+                    --card-border: rgba(255, 255, 255, 0.6);
+                    --text: #2d3748;
+                    --text-light: #64748b;
+                    --shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+                    --shadow-hover: 0 25px 60px rgba(0, 0, 0, 0.15);
+                    --glow: rgba(147, 197, 253, 0.4);
+                    --transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                .notice-page {
+                    min-height: 100vh;
+                    background: linear-gradient(135deg,
+                        #f0f9ff 0%, #e0f2fe 15%, #bae6fd 35%,
+                        #7dd3fc 60%, #38bdf8 85%, #0ea5e9 100%);
+                    padding: 4rem 1rem;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .notice-page::before {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background:
+                        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.7) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(186, 230, 253, 0.4) 0%, transparent 50%);
+                    pointer-events: none;
+                }
+
+                .notice-container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+
+                .page-header { text-align: center; margin-bottom: 3rem; }
+                .page-header h1 {
+                    font-size: 3.6rem; font-weight: 800; margin: 0;
+                    background: linear-gradient(90deg, #0369a1, #0ea5e9, #38bdf8);
+                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                .page-header p { font-size: 1.35rem; color: #475569; margin-top: 1rem; font-weight: 500; }
+
+                /* Top Banner */
+                .new-notice-banner {
+                    background: rgba(59, 130, 246, 0.15);
+                    backdrop-filter: blur(12px);
+                    border: 2px solid #3b82f6;
+                    border-radius: 20px;
+                    padding: 1.5rem 2rem;
+                    margin: 0 auto 3rem;
+                    max-width: 800px;
+                    text-align: center;
+                    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+                    animation: bounceIn 1s ease-out;
+                }
+                .new-notice-banner i { font-size: 2.2rem; color: #3b82f6; margin-right: 12px; animation: ring 2s infinite; }
+
+                @keyframes bounceIn { 0% { opacity:0; transform:scale(0.8); } 60% { transform:scale(1.05); } 100% { transform:scale(1); } }
+                @keyframes ring { 0%,100% { transform:rotate(0); } 10%,30%,50%,70%,90% { transform:rotate(-10deg); } 20%,40%,60%,80% { transform:rotate(10deg); } }
+
+                /* NEW Badge */
+                .badge-new {
+                    position: absolute;
+                    top: 16px;
+                    right: -10px;
+                    background: linear-gradient(45deg, #ef4444, #dc2626);
+                    color: white;
+                    padding: 0.5rem 1.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 800;
+                    border-radius: 50px;
+                    box-shadow: 0 6px 20px rgba(239,68,68,0.5);
+                    z-index: 20;
+                    transform: rotate(12deg);
+                    animation: pulse 2s infinite;
+                }
+                .badge-new::after {
+                    content: ''; position: absolute; bottom: -8px; left: 50%;
+                    transform: translateX(-50%) rotate(45deg);
+                    width: 16px; height: 16px; background: #991b1b;
+                }
+                @keyframes pulse { 0%,100% { transform: rotate(12deg) scale(1); } 50% { transform: rotate(12deg) scale(1.15); } }
+
+                .notices-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+                    gap: 2.2rem;
+                    animation: fadeInUp 0.9s ease-out;
+                }
+                @keyframes fadeInUp { from { opacity:0; transform:translateY(50px); } to { opacity:1; transform:translateY(0); } }
+
+                .notice-card {
+                    background: var(--card-bg);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    border-radius: 26px;
+                    border: 1.5px solid var(--card-border);
+                    overflow: hidden;
+                    box-shadow: var(--shadow);
+                    transition: var(--transition);
+                    position: relative;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .notice-card:hover {
+                    transform: translateY(-18px) scale(1.025);
+                    box-shadow: var(--shadow-hover), 0 0 50px var(--glow);
+                    border-color: rgba(147, 197, 253, 0.6);
+                }
+
+                .notice-header { padding: 2rem 2rem 1.2rem; border-bottom: 1px solid rgba(148,163,184,0.2); }
+                .notice-type {
+                    display: inline-block;
+                    background: linear-gradient(90deg, #22d3ee, #06b6d4);
+                    color: white;
+                    padding: 0.6rem 1.3rem;
+                    border-radius: 50px;
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    letter-spacing: 0.8px;
+                    box-shadow: 0 6px 20px rgba(6,182,212,0.35);
+                }
+                .notice-title { font-size: 1.75rem; font-weight: 700; color: #1e293b; margin: 1.2rem 0 0.6rem; line-height: 1.3; }
+                .notice-dates {
+                    color: #475569; font-size: 1rem; font-weight: 600;
+                    background: rgba(148,163,184,0.15); padding: 0.6rem 1.2rem;
+                    border-radius: 14px; display: inline-block; margin-top: 0.6rem;
+                    backdrop-filter: blur(8px); border: 1px solid rgba(148,163,184,0.2);
+                }
+                .notice-body { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
+                .notice-content { color: #475569; line-height: 1.8; font-size: 1.1rem; flex-grow: 1; margin-bottom: 1.2rem; }
+                .notice-image-wrapper { margin: 1.2rem -2rem 0; overflow: hidden; border-radius: 0 0 22px 22px; }
+                .notice-image { width: 100%; height: 280px; object-fit: cover; transition: transform 0.7s ease; }
+                .notice-card:hover .notice-image { transform: scale(1.1); }
+
+                .empty-notice {
+                    grid-column: 1/-1; text-align: center; padding: 6rem 2rem;
+                    background: rgba(255,255,255,0.7); border-radius: 24px; backdrop-filter: blur(10px);
+                }
+                .empty-notice i { font-size: 6rem; color: #94a3b8; margin-bottom: 1.5rem; }
+
+                @media (max-width: 768px) {
+                    .notices-grid { grid-template-columns: 1fr; }
+                    .page-header h1 { font-size: 2.9rem; }
+                }
+            </style>
+
+            <div class="notice-page">
+                <div class="notice-container">
+                    <div class="page-header">
+                        <h1>Notice Board</h1>
+                        <p>Important updates and announcements from your community</p>
+                    </div>
+
+                    <!-- Top Banner: New Notices -->
+                    <t t-if="has_new">
+                        <div class="new-notice-banner">
+                            <i class="fa fa-bell"></i>
+                            <strong>New Notice!</strong> You have fresh announcements. Scroll down to see what's new!
+                        </div>
+                    </t>
+
+                    <!-- Empty State -->
+                    <t t-if="not notices">
+                        <div class="empty-notice">
+                            <i class="fa fa-bell-slash"></i>
+                            <h3 style="color:#475569; margin:1rem 0;">No Active Notices</h3>
+                            <p style="color:#64748b;">Check back later for updates from your management</p>
+                        </div>
+                    </t>
+
+                    <!-- Notices Grid -->
+                    <div class="notices-grid">
+                        <t t-foreach="notices" t-as="notice">
+                            <div class="notice-card">
+                                <!-- NEW Badge – uses last_viewed passed from controller -->
+                                <t t-if="notice.create_date > last_viewed">
+                                    <div class="badge-new">NEW</div>
+                                </t>
+
+                                <div class="notice-header">
+                                    <span class="notice-type">
+                                        <t t-esc="dict(notice._fields['notice_type'].selection)[notice.notice_type]"/>
+                                    </span>
+                                    <div class="notice-title" t-esc="notice.name"/>
+
+                                    <t t-if="notice.date_start or notice.date_end">
+                                        <div class="notice-dates">
+                                            <t t-if="notice.date_start">
+                                                From: <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/>
+                                            </t>
+                                            <t t-if="notice.date_end">
+                                                → To: <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+
+                                <div class="notice-body">
+                                    <div class="notice-content" t-field="notice.description"/>
+
+                                    <t t-if="notice.image">
+                                        <div class="notice-image-wrapper">
+                                            <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()"
+                                                 class="notice-image" alt="Notice Image"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,419 @@
+<!--This XML file does not appear to have any style information associated with it. The document tree is shown below.-->
+<!--  File: community_management/views/templates/portal_my_profile_combined.xml  -->
+<odoo>
+    <template id="portal_my_profile_combined" name="My Profile - Family, Pets &amp; Vehicles">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs">
+                <li class="breadcrumb-item">
+                    <a t-att-href="portal_my_home">My Account</a>
+                </li>
+                <li class="breadcrumb-item active">My Profile</li>
+            </t>
+            <style>:root { --family-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%); --pet-gradient:
+                linear-gradient(135deg, #f093fb 0%, #f5576c 100%); --vehicle-gradient: linear-gradient(135deg, #667eea
+                0%, #764ba2 100%); --shadow: 0 12px 32px rgba(0,0,0,0.12); --shadow-hover: 0 24px 60px rgba(0,0,0,0.22);
+                --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); } .profile-container { max-width: 1450px;
+                margin: 0 auto; padding: 2.5rem 1rem; } .page-title { font-size: 2.8rem; font-weight: 800; text-align:
+                center; margin-bottom: 4rem; background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+                .section-header { background: var(--section-gradient); color: white; padding: 1.8rem 2.2rem;
+                border-radius: 20px; margin: 3.5rem 0 2rem; display: flex; justify-content: space-between; align-items:
+                center; box-shadow: 0 12px 30px rgba(0,0,0,0.18); position: relative; overflow: hidden; }
+                .section-header::before { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg,
+                rgba(255,255,255,0.15) 0%, transparent 60%); pointer-events: none; } .section-header h3 { margin: 0;
+                font-size: 2rem; font-weight: 700; display: flex; align-items: center; gap: 14px; } .section-header i {
+                font-size: 2rem; } .btn-add { background: rgba(255,255,255,0.97); color: var(--btn-color); border: none;
+                border-radius: 14px; padding: 0.9rem 2rem; font-weight: 600; font-size: 1.05rem; backdrop-filter:
+                blur(12px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); transition: var(--transition); } .btn-add:hover {
+                transform: translateY(-5px) scale(1.05); background: white; box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+                .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;
+                margin-top: 1.5rem; } .profile-card { background: white; border-radius: 24px; overflow: hidden;
+                box-shadow: var(--shadow); transition: var(--transition); height: 100%; display: flex; flex-direction:
+                column; border: 1px solid rgba(0,0,0,0.06); } .profile-card:hover { transform: translateY(-14px);
+                box-shadow: var(--shadow-hover); } .card-image { height: 260px; background: linear-gradient(135deg,
+                #f8fafc 0%, #e2e8f0 100%); position: relative; overflow: hidden; } .card-image img { width: 100%;
+                height: 100%; object-fit: cover; transition: transform 0.7s ease; } .profile-card:hover .card-image img
+                { transform: scale(1.12); } .placeholder-icon { position: absolute; top: 50%; left: 50%; transform:
+                translate(-50%, -50%); font-size: 6.5rem; color: #cbd5e0; opacity: 0.6; } .card-body { padding: 1.8rem;
+                flex-grow: 1; display: flex; flex-direction: column; } .card-title { font-size: 1.5rem; font-weight:
+                700; color: #1a202c; margin: 0 0 1rem; } /* PERFECT BADGES - Small, Pill, Never Full Width */
+                .badge-custom { display: inline-flex; align-items: center; justify-content: center; padding: 0.45rem
+                1.1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+                letter-spacing: 0.6px; width: fit-content; min-width: 80px; box-shadow: 0 5px 15px rgba(0,0,0,0.18);
+                margin: 0.4rem 0; } .family-card .badge-custom { background: var(--family-gradient); color: white; }
+                .pet-card .badge-custom { background: var(--pet-gradient); color: white; } .vehicle-card .badge-custom {
+                background: var(--vehicle-gradient); color: white; } /* Vaccination Status Badges */
+                .vaccination-badge-up_to_date { background: #9ae6b4; color: #22543d; } .vaccination-badge-due_soon {
+                background: #fde68a; color: #92400e; border: 1px solid #f59e0b; } .vaccination-badge-overdue {
+                background: #fca5a5; color: #7f1d1d; border: 1px solid #f87171; } .warning-icon { position: absolute;
+                top: 14px; right: 14px; background: #dc2626; color: white; width: 46px; height: 46px; border-radius:
+                50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: bold;
+                box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5); animation: pulse 2s infinite; z-index: 10; } @keyframes
+                pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } } .info-group { margin-top:
+                0.8rem; display: flex; flex-direction: column; gap: 0.6rem; } .info-item { display: flex; align-items:
+                center; gap: 0.7rem; color: #4a5568; font-size: 0.98rem; } .info-item i { width: 20px; color: #94a3b8; }
+                .card-actions { margin-top: auto; padding-top: 1.4rem; display: flex; gap: 1rem; } .btn-action { flex:
+                1; padding: 0.8rem; border-radius: 12px; font-weight: 600; text-align: center; transition: all 0.3s
+                ease; } .btn-edit { background: #e0e7ff; color: #4f46e5; } .btn-edit:hover { background: #6366f1; color:
+                white; transform: translateY(-2px); } .btn-delete { background: #fee2e2; color: #dc2626; }
+                .btn-delete:hover { background: #ef4444; color: white; transform: translateY(-2px); } .empty-state {
+                grid-column: 1 / -1; text-align: center; padding: 5rem 2rem; background: linear-gradient(135deg, #f8fafc
+                0%, #e2e8f0 100%); border-radius: 24px; color: #64748b; } .empty-state i { font-size: 7rem; color:
+                #cbd5e0; margin-bottom: 1.5rem; } @media (max-width: 768px) { .cards-grid { grid-template-columns: 1fr;
+                gap: 1.8rem; } .section-header { flex-direction: column; text-align: center; gap: 1rem; } .page-title {
+                font-size: 2.3rem; } }
+            </style>
+            <div class="profile-container">
+                <h2 class="page-title">My Complete Profile</h2>
+                <!--                &#45;&#45;-->
+                <!--  🏠 MY FLAT DETAILS SECTION WITH ROOM DETAILS INCLUDED -->
+                <div style="--section-gradient: linear-gradient(135deg, #4c6ef5 0%, #15aabf 100%);">
+                    <div class="section-header">
+                        <h3>
+                            <i class="fa fa-home"></i>
+                            My Flat Details
+                        </h3>
+                    </div>
+
+                    <!-- No Flat Assigned -->
+                    <t t-if="not flats">
+                        <div class="empty-state">
+                            <i class="fa fa-home"/>
+                            <h4>No Flat Assigned</h4>
+                            <p>Please contact your society admin.</p>
+                        </div>
+                    </t>
+
+                    <!-- Single Flat Full Width -->
+                    <t t-elif="len(flats) == 1">
+                        <t t-foreach="flats" t-as="flat">
+                            <div class="card profile-card"
+                                 style="width: 100%; border-top: 5px solid #4c6ef5; margin-bottom: 2.5rem;">
+
+                                <div class="card-body">
+                                    <!-- Flat Name -->
+                                    <h5 class="card-title">
+                                        <t t-esc="flat.name"/>
+                                    </h5>
+
+                                    <!-- Status Badge -->
+                                    <span class="badge-custom"
+                                          t-att-style="flat.status == 'occupied'
+                        and 'background:#38a169;color:white;'
+                        or 'background:#f6ad55;color:white;'">
+                                        <t t-esc="flat.status.title()"/>
+                                    </span>
+
+                                    <!-- Flat Info -->
+
+                                    <div class="info-group mt-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; width: 100%;">
+<!--                                        '''-->
+                                        <div class="info-item">
+                                            <i class="fa fa-building"></i>
+                                            <span>
+                                                <t t-esc="flat.building_id.name"/>
+                                            </span>
+                                        </div>
+
+                                        <t t-if="flat.floor_id.name">
+                                            <div class="info-item">
+                                                <i class="fa fa-layer-group"></i>
+                                                <span>
+                                                    <t t-esc="flat.floor_id.name"/>
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                        <t t-if="flat.flat_type_id.name">
+                                            <div class="info-item">
+                                                <i class="fa fa-tag"></i>
+                                                <span>
+                                                    <t t-esc="flat.flat_type_id.name"/>
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                        <t t-if="flat.area">
+                                            <div class="info-item">
+                                                <i class="fa fa-arrows-alt"></i>
+                                                <span>
+                                                    <t t-esc="flat.area"/>
+                                                    sq.ft
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                        <t t-if="flat.rent_price">
+                                            <div class="info-item">
+                                                <i class="fa fa-money-bill"></i>
+                                                <span>
+                                                    <t t-esc="flat.rent_price"/>
+                                                    / month
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                        <t t-if="flat.lease_start_date">
+                                            <div class="info-item">
+                                                <i class="fa fa-calendar-check"></i>
+                                                <span>
+                                                    <t t-esc="flat.lease_start_date"/>
+                                                    —
+                                                    <t t-esc="flat.lease_end_date or 'Ongoing'"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <!-- 🛏️ ROOMS INSIDE FLAT -->
+                                    <t t-if="flat.room_ids">
+                                        <h5 style="margin-top: 2rem; font-weight:700;">Rooms</h5>
+                                        <div class="cards-grid">
+                                            <t t-foreach="flat.room_ids" t-as="room">
+                                                <div class="card profile-card" style="min-height: 240px;">
+                                                    <div class="card-image" style="height:240px;">
+                                                        <t t-if="room.room_image">
+                                                            <img t-att-src="image_data_uri(room.room_image)"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <i class="fa fa-home placeholder-icon"/>
+                                                        </t>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h6 class="card-title">
+                                                            <t t-esc="room.name"/>
+                                                        </h6>
+                                                        <div class="info-group">
+                                                            <t t-if="room.area">
+                                                                <div class="info-item">
+                                                                    <i class="fa fa-arrows-alt"></i>
+                                                                    <span>
+                                                                        <t t-esc="room.area"/>
+                                                                        sq.ft
+                                                                    </span>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+
+                </div>
+                <!-- END FLAT SECTION -->
+
+                <!-- END FLAT SECTION -->
+
+                <!--                -&#45;&#45;-->
+
+
+                <!--  FAMILY MEMBERS  -->
+                <div style="--section-gradient: var(--family-gradient);">
+                    <div class="section-header">
+                        <h3>Family Members</h3>
+                        <a href="/my/family/new" class="btn-add" style="--btn-color: #38a169;">Add Member</a>
+                    </div>
+                    <div class="cards-grid">
+                        <t t-if="not family_members">
+                            <div class="empty-state">
+                                <i class="fa fa-users"/>
+                                <h4>No family members yet</h4>
+                                <p>Start adding your loved ones</p>
+                            </div>
+                        </t>
+                        <t t-foreach="family_members" t-as="member">
+                            <div class="card profile-card family-card">
+                                <div class="card-image">
+                                    <t t-if="member.photo">
+                                        <img t-att-src="image_data_uri(member.photo)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-user placeholder-icon"/>
+                                    </t>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <t t-esc="member.name"/>
+                                    </h5>
+                                    <span class="badge-custom">
+                                        <t t-esc="member.member_type.title()"/>
+                                    </span>
+                                    <div class="info-group">
+                                        <t t-if="member.relationship">
+                                            <div class="info-item">
+                                                <i class="fa fa-heart" style="color:#f43f5e;"/>
+                                                <span>
+                                                    <t t-esc="member.relationship"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                        <t t-if="member.gender">
+                                            <div class="info-item">
+                                                <i class="fa fa-venus-mars"/>
+                                                <span>
+                                                    <t t-esc="member.gender.title()"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="card-actions">
+                                        <a t-att-href="'/my/family/%s/edit' % member.id" class="btn-action btn-edit">
+                                            Edit
+                                        </a>
+                                        <a t-att-href="'/my/family/%s/delete' % member.id" class="btn-action btn-delete"
+                                           onclick="return confirm('Delete this family member?');">Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <!--  PETS  -->
+                <div style="--section-gradient: var(--pet-gradient);">
+                    <div class="section-header">
+                        <h3>My Pets</h3>
+                        <a href="/my/pets/new" class="btn-add" style="--btn-color: #f5576c;">Add Pet</a>
+                    </div>
+                    <t t-if="pets and any(p.vaccination_status == 'overdue' for p in pets)">
+                        <div class="alert alert-danger p-4 rounded-lg mb-4 shadow-lg">
+                            <h5>Urgent: Vaccination Overdue!</h5>
+                            <t t-foreach="pets" t-as="pet">
+                                <t t-if="pet.vaccination_status == 'overdue'">
+                                    <strong>
+                                        <t t-esc="pet.name"/>
+                                    </strong>
+                                    <t t-if="not pet_last">,</t>
+                                    <t t-set="pet_last" t-value="True"/>
+                                </t>
+                            </t>
+                        </div>
+                    </t>
+                    <div class="cards-grid">
+                        <t t-if="not pets">
+                            <div class="empty-state">
+                                <i class="fa fa-paw"/>
+                                <h4>No pets registered</h4>
+                                <p>Add your companions</p>
+                            </div>
+                        </t>
+                        <t t-foreach="pets" t-as="pet">
+                            <div t-att-class="'card profile-card pet-card' + (' border-4 border-red-500 shadow-red-500/30' if pet.vaccination_status == 'overdue' else '')">
+                                <div class="card-image">
+                                    <t t-if="pet.vaccination_status == 'overdue'">
+                                        <div class="warning-icon">!</div>
+                                    </t>
+                                    <t t-if="pet.photo">
+                                        <img t-att-src="image_data_uri(pet.photo)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-paw placeholder-icon"/>
+                                    </t>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <t t-esc="pet.name"/>
+                                    </h5>
+                                    <div class="flex flex-wrap gap-2 mb-3">
+                                        <span class="badge-custom">
+                                            <t t-esc="pet.pet_type.title()"/>
+                                        </span>
+                                        <span t-att-class="'badge-custom vaccination-badge-' + pet.vaccination_status">
+                                            <t t-esc="pet.vaccination_status.replace('_', ' ').title()"/>
+                                        </span>
+                                    </div>
+                                    <div class="info-group">
+                                        <t t-if="pet.breed">
+                                            <div class="info-item">
+                                                <i class="fa fa-tag"/>
+                                                <span>
+                                                    <t t-esc="pet.breed"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="card-actions">
+                                        <a t-att-href="'/my/pets/%s/edit' % pet.id" class="btn-action btn-edit">Edit</a>
+                                        <a t-att-href="'/my/pets/%s/delete' % pet.id" class="btn-action btn-delete"
+                                           onclick="return confirm('Delete this pet?');">Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <!--  VEHICLES  -->
+                <div style="--section-gradient: var(--vehicle-gradient);">
+                    <div class="section-header">
+                        <h3>My Vehicles</h3>
+                        <a href="/my/vehicles/new" class="btn-add" style="--btn-color: #764ba2;">Add Vehicle</a>
+                    </div>
+                    <div class="cards-grid">
+                        <t t-if="not vehicles">
+                            <div class="empty-state">
+                                <i class="fa fa-car"/>
+                                <h4>No vehicles registered</h4>
+                                <p>Add your car, bike, or scooter</p>
+                            </div>
+                        </t>
+                        <t t-foreach="vehicles" t-as="vehicle">
+                            <div class="card profile-card vehicle-card">
+                                <div class="card-image">
+                                    <t t-if="vehicle.vehicle_photo">
+                                        <img t-att-src="image_data_uri(vehicle.vehicle_photo)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-car placeholder-icon"/>
+                                    </t>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <t t-esc="vehicle.vehicle_number"/>
+                                    </h5>
+                                    <span class="badge-custom">
+                                        <t t-esc="vehicle.vehicle_type.title()"/>
+                                    </span>
+                                    <div class="info-group mt-3">
+                                        <t t-if="vehicle.make or vehicle.model">
+                                            <div class="info-item">
+                                                <i class="fa fa-car-side"/>
+                                                <span>
+                                                    <t t-esc="vehicle.make or ''"/>
+                                                    <t t-esc="vehicle.model or ''"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                        <t t-if="vehicle.year">
+                                            <div class="info-item">
+                                                <i class="fa fa-calendar"/>
+                                                <span>
+                                                    <t t-esc="vehicle.year"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="card-actions">
+                                        <a t-att-href="'/my/vehicles/%s/edit' % vehicle.id" class="btn-action btn-edit">
+                                            Edit
+                                        </a>
+                                        <a t-att-href="'/my/vehicles/%s/delete' % vehicle.id"
+                                           class="btn-action btn-delete"
+                                           onclick="return confirm('Delete this vehicle?');">Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,110 @@
+<odoo>
+    <!-- Form View -->
+    <record id="view_form_floor_management" model="ir.ui.view">
+        <field name="name">floor.management.form</field>
+        <field name="model">floor.management</field>
+        <field name="arch" type="xml">
+            <form string="Floor">
+                <sheet>
+                    <field name="floor_plan" widget="image" class="oe_avatar"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="building_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="total_flats"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <!-- NEW: Notebook with Flats Page -->
+                    <notebook>
+                        <page string="Flats" name="flats">
+                            <field name="flat_ids">
+                                <list string="Flats" editable="bottom">
+                                    <field name="name"/>
+                                    <field name="building_id" column_invisible="1"/>
+                                    <field name="area"/>
+                                    <field name="rent_price"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_floor_management" model="ir.ui.view">
+        <field name="name">floor.management.list</field>
+        <field name="model">floor.management</field>
+        <field name="arch" type="xml">
+            <list string="Floors">
+                <field name="name"/>
+                <field name="building_id"/>
+                <field name="total_flats"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_floor_management" model="ir.ui.view">
+        <field name="name">floor.management.kanban</field>
+        <field name="model">floor.management</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="floor_plan"/>
+                <field name="name"/>
+                <field name="building_id"/>
+                <field name="total_flats"/>
+                <field name="description"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <div t-if="record.floor_plan.raw_value"
+                                     style="text-align: center; margin-bottom: 10px;">
+                                    <img t-att-src="kanban_image('floor.management', 'floor_plan', record.id.raw_value)"
+                                         style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;"/>
+                                </div>
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                                <br/>
+                                <span>
+                                    <i class="fa fa-building"/>
+                                    <field name="building_id"/>
+                                </span>
+                                <br/>
+                                <span>
+                                    <i class="fa fa-home"/>
+                                    <field name="total_flats"/>
+                                    Flats
+                                </span>
+                                <br/>
+                                <div t-if="record.description.raw_value" class="text-muted mt-2">
+                                    <field name="description"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_floor_management" model="ir.actions.act_window">
+        <field name="name">Floors</field>
+        <field name="res_model">floor.management</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_floor_management" name="Floors" parent="menu_master_data_root"
+              action="action_floor_management" sequence="3"/>
+</odoo>

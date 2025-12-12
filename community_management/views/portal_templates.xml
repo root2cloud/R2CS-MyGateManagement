@@ -1,0 +1,226 @@
+<odoo>
+
+    <!-- FIXED: HELP DESK MENU IN BREADCRUMBS -->
+    <template id="portal_helpdesk_menu" inherit_id="portal.portal_breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <li class="breadcrumb-item">
+                <a href="/my/helpdesk">Helpdesk</a>
+            </li>
+        </xpath>
+    </template>
+
+    <!-- TEAM LIST PAGE -->
+    <template id="portal_helpdesk_team_list" name="Portal Helpdesk Teams">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+
+                <h2 class="text-center mb-4">Helpdesk Teams</h2>
+
+                <style>
+                    .team-card {
+                    background: #fff;
+                    border-radius: 12px;
+                    padding: 20px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    transition: 0.3s ease;
+                    border-left: 5px solid #4a90e2;
+                    }
+                    .team-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+                    }
+                </style>
+
+                <div class="row">
+                    <t t-foreach="teams" t-as="team">
+                        <div class="col-md-4 mb-4">
+                            <div class="team-card">
+                                <div class="team-title">
+                                    <t t-esc="team.name"/>
+                                </div>
+                                <p>
+                                    <t t-esc="team.description or ''"/>
+                                </p>
+
+                                <div class="team-buttons mt-3">
+                                    <a t-att-href="'/my/helpdesk/%s/raise' % team.id"
+                                       class="btn btn-primary btn-sm">Raise Ticket
+                                    </a>
+
+                                    <a t-att-href="'/my/helpdesk/%s/tickets' % team.id"
+                                       class="btn btn-secondary btn-sm">View Tickets
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- RAISE TICKET FORM -->
+    <template id="portal_raise_ticket_form" name="Portal Raise Ticket Form">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <h2>Create Ticket -
+                    <t t-esc="team.name"/>
+                </h2>
+
+                <t t-if="error">
+                    <div class="alert alert-danger mt-3">
+                        <t t-esc="error"/>
+                    </div>
+                </t>
+
+                <form action="/my/helpdesk/submit" method="post" class="ticket-form mt-3"
+                      enctype="multipart/form-data" onsubmit="return validateForm();">
+
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="team_id" t-att-value="team.id"/>
+
+                    <div class="form-group">
+                        <label>Ticket Subject</label>
+                        <input type="text" name="name" class="form-control"/>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label>Description</label>
+                        <textarea name="description" class="form-control" rows="5"></textarea>
+                    </div>
+
+                    <!-- ⭐ ONLY THIS NEW BLOCK ADDED ⭐ -->
+                    <div class="form-group mt-2">
+                        <label>Upload Issue Image (Optional)</label>
+                        <input type="file" name="image" class="form-control" accept="image/*"/>
+                    </div>
+
+                    <button class="btn btn-primary mt-3" type="submit">Submit Ticket</button>
+                </form>
+
+
+                <script>
+                    function validateForm() {
+                    let name = document.querySelector('input[name="name"]').value.trim();
+                    let desc = document.querySelector('textarea[name="description"]').value.trim();
+
+                    if (!name) {
+                    alert("Ticket subject is required");
+                    return false;
+                    }
+                    if (!desc) {
+                    alert("Description cannot be empty");
+                    return false;
+                    }
+                    return true;
+                    }
+                </script>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- THANK YOU PAGE -->
+    <template id="portal_ticket_thank_you" name="Ticket Submitted">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-5 text-center">
+                <h2 class="text-success">🎉 Ticket Submitted Successfully!</h2>
+                <p class="mt-3">Your ticket has been submitted. Our team will contact you shortly.</p>
+
+                <a href="/my/helpdesk" class="btn btn-primary mt-3">Back to Helpdesk</a>
+            </div>
+        </t>
+    </template>
+
+    <!-- TICKET LIST PAGE -->
+    <!-- TICKET LIST PAGE IN TABLE FORMAT -->
+    <!-- TICKET LIST PAGE IN TABLE FORMAT -->
+    <template id="portal_ticket_list" name="Portal Ticket List">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <h2>
+                    <t t-esc="team.name"/>
+                    - My Tickets
+                </h2>
+
+                <style>
+                    .ticket-table {
+                    background: #fff;
+                    border-radius: 10px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    overflow: hidden;
+                    }
+                    .ticket-table th {
+                    background: #4a90e2;
+                    color: white;
+                    padding: 10px;
+                    text-align: left;
+                    }
+                    .ticket-table td {
+                    padding: 10px;
+                    border-bottom: 1px solid #eee;
+                    }
+                    .badge-status {
+                    padding: 4px 8px;
+                    border-radius: 6px;
+                    font-size: 13px;
+                    color: #fff;
+                    }
+                    .badge-new { background: #007bff; }
+                    .badge-progress { background: #ff9800; }
+                    .badge-done { background: #4caf50; }
+                    .badge-cancel { background: #f44336; }
+                </style>
+
+                <t t-if="not tickets">
+                    <p>No tickets found.</p>
+                </t>
+
+                <t t-if="tickets">
+                    <div class="ticket-table mt-3">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Created On</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-foreach="tickets" t-as="tkt">
+                                    <tr>
+                                        <td>
+                                            <t t-esc="tkt.name"/>
+                                        </td>
+
+                                        <td>
+                                            <span t-if="tkt.stage == 'new'" class="badge-status badge-new">New</span>
+                                            <span t-if="tkt.stage == 'in_progress'" class="badge-status badge-progress">
+                                                In Progress
+                                            </span>
+                                            <span t-if="tkt.stage == 'done'" class="badge-status badge-done">Done</span>
+                                            <span t-if="tkt.stage == 'cancel'" class="badge-status badge-cancel">
+                                                Cancelled
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <t t-esc="tkt.date_open"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+
+
+                        </table>
+                    </div>
+                </t>
+
+            </div>
+        </t>
+    </template>
+
+
+</odoo>

@@ -1,0 +1,273 @@
+<!--<odoo>-->
+<!--    <template id="inquiry_form_template" name="Customer Inquiry Form">-->
+<!--        <t t-call="website.layout">-->
+<!--            <style>-->
+<!--                .container.mt16 {-->
+<!--                max-width: 700px;-->
+<!--                margin: 40px auto;-->
+<!--                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;-->
+<!--                color: #333;-->
+<!--                }-->
+<!--                h2 {-->
+<!--                color: #2c3e50;-->
+<!--                font-weight: 700;-->
+<!--                margin-bottom: 20px;-->
+<!--                border-bottom: 2px solid #3498db;-->
+<!--                padding-bottom: 10px;-->
+<!--                }-->
+<!--                .alert-success {-->
+<!--                background-color: #d4edda;-->
+<!--                color: #155724;-->
+<!--                padding: 15px;-->
+<!--                border-radius: 5px;-->
+<!--                margin-bottom: 20px;-->
+<!--                border: 1px solid #c3e6cb;-->
+<!--                }-->
+<!--                form {-->
+<!--                background-color: #fefefe;-->
+<!--                padding: 30px;-->
+<!--                border-radius: 8px;-->
+<!--                box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);-->
+<!--                }-->
+<!--                .form-group {-->
+<!--                margin-bottom: 18px;-->
+<!--                }-->
+<!--                .form-group label {-->
+<!--                font-weight: 600;-->
+<!--                margin-bottom: 6px;-->
+<!--                display: block;-->
+<!--                color: #34495e;-->
+<!--                }-->
+<!--                .form-control {-->
+<!--                width: 100%;-->
+<!--                padding: 10px 12px;-->
+<!--                border: 1px solid #ced4da;-->
+<!--                border-radius: 4px;-->
+<!--                box-sizing: border-box;-->
+<!--                font-size: 14px;-->
+<!--                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;-->
+<!--                }-->
+<!--                textarea.form-control {-->
+<!--                resize: vertical;-->
+<!--                }-->
+<!--                .btn-primary {-->
+<!--                background-color: #3498db;-->
+<!--                border: none;-->
+<!--                color: #fff;-->
+<!--                font-weight: 600;-->
+<!--                padding: 12px 24px;-->
+<!--                border-radius: 5px;-->
+<!--                cursor: pointer;-->
+<!--                transition: background-color 0.3s;-->
+<!--                font-size: 16px;-->
+<!--                }-->
+<!--                .btn-primary:hover {-->
+<!--                background-color: #2980b9;-->
+<!--                }-->
+<!--            </style>-->
+
+<!--            <div class="container mt16">-->
+<!--                <h2>Inquiry Form</h2>-->
+
+<!--                <t t-if="request.params.get('success')">-->
+<!--                    <div class="alert alert-success">-->
+<!--                        Thank you for contacting us! We will get back to you shortly.-->
+<!--                    </div>-->
+<!--                </t>-->
+
+<!--                <form action="/inquiry/submit" method="post">-->
+<!--                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>-->
+
+<!--                    <div class="form-group">-->
+<!--                        <label for="name">Name*</label>-->
+<!--                        <input type="text" id="name" name="name" class="form-control"-->
+<!--                               t-att-value="partner and partner.name"-->
+<!--                               t-att-readonly="partner and 'readonly'"-->
+<!--                               required="required"/>-->
+<!--                    </div>-->
+
+<!--                    <div class="form-group">-->
+<!--                        <label for="email">Email*</label>-->
+<!--                        <input type="email" id="email" name="email" class="form-control"-->
+<!--                               t-att-value="partner and partner.email"-->
+<!--                               t-att-readonly="partner and 'readonly'"-->
+<!--                               required="required"/>-->
+<!--                    </div>-->
+
+<!--                    <div class="form-group">-->
+<!--                        <label for="phone">Phone*</label>-->
+<!--                        <input type="tel" id="phone" name="phone" class="form-control"-->
+<!--                               t-att-value="partner and partner.phone"-->
+<!--                               t-att-readonly="partner and 'readonly'"-->
+<!--                               required="required"/>-->
+<!--                    </div>-->
+
+<!--                    <div class="form-group">-->
+<!--                        <label for="subject">Subject*</label>-->
+<!--                        <input type="text" id="subject" name="subject" class="form-control" required="required"-->
+<!--                               placeholder="e.g., General Inquiry, Property Information"/>-->
+<!--                    </div>-->
+
+<!--                    <div class="form-group">-->
+<!--                        <label for="message">Message</label>-->
+<!--                        <textarea id="message" name="message" class="form-control" rows="5"-->
+<!--                                  placeholder="Your message here..."></textarea>-->
+<!--                    </div>-->
+
+<!--                    <button type="submit" class="btn btn-primary">Submit Inquiry</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </t>-->
+<!--    </template>-->
+<!--</odoo>-->
+<odoo>
+    <template id="inquiry_form_template" name="Customer Inquiry Form">
+        <t t-call="website.layout">
+            <style>
+                /* --- Your Existing Styles (NOT removed) --- */
+                .container.mt16 {
+                max-width: 700px;
+                margin: 40px auto;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #333;
+                background: linear-gradient(135deg, #e3f2fd, #ffffff);
+                padding: 30px;
+                border-radius: 18px;
+                box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+                border: 1px solid #dbe9f5;
+                }
+
+                h2 {
+                color: #1e3c72;
+                font-weight: 700;
+                text-align: center;
+                margin-bottom: 25px;
+                padding-bottom: 12px;
+                border-bottom: 3px solid #6a8eff;
+                background: linear-gradient(90deg, #6a8eff, #4fc3f7);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                }
+
+                form {
+                background: linear-gradient(145deg, #ffffff, #f6fbff);
+                padding: 30px;
+                border-radius: 14px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+                border: 1px solid #e1ecf7;
+                }
+
+                .form-group label {
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 6px;
+                display: block;
+                }
+
+                .form-control {
+                width: 100%;
+                padding: 12px 14px;
+                border: 1px solid #bcd4f0;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: 0.3s ease-in-out;
+                background: #fdfdff;
+                }
+
+                .form-control:focus {
+                border-color: #6a8eff;
+                box-shadow: 0 0 8px rgba(106, 142, 255, 0.4);
+                background: #ffffff;
+                }
+
+                textarea.form-control {
+                resize: vertical;
+                }
+
+                .btn-primary {
+                background: linear-gradient(135deg, #6a8eff, #4fc3f7);
+                border: none;
+                color: #fff;
+                font-weight: 600;
+                padding: 10px 28px;
+                border-radius: 30px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: 0.3s ease;
+                box-shadow: 0 4px 15px rgba(79,195,247,0.3);
+                width: auto; /* FIX: no full width */
+                display: inline-block; /* Keep original size */
+                }
+
+                .btn-primary:hover {
+                background: linear-gradient(135deg, #4fc3f7, #6a8eff);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(106,142,255,0.4);
+                }
+
+
+                .alert-success {
+                background: linear-gradient(135deg, #d4edda, #e9f7ef);
+                color: #155724;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #c3e6cb;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+                }
+            </style>
+
+
+            <div class="container mt16">
+                <h2>Inquiry Form</h2>
+
+                <t t-if="request.params.get('success')">
+                    <div class="alert alert-success">
+                        Thank you for contacting us! We will get back to you shortly.
+                    </div>
+                </t>
+
+                <form action="/inquiry/submit" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <div class="form-group">
+                        <label for="name">Name*</label>
+                        <input type="text" id="name" name="name" class="form-control"
+                               t-att-value="partner and partner.name"
+                               t-att-readonly="partner and 'readonly'"
+                               required="required"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email*</label>
+                        <input type="email" id="email" name="email" class="form-control"
+                               t-att-value="partner and partner.email"
+                               t-att-readonly="partner and 'readonly'"
+                               required="required"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone*</label>
+                        <input type="tel" id="phone" name="phone" class="form-control"
+                               t-att-value="partner and partner.phone"
+                               t-att-readonly="partner and 'readonly'"
+                               required="required"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject*</label>
+                        <input type="text" id="subject" name="subject" class="form-control" required="required"
+                               placeholder="e.g., General Inquiry, Property Information"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" class="form-control" rows="5"
+                                  placeholder="Your message here..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit Inquiry</button>
+                </form>
+            </div>
+        </t>
+    </template>
+</odoo>

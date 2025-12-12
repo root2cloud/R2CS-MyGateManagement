@@ -1,0 +1,193 @@
+<odoo>
+    <!-- Form View -->
+    <record id="view_form_flat_maintenance" model="ir.ui.view">
+        <field name="name">flat.maintenance.form</field>
+        <field name="model">flat.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            class="btn-primary" invisible="status != 'draft'"/>
+
+                    <!-- Create Maintenance Invoice Button - Always visible after confirm -->
+                    <button name="action_create_maintenance_invoice"
+                            string="Create Maintenance Invoice"
+                            type="object"
+                            class="btn-success"
+                            invisible="status == 'draft'"/>
+
+                    <field name="status" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Smart Button to View All Invoices -->
+                        <button name="action_view_all_invoices"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                invisible="invoice_count == 0">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+
+                    <group>
+                        <group string="Tenant &amp; Property">
+                            <field name="tenant_id"/>
+                            <field name="flat_id"/>
+                            <field name="building_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="total_amount" widget="monetary" readonly="1"
+                                   style="font-size: 20px; font-weight: bold;"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Maintenance Items">
+                        <field name="maintenance_item_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="maintenance_type"/>
+                                <field name="description"/>
+                                <field name="amount"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <group string="Additional Notes">
+                        <field name="notes" nolabel="1" placeholder="Add any additional notes..."/>
+                    </group>
+
+                    <!-- Display all created invoices -->
+                    <notebook invisible="invoice_count == 0">
+                        <page string="Invoices" name="invoices">
+                            <field name="invoice_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="invoice_date"/>
+                                    <field name="amount_total"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_flat_maintenance" model="ir.ui.view">
+        <field name="name">flat.maintenance.kanban</field>
+        <field name="model">flat.maintenance</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <field name="building_id"/>
+                <field name="total_amount"/>
+                <field name="invoice_count"/>
+                <field name="status"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="tenant_id"/>
+                                        </strong>
+                                    </div>
+                                    <span class="badge" t-att-class="record.status.raw_value === 'draft' ? 'text-bg-info' : 'text-bg-success'">
+                                        <field name="status"/>
+                                    </span>
+                                </div>
+
+                                <div class="o_kanban_record_body">
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <i class="fa fa-building"/> <field name="building_id"/> - <field name="flat_id"/>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <strong style="font-size: 16px; color: #28a745;">
+                                                <field name="total_amount" widget="monetary"/>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span t-if="record.invoice_count.raw_value > 0">
+                                            <i class="fa fa-file-text-o"/>
+                                            <field name="invoice_count"/> Invoice(s)
+                                        </span>
+                                        <span t-else="" class="text-muted">
+                                            <i class="fa fa-file-text-o"/> No Invoices
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_flat_maintenance" model="ir.ui.view">
+        <field name="name">flat.maintenance.list</field>
+        <field name="model">flat.maintenance</field>
+        <field name="arch" type="xml">
+            <list string="Maintenance">
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <field name="building_id"/>
+                <field name="total_amount"/>
+                <field name="invoice_count"/>
+                <field name="status" widget="badge"
+                       decoration-info="status == 'draft'"
+                       decoration-success="status == 'confirmed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_search_flat_maintenance" model="ir.ui.view">
+        <field name="name">flat.maintenance.search</field>
+        <field name="model">flat.maintenance</field>
+        <field name="arch" type="xml">
+            <search string="Maintenance">
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <field name="building_id"/>
+                <filter name="filter_draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                <filter name="filter_confirmed" string="Confirmed" domain="[('status', '=', 'confirmed')]"/>
+                <separator/>
+                <filter name="filter_has_invoices" string="Has Invoices" domain="[('invoice_count', '>', 0)]"/>
+                <filter name="filter_no_invoices" string="No Invoices" domain="[('invoice_count', '=', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_tenant" string="Tenant" context="{'group_by': 'tenant_id'}"/>
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_flat_maintenance" model="ir.actions.act_window">
+        <field name="name">Maintenance</field>
+        <field name="res_model">flat.maintenance</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_flat_maintenance" name="Maintenance" parent="menu_flat_transaction_menu"
+              action="action_flat_maintenance" sequence="6"/>
+</odoo>

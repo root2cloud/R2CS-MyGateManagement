@@ -1,0 +1,137 @@
+<odoo>
+    <!-- Form View -->
+    <record id="view_form_vehicle_management" model="ir.ui.view">
+        <field name="name">vehicle.management.form</field>
+        <field name="model">vehicle.management</field>
+        <field name="arch" type="xml">
+            <form string="Vehicle">
+                <sheet>
+                    <field name="vehicle_photo" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="vehicle_number" placeholder="Vehicle Number"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Vehicle Information">
+                            <field name="vehicle_type"/>
+                            <field name="make"/>
+                            <field name="model"/>
+                            <field name="year"/>
+                            <field name="color"/>
+                        </group>
+                        <group string="Owner Information">
+                            <field name="tenant_id"/>
+                            <field name="flat_id"/>
+                            <field name="building_id"/>
+                        </group>
+                    </group>
+
+                    <group string="Additional Notes">
+                        <field name="notes" placeholder="Additional information about the vehicle..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_vehicle_management" model="ir.ui.view">
+        <field name="name">vehicle.management.list</field>
+        <field name="model">vehicle.management</field>
+        <field name="arch" type="xml">
+            <list string="Vehicles">
+                <field name="vehicle_photo" widget="image" options="{'size': [50, 50]}"/>
+                <field name="vehicle_number"/>
+                <field name="vehicle_type"/>
+                <field name="make"/>
+                <field name="model"/>
+                <field name="year"/>
+                <field name="color"/>
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_vehicle_management" model="ir.ui.view">
+        <field name="name">vehicle.management.kanban</field>
+        <field name="model">vehicle.management</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="vehicle_photo"/>
+                <field name="vehicle_number"/>
+                <field name="vehicle_type"/>
+                <field name="make"/>
+                <field name="model"/>
+                <field name="year"/>
+                <field name="color"/>
+                <field name="tenant_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <div style="text-align: center; margin-bottom: 10px;">
+                                    <t t-if="record.vehicle_photo.raw_value">
+                                        <img t-att-src="kanban_image('vehicle.management', 'vehicle_photo', record.id.raw_value)"
+                                             style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;"/>
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-car" style="font-size: 100px; color: #ccc;"/>
+                                    </t>
+                                </div>
+                                <strong><field name="vehicle_number"/></strong><br/>
+                                <span class="badge badge-primary"><field name="vehicle_type"/></span><br/>
+                                <span t-if="record.make.raw_value"><field name="make"/> <field name="model"/></span><br/>
+                                <span t-if="record.year.raw_value"><i class="fa fa-calendar"/> <field name="year"/></span><br/>
+                                <span t-if="record.color.raw_value"><i class="fa fa-paint-brush"/> <field name="color"/></span><br/>
+                                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+                                    <span><i class="fa fa-user"/> <field name="tenant_id"/></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_search_vehicle_management" model="ir.ui.view">
+        <field name="name">vehicle.management.search</field>
+        <field name="model">vehicle.management</field>
+        <field name="arch" type="xml">
+            <search string="Vehicles">
+                <field name="vehicle_number"/>
+                <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <field name="make"/>
+                <field name="model"/>
+                <filter name="filter_car" string="Cars" domain="[('vehicle_type', '=', 'car')]"/>
+                <filter name="filter_motorcycle" string="Motorcycles" domain="[('vehicle_type', '=', 'motorcycle')]"/>
+                <filter name="filter_bicycle" string="Bicycles" domain="[('vehicle_type', '=', 'bicycle')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_vehicle_type" string="Vehicle Type" context="{'group_by': 'vehicle_type'}"/>
+                    <filter name="group_tenant" string="Tenant" context="{'group_by': 'tenant_id'}"/>
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_vehicle_management" model="ir.actions.act_window">
+        <field name="name">Vehicles</field>
+        <field name="res_model">vehicle.management</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_vehicle_management"
+              name="Vehicles"
+              parent="tenant_details_menu"
+              action="action_vehicle_management"
+              sequence="8"/>
+</odoo>

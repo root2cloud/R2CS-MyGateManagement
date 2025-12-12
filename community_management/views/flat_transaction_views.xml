@@ -1,0 +1,256 @@
+<odoo>
+    <!-- Form View -->
+    <record id="view_form_flat_transaction" model="ir.ui.view">
+        <field name="name">flat.transaction.form</field>
+        <field name="model">flat.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Lease Transaction">
+                <header>
+                    <button name="action_confirm" string="Activate Lease" type="object"
+                            class="btn-primary" invisible="status != 'draft'"/>
+                    <button name="action_terminate" string="Terminate Lease" type="object"
+                            class="btn-warning" invisible="status != 'confirmed'"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            class="btn-secondary" invisible="status not in ['draft', 'confirmed']"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            class="btn-warning" invisible="status == 'draft'"/>
+
+                    <!-- Create Security Deposit Invoice Button -->
+                    <button name="action_create_security_deposit_invoice" string="Create Security Deposit Invoice"
+                            type="object" class="btn-info"
+                            invisible="security_deposit_invoiced or security_deposit &lt;= 0"/>
+
+                    <!-- Create Rent Invoice Button -->
+                    <button name="action_create_invoice" string="Create Rent Invoice" type="object"
+                            class="btn-success" invisible="status != 'confirmed'"/>
+
+                    <!-- Generate Agreement Button -->
+                    <button name="action_generate_agreement" string="Generate Agreement" type="object"
+                            class="btn-info" invisible="status == 'draft'"/>
+
+                    <field name="status" widget="statusbar" statusbar_visible="draft,confirmed,expired,terminated"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <!-- MAGIC Invoice Button -->
+                        <button name="action_view_invoices"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-money"
+                        >
+                            <span style="color:black;">View Invoices</span>
+                        </button>
+
+
+                        <!-- Other buttons... -->
+                    </div>
+
+                    <group>
+                        <group string="Property Selection">
+                            <field name="building_id" options="{'no_create': True}"/>
+                            <field name="floor_id" options="{'no_create': True}"/>
+                            <field name="flat_id" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Lease Period">
+                            <field name="lease_start_date"/>
+                            <field name="lease_end_date"/>
+                            <field name="lease_duration_months" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Lease Parties">
+                        <group>
+                            <field name="lease_owner_id" placeholder="Leave empty if tenant rents directly"/>
+                            <field name="tenant_id" required="1"/>
+                        </group>
+                        <group>
+                            <field name="invoice_partner_id" string="Invoice Will Be Sent To" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Financial Details">
+                        <group>
+                            <field name="rent_price" required="1"/>
+                            <field name="security_deposit"/>
+                            <field name="security_deposit_invoiced" readonly="1"
+                                   invisible="security_deposit &lt;= 0"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Agreement">
+                        <group>
+                            <field name="agreement_date"/>
+                            <field name="agreement_document" filename="agreement_filename"/>
+                            <field name="agreement_filename" invisible="1"/>
+                        </group>
+                        <group>
+                            <!--                             Send Agreement via Email Button - IN AGREEMENT SECTION -->
+                            <button name="action_send_lease_agreement_email"
+                                    string="📧 Send Agreement via Email"
+                                    type="object"
+                                    class="oe_highlight btn-info"
+                                    style="margin-top: 8px;"/>
+                        </group>
+                    </group>
+
+                    <group string="Additional Terms &amp; Conditions">
+                        <field name="notes"
+                               placeholder="Enter any additional terms, conditions, or special clauses..."/>
+                    </group>
+
+                    <field name="invoiced_months" invisible="1"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_flat_transaction" model="ir.ui.view">
+        <field name="name">flat.transaction.list</field>
+        <field name="model">flat.transaction</field>
+        <field name="arch" type="xml">
+            <list string="Lease Transactions">
+                <field name="building_id"/>
+                <field name="floor_id"/>
+                <field name="flat_id"/>
+                <field name="lease_owner_id"/>
+                <field name="tenant_id"/>
+                <field name="invoice_partner_id"/>
+                <field name="rent_price"/>
+                <field name="security_deposit"/>
+                <field name="lease_start_date"/>
+                <field name="lease_end_date"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'confirmed'"
+                       decoration-info="status == 'draft'"
+                       decoration-warning="status == 'expired'"
+                       decoration-danger="status in ['terminated', 'cancelled']"/>
+                <field name="invoice_count" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_flat_transaction" model="ir.ui.view">
+        <field name="name">flat.transaction.kanban</field>
+        <field name="model">flat.transaction</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="building_id"/>
+                <field name="flat_id"/>
+                <field name="lease_owner_id"/>
+                <field name="tenant_id"/>
+                <field name="rent_price"/>
+                <field name="security_deposit"/>
+                <field name="status"/>
+                <field name="lease_start_date"/>
+                <field name="invoice_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <strong>
+                                    <field name="flat_id"/>
+                                </strong>
+                                <br/>
+                                <span t-attf-class="badge badge-pill badge-#{record.status.raw_value == 'draft' ? 'secondary' : record.status.raw_value == 'confirmed' ? 'success' : record.status.raw_value == 'expired' ? 'warning' : 'danger'}">
+                                    <field name="status"/>
+                                </span>
+                                <span t-if="record.invoice_count.raw_value > 0" class="badge badge-pill badge-primary">
+                                    <i class="fa fa-file-text"/>
+                                    <field name="invoice_count"/>
+                                    Invoice(s)
+                                </span>
+                                <br/>
+                                <span>
+                                    <i class="fa fa-building"/>
+                                    <field name="building_id"/>
+                                </span>
+                                <br/>
+                                <div style="margin-top: 5px;">
+                                    <span t-if="record.lease_owner_id.raw_value">
+                                        <i class="fa fa-user-circle"/>
+                                        Lease Owner:
+                                        <field name="lease_owner_id"/>
+                                        <br/>
+                                    </span>
+                                    <span>
+                                        <i class="fa fa-user"/>
+                                        Tenant:
+                                        <field name="tenant_id"/>
+                                    </span>
+                                    <br/>
+                                    <span>
+                                        <i class="fa fa-tag"/>
+                                        Rent:<field name="rent_price"/>/month
+                                    </span>
+                                    <br/>
+                                    <span t-if="record.security_deposit.raw_value > 0">
+                                        <i class="fa fa-shield"/>
+                                        Deposit:
+                                        <field name="security_deposit"/>
+                                    </span>
+                                    <br/>
+                                    <span class="text-muted">From:
+                                        <field name="lease_start_date"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_search_flat_transaction" model="ir.ui.view">
+        <field name="name">flat.transaction.search</field>
+        <field name="model">flat.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Lease Transactions">
+                <field name="flat_id"/>
+                <field name="building_id"/>
+                <field name="lease_owner_id"/>
+                <field name="tenant_id"/>
+                <filter name="filter_draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                <filter name="filter_confirmed" string="Active" domain="[('status', '=', 'confirmed')]"/>
+                <filter name="filter_expired" string="Expired" domain="[('status', '=', 'expired')]"/>
+                <filter name="filter_terminated" string="Terminated" domain="[('status', '=', 'terminated')]"/>
+                <separator/>
+                <filter name="filter_invoiced" string="Has Invoices" domain="[('invoice_ids', '!=', False)]"/>
+                <filter name="filter_not_invoiced" string="No Invoices" domain="[('invoice_ids', '=', False)]"/>
+                <filter name="filter_deposit_invoiced" string="Deposit Invoiced"
+                        domain="[('security_deposit_invoiced', '=', True)]"/>
+                <separator/>
+                <filter name="filter_has_lease_owner" string="With Lease Owner"
+                        domain="[('lease_owner_id', '!=', False)]"/>
+                <filter name="filter_direct_tenant" string="Direct Tenant" domain="[('lease_owner_id', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_lease_owner" string="Lease Owner" context="{'group_by': 'lease_owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- Action -->
+    <record id="action_flat_transaction" model="ir.actions.act_window">
+        <field name="name">Lease Transactions</field>
+        <field name="res_model">flat.transaction</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_flat_transaction_menu" name="Lease Transactions" parent="menu_community_management_root"
+              sequence="5"/>
+
+    <menuitem id="menu_flat_transaction" name="Lease Transactions" parent="menu_flat_transaction_menu"
+              action="action_flat_transaction" sequence="5"/>
+</odoo>

@@ -1,0 +1,240 @@
+<odoo>
+    <!-- Demo Page Inquiry Form -->
+    <template id="demo_inquiry_form" name="Demo Inquiry Form">
+        <t t-call="website.layout">
+            <style>
+                .demo-form-wrapper {
+                min-height: 80vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #f5f5f5 0%, #dcdcdc 50%, #2b2b2b 100%);
+                padding: 3rem 1rem;
+                }
+                .demo-form-card {
+                background: rgba(255, 255, 255, 0.96);
+                border-radius: 18px;
+                box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+                max-width: 700px;
+                width: 100%;
+                overflow: hidden;
+                }
+                .demo-form-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: #fff;
+                padding: 1.75rem 2rem;
+                text-align: left;
+                }
+                .demo-form-header h2 {
+                margin: 0;
+                font-weight: 700;
+                font-size: 1.9rem;
+                }
+                .demo-form-header p {
+                margin: 0.4rem 0 0;
+                opacity: 0.9;
+                }
+                .demo-form-body {
+                padding: 2rem 2.25rem 2.25rem;
+                }
+                .demo-form-body .form-group label {
+                font-weight: 600;
+                font-size: 0.95rem;
+                }
+                .demo-form-body .form-control {
+                border-radius: 10px;
+                border: 1px solid #d1d5db;
+                padding: 0.65rem 0.9rem;
+                }
+                .demo-form-body .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+                }
+                .demo-form-submit {
+                margin-top: 1.75rem;
+                width: auto; /* button adjusts to text size */
+                padding: 0.75rem 2rem; /* comfortable size */
+                background: linear-gradient(135deg, #f97316 0%, #f97373 100%);
+                border: none;
+                border-radius: 999px;
+                font-weight: 600;
+                font-size: 1rem;
+                box-shadow: 0 12px 25px rgba(249, 115, 22, 0.45);
+                display: inline-block;
+                }
+
+
+                @media (max-width: 576px) {
+                .demo-form-body {
+                padding: 1.4rem 1.4rem 1.6rem;
+                }
+                }
+            </style>
+
+            <div class="demo-form-wrapper">
+                <div class="demo-form-card">
+                    <div class="demo-form-header">
+                        <h2>Book a Demo</h2>
+                        <p>Share your details and our team will reach out to schedule a personalized demo.</p>
+                    </div>
+                    <div class="demo-form-body">
+                        <form action="/demo/page/submit" method="post">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mt-2">
+                                        <label>Name</label>
+                                        <input type="text" name="name" required="required" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mt-2">
+                                        <label>Mobile</label>
+                                        <input type="text" name="mobile" required="required" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label>Email</label>
+                                <input type="email" name="email" class="form-control"/>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label>Society Name</label>
+                                <select name="community_id" class="form-control" required="required">
+                                    <t t-foreach="communities" t-as="c">
+                                        <option t-att-value="c.id">
+                                            <t t-esc="c.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mt-3">
+                                        <label>Customer Type</label>
+                                        <select name="customer_type" class="form-control" required="required">
+                                            <option value="rwa">RWA Member</option>
+                                            <option value="resident">Resident</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mt-3">
+                                        <label>City</label>
+                                        <input type="text" name="city" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary demo-form-submit">
+                                Submit Inquiry
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Thank You Page -->
+    <template id="demo_inquiry_thanks" name="Demo Inquiry Thank You">
+        <t t-call="website.layout">
+
+            <style>
+                .thankyou-wrapper {
+                min-height: 80vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 50%, #dfe9f3 100%);
+                padding: 3rem 1rem;
+                animation: fadeIn 1s ease;
+                }
+
+                .thankyou-card {
+                background: #ffffffee;
+                border-radius: 20px;
+                padding: 3rem 2.5rem;
+                text-align: center;
+                max-width: 650px;
+                width: 100%;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+                animation: slideUp 0.8s ease;
+                }
+
+                .thankyou-icon {
+                font-size: 80px;
+                color: #22c55e; /* Soft green */
+                margin-bottom: 1rem;
+                animation: popIn 0.6s ease;
+                }
+
+                .thankyou-card h2 {
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                color: #333;
+                }
+
+                .thankyou-card p {
+                font-size: 1.1rem;
+                color: #666;
+                margin-bottom: 2rem;
+                }
+
+                .thankyou-card .btn-back {
+                background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+                padding: 0.75rem 2rem;
+                border-radius: 999px;
+                border: none;
+                color: #fff;
+                font-weight: 600;
+                font-size: 1rem;
+                box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+                }
+
+                .thankyou-card .btn-back:hover {
+                filter: brightness(1.1);
+                }
+
+                @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+                }
+
+                @keyframes slideUp {
+                from { transform: translateY(40px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+                }
+
+                @keyframes popIn {
+                0% { transform: scale(0); }
+                80% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+                }
+            </style>
+
+            <div class="thankyou-wrapper">
+                <div class="thankyou-card">
+
+                    <!-- Success Icon -->
+                    <div class="thankyou-icon">✔</div>
+
+                    <h2>Thank You!</h2>
+                    <p>Your demo request has been submitted successfully.
+                        <br/>
+                        Our team will reach out to you shortly.
+                    </p>
+
+                    <a href="/" class="btn btn-back">Back to Home</a>
+                </div>
+            </div>
+
+        </t>
+    </template>
+
+
+</odoo>

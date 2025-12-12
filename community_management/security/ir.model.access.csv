@@ -1,0 +1,54 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_community_management_user,access.community.management.user,model_community_management,base.group_user,1,1,1,1
+access_nearby_facility_user,nearby.facility user,model_nearby_facility,base.group_user,1,1,1,1
+access_building_management_user,access.building.management.user,model_building_management,base.group_user,1,1,1,1
+access_floor_management_user,floor.management user,model_floor_management,base.group_user,1,1,1,1
+access_flat_management_user,access.flat.management.user,model_flat_management,base.group_user,1,1,1,1
+access_flat_type_user,flat.type user,model_flat_type,,1,1,1,1
+access_room_management_user,access.room.management.user,model_room_management,base.group_user,1,1,1,1
+access_flat_transaction_user,flat.transaction user,model_flat_transaction,base.group_user,1,1,1,1
+
+access_flat_maintenance,access.flat.maintenance,model_flat_maintenance,base.group_user,1,1,1,1
+access_flat_maintenance_item,access.flat.maintenance.item,model_flat_maintenance_item,base.group_user,1,1,1,1
+
+access_family_member_user,family.member user,model_family_member,base.group_user,1,1,1,1
+access_family_member_portal,family.member portal,model_family_member,base.group_portal,1,1,1,1
+
+access_pet_management_user,pet.management user,model_pet_management,base.group_user,1,1,1,1
+access_pet_management_portal,pet.management portal,model_pet_management,base.group_portal,1,1,1,1
+access_pet_vaccination_user,pet.vaccination user,model_pet_vaccination,base.group_user,1,1,1,1
+access_pet_vaccination_portal,pet.vaccination portal,model_pet_vaccination,base.group_portal,1,1,1,1
+
+access_vehicle_management_user,vehicle.management user,model_vehicle_management,base.group_user,1,1,1,1
+access_vehicle_management_portal,vehicle.management portal,model_vehicle_management,base.group_portal,1,1,1,1
+
+access_customer_inquiry_user,customer.inquiry user,model_customer_inquiry,base.group_user,1,1,1,1
+
+
+
+access_property_notice_board_user,access_property_notice_board_user,model_property_notice_board,,1,1,1,1
+
+
+access_amenity_amenity_portal,Amenity Portal Access,model_amenity_amenity,base.group_portal,1,0,0,0
+access_amenity_amenity_user,Amenity Internal User Access,model_amenity_amenity,base.group_user,1,1,1,1
+
+access_amenity_time_slot_portal,Amenity Time Slot Portal Access,model_amenity_time_slot,base.group_portal,1,0,0,0
+access_amenity_time_slot_user,Amenity Time Slot Internal User Access,model_amenity_time_slot,base.group_user,1,1,1,1
+
+access_amenity_booking_portal,Amenity Booking Portal Access,model_amenity_booking,base.group_portal,1,1,1,1
+access_amenity_booking_user,Amenity Booking Internal User Access,model_amenity_booking,base.group_user,1,1,1,1
+
+
+
+
+access_building_portal,access_building_portal,model_building_management,base.group_portal,1,0,0,0
+access_floor_portal,access_floor_portal,model_floor_management,base.group_portal,1,0,0,0
+
+
+access_room_portal,access_room_portal,model_room_management,base.group_portal,1,0,0,0
+access_flat_portal,access_flat_portal,model_flat_management,base.group_portal,1,0,0,0
+
+access_community_lead_user,access.community.lead.user,model_community_lead,base.group_user,1,1,1,1
+access_community_lead_public,access.community.lead.public,model_community_lead,base.group_public,1,0,1,0
+
+access_community_dashboard_user,Community Dashboard User,model_community_dashboard,,1,1,1,1

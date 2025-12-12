@@ -1,0 +1,5 @@
+<odoo>
+  <template id="assets_frontend" name="community_management assets" inherit_id="web.assets_frontend">
+    <link rel="stylesheet" href="/community_management/static/src/css/portal_family.css"/>
+  </template>
+</odoo>

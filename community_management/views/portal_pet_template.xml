@@ -1,0 +1,472 @@
+<odoo>
+    <data>
+        <!-- Portal Page: Pets List with Warnings -->
+        <template id="portal_my_pets" name="My Pets">
+            <t t-call="portal.portal_layout">
+                <style>
+                    .pet-portal-header {
+                        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                        color: white;
+                        padding: 2rem 0;
+                        margin-bottom: 2rem;
+                        border-radius: 10px;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .pet-portal-header h3 {
+                        margin: 0;
+                        font-weight: 600;
+                        font-size: 1.8rem;
+                    }
+
+                    .vaccination-alert {
+                        padding: 1rem;
+                        margin-bottom: 1.5rem;
+                        border-radius: 10px;
+                        border-left: 5px solid;
+                    }
+
+                    .vaccination-alert-overdue {
+                        background-color: #fed7d7;
+                        border-color: #c53030;
+                        color: #742a2a;
+                    }
+
+                    .vaccination-alert-due {
+                        background-color: #fefcbf;
+                        border-color: #d69e2e;
+                        color: #744210;
+                    }
+
+                    .vaccination-alert h5 {
+                        margin: 0 0 0.5rem 0;
+                        font-weight: 600;
+                    }
+
+                    .vaccination-alert ul {
+                        margin: 0;
+                        padding-left: 1.5rem;
+                    }
+
+                    .pet-card {
+                        border: none;
+                        border-radius: 15px;
+                        overflow: hidden;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                        height: 100%;
+                        position: relative;
+                    }
+
+                    .pet-card:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .pet-card-overdue {
+                        border: 3px solid #fc8181;
+                    }
+
+                    .pet-card-due {
+                        border: 3px solid #f6e05e;
+                    }
+
+                    .vaccination-badge-up_to_date {
+                        background-color: #c6f6d5;
+                        color: #22543d;
+                        padding: 0.35rem 0.75rem;
+                        border-radius: 20px;
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                    }
+                    .vaccination-badge-due_soon {
+                        background-color: #fefcbf;
+                        color: #744210;
+                        padding: 0.35rem 0.75rem;
+                        border-radius: 20px;
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                    }
+                    .vaccination-badge-overdue {
+                        background-color: #fed7d7;
+                        color: #742a2a;
+                        padding: 0.35rem 0.75rem;
+                        border-radius: 20px;
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                    }
+                    .vaccination-badge-not_vaccinated {
+                        background-color: #e2e8f0;
+                        color: #2d3748;
+                        padding: 0.35rem 0.75rem;
+                        border-radius: 20px;
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                    }
+
+                    .warning-icon {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        background: #fc8181;
+                        color: white;
+                        width: 35px;
+                        height: 35px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.2rem;
+                        animation: pulse 2s infinite;
+                        z-index: 10;
+                    }
+
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.1); }
+                    }
+
+                    .btn-add-pet {
+                        background: white;
+                        border-radius: 10px;
+                        padding: 0.75rem 1.5rem;
+                        font-weight: 500;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+                    }
+
+                    .btn-add-pet:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+                    }
+                </style>
+
+                <div class="container mt-4">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="pet-portal-header d-flex justify-content-between align-items-center px-4">
+                                <h3><i class="fa fa-paw mr-2"/> My Pets</h3>
+                                <a href="/my/pets/new" class="btn btn-light btn-add-pet">
+                                    <i class="fa fa-plus mr-1"/> Add Pet
+                                </a>
+                            </div>
+
+                            <!-- Vaccination Warnings -->
+                            <t t-set="overdue_pets" t-value="[p for p in pets if p.vaccination_status == 'overdue']"/>
+                            <t t-set="due_soon_pets" t-value="[p for p in pets if p.vaccination_status == 'due_soon']"/>
+
+                            <t t-if="overdue_pets">
+                                <div class="vaccination-alert vaccination-alert-overdue">
+                                    <h5><i class="fa fa-exclamation-triangle mr-2"/> Overdue Vaccinations</h5>
+                                    <p>The following pets have overdue vaccinations. Please contact your veterinarian immediately:</p>
+                                    <ul>
+                                        <t t-foreach="overdue_pets" t-as="pet">
+                                            <li>
+                                                <strong><t t-esc="pet.name"/></strong> -
+                                                Overdue by <t t-esc="abs(pet.days_until_vaccination)"/> days
+                                                <t t-if="pet.next_vaccination_date">
+                                                    (Due: <t t-esc="pet.next_vaccination_date"/>)
+                                                </t>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </t>
+
+                            <t t-if="due_soon_pets">
+                                <div class="vaccination-alert vaccination-alert-due">
+                                    <h5><i class="fa fa-exclamation-circle mr-2"/> Vaccinations Due Soon</h5>
+                                    <p>The following pets need vaccination within the next 30 days:</p>
+                                    <ul>
+                                        <t t-foreach="due_soon_pets" t-as="pet">
+                                            <li>
+                                                <strong><t t-esc="pet.name"/></strong> -
+                                                Due in <t t-esc="pet.days_until_vaccination"/> days
+                                                <t t-if="pet.next_vaccination_date">
+                                                    (<t t-esc="pet.next_vaccination_date"/>)
+                                                </t>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </t>
+
+                            <t t-if="pets">
+                                <div class="row">
+                                    <t t-foreach="pets" t-as="pet">
+                                        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                                            <div t-attf-class="card pet-card #{pet.vaccination_status == 'overdue' and 'pet-card-overdue' or pet.vaccination_status == 'due_soon' and 'pet-card-due' or ''}">
+                                                <!-- Warning Icon for Overdue -->
+                                                <t t-if="pet.vaccination_status == 'overdue'">
+                                                    <div class="warning-icon" title="Vaccination Overdue!">
+                                                        <i class="fa fa-exclamation"/>
+                                                    </div>
+                                                </t>
+
+                                                <t t-if="pet.photo">
+                                                    <img t-att-src="image_data_uri(pet.photo)" class="card-img-top" style="height: 220px; object-fit: cover;"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 220px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                                                        <i class="fa fa-paw" style="font-size: 5rem; color: #cbd5e0;"/>
+                                                    </div>
+                                                </t>
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><t t-esc="pet.name"/></h5>
+                                                    <span class="badge badge-primary"><t t-esc="pet.pet_type.title()"/></span>
+                                                    <span t-attf-class="vaccination-badge-#{pet.vaccination_status}">
+                                                        <t t-esc="pet.vaccination_status.replace('_', ' ').title()"/>
+                                                    </span><br/>
+                                                    <div class="mt-2">
+                                                        <small class="d-block mb-1" t-if="pet.breed">
+                                                            <i class="fa fa-tag"/> <t t-esc="pet.breed"/>
+                                                        </small>
+                                                        <small class="d-block mb-1" t-if="pet.age">
+                                                            <i class="fa fa-birthday-cake"/> <t t-esc="pet.age"/> years
+                                                        </small>
+
+                                                        <!-- Vaccination Status Details -->
+                                                        <t t-if="pet.vaccination_status == 'overdue'">
+                                                            <small class="d-block mb-1" style="color: #c53030; font-weight: 600;">
+                                                                <i class="fa fa-exclamation-triangle"/> Overdue by <t t-esc="abs(pet.days_until_vaccination)"/> days
+                                                            </small>
+                                                        </t>
+                                                        <t t-elif="pet.vaccination_status == 'due_soon'">
+                                                            <small class="d-block mb-1" style="color: #d69e2e; font-weight: 600;">
+                                                                <i class="fa fa-clock-o"/> Due in <t t-esc="pet.days_until_vaccination"/> days
+                                                            </small>
+                                                        </t>
+                                                        <t t-elif="pet.vaccination_status == 'up_to_date'">
+                                                            <small class="d-block mb-1" style="color: #22543d;">
+                                                                <i class="fa fa-check-circle"/> Next in <t t-esc="pet.days_until_vaccination"/> days
+                                                            </small>
+                                                        </t>
+
+                                                        <small class="d-block mb-1" t-if="pet.next_vaccination_date">
+                                                            <i class="fa fa-calendar"/> Next: <t t-esc="pet.next_vaccination_date"/>
+                                                        </small>
+                                                    </div>
+                                                    <div class="mt-3 d-flex" style="gap: 0.5rem;">
+                                                        <a t-attf-href="/my/pets/#{pet.id}/edit" class="btn btn-sm btn-secondary flex-fill">
+                                                            <i class="fa fa-edit"/> Edit
+                                                        </a>
+                                                        <a t-attf-href="/my/pets/#{pet.id}/delete" class="btn btn-sm btn-danger flex-fill"
+                                                           onclick="return confirm('Are you sure you want to delete this pet?');">
+                                                            <i class="fa fa-trash"/> Delete
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="text-center py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 15px;">
+                                    <i class="fa fa-paw" style="font-size: 5rem; color: #cbd5e0;"/>
+                                    <h4 class="mt-3" style="color: #4a5568;">No pets registered yet</h4>
+                                    <p style="color: #718096;">Add your first pet to get started</p>
+                                    <a href="/my/pets/new" class="btn btn-primary mt-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: none; border-radius: 10px; padding: 0.75rem 1.5rem;">
+                                        <i class="fa fa-plus mr-1"/> Add Your First Pet
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Portal Page: Add/Edit Pet Form -->
+        <template id="portal_pet_form" name="Pet Form">
+            <t t-call="portal.portal_layout">
+                <style>
+                    .pet-form-header {
+                        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                        color: white;
+                        text-align: center;
+                        padding: 2rem;
+                        border-radius: 15px 15px 0 0;
+                    }
+
+                    .pet-form-header i {
+                        font-size: 2.5rem;
+                        display: block;
+                        margin-bottom: 0.5rem;
+                    }
+
+                    .pet-form-header h3 {
+                        margin: 0;
+                        font-weight: 600;
+                    }
+
+                    .pet-form-container {
+                        border-radius: 15px;
+                        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .form-control {
+                        border-radius: 10px;
+                        border: 2px solid #e2e8f0;
+                        padding: 0.75rem 1rem;
+                    }
+
+                    .form-control:focus {
+                        border-color: #f093fb;
+                        box-shadow: 0 0 0 4px rgba(240, 147, 251, 0.1);
+                        outline: none;
+                    }
+
+                    .btn-primary {
+                        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                        border: none;
+                        border-radius: 10px;
+                        padding: 0.875rem 2.5rem;
+                        font-weight: 600;
+                    }
+
+                    .btn-primary:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+                    }
+                </style>
+
+                <div class="container mt-4 mb-5">
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <div class="card pet-form-container">
+                                <div class="pet-form-header">
+                                    <i t-if="pet" class="fa fa-edit"/>
+                                    <i t-else="" class="fa fa-paw"/>
+                                    <h3 t-if="pet">Edit Pet</h3>
+                                    <h3 t-else="">Add Pet</h3>
+                                </div>
+                                <div class="card-body p-4">
+                                    <form action="/my/pets/save" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="hidden" name="pet_id" t-att-value="pet.id if pet else 'None'"/>
+
+                                        <div class="form-group">
+                                            <label><i class="fa fa-camera mr-1"/> Photo</label>
+                                            <input type="file" class="form-control-file" name="photo" accept="image/*"/>
+                                            <t t-if="pet and pet.photo">
+                                                <img t-att-src="image_data_uri(pet.photo)" class="img-thumbnail mt-2" style="max-width: 200px; border-radius: 10px;"/>
+                                            </t>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label><i class="fa fa-paw mr-1"/> Pet Name *</label>
+                                                <input type="text" class="form-control" name="name" t-att-value="pet.name if pet else ''" required="1" placeholder="Enter pet name"/>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label><i class="fa fa-list mr-1"/> Pet Type *</label>
+                                                <select class="form-control" name="pet_type" required="1">
+                                                    <option value="dog" t-att-selected="pet and pet.pet_type == 'dog' and 'selected' or ''">Dog</option>
+                                                    <option value="cat" t-att-selected="pet and pet.pet_type == 'cat' and 'selected' or ''">Cat</option>
+                                                    <option value="bird" t-att-selected="pet and pet.pet_type == 'bird' and 'selected' or ''">Bird</option>
+                                                    <option value="rabbit" t-att-selected="pet and pet.pet_type == 'rabbit' and 'selected' or ''">Rabbit</option>
+                                                    <option value="fish" t-att-selected="pet and pet.pet_type == 'fish' and 'selected' or ''">Fish</option>
+                                                    <option value="other" t-att-selected="pet and pet.pet_type == 'other' and 'selected' or ''">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-4">
+                                                <label>Breed</label>
+                                                <input type="text" class="form-control" name="breed" t-att-value="pet.breed if pet else ''" placeholder="e.g., Golden Retriever"/>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label>Color</label>
+                                                <input type="text" class="form-control" name="color" t-att-value="pet.color if pet else ''" placeholder="e.g., Brown"/>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label>Gender</label>
+                                                <select class="form-control" name="gender">
+                                                    <option value="">Select...</option>
+                                                    <option value="male" t-att-selected="pet and pet.gender == 'male' and 'selected' or ''">Male</option>
+                                                    <option value="female" t-att-selected="pet and pet.gender == 'female' and 'selected' or ''">Female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label><i class="fa fa-birthday-cake mr-1"/> Date of Birth</label>
+                                                <input type="date" class="form-control" name="date_of_birth" t-att-value="pet.date_of_birth if pet else ''"/>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label><i class="fa fa-balance-scale mr-1"/> Weight (kg)</label>
+                                                <input type="number" step="0.1" class="form-control" name="weight" t-att-value="pet.weight if pet else ''" placeholder="0.0"/>
+                                            </div>
+                                        </div>
+
+                                        <h5 class="mt-4 mb-3" style="color: #2d3748; font-weight: 600;"><i class="fa fa-medkit mr-2"/> Vaccination Information</h5>
+
+                                        <div class="alert alert-info">
+                                            <i class="fa fa-info-circle mr-2"/> Vaccination status will be automatically calculated based on the dates you provide.
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label>Last Vaccination Date</label>
+                                                <input type="date" class="form-control" name="last_vaccination_date" t-att-value="pet.last_vaccination_date if pet else ''"/>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label>Next Vaccination Date</label>
+                                                <input type="date" class="form-control" name="next_vaccination_date" t-att-value="pet.next_vaccination_date if pet else ''"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label>Veterinarian Name</label>
+                                                <input type="text" class="form-control" name="veterinarian" t-att-value="pet.veterinarian if pet else ''" placeholder="Dr. Name"/>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label>Veterinarian Phone</label>
+                                                <input type="tel" class="form-control" name="vet_phone" t-att-value="pet.vet_phone if pet else ''" placeholder="+1 234 567 8900"/>
+                                            </div>
+                                        </div>
+
+                                        <h5 class="mt-4 mb-3" style="color: #2d3748; font-weight: 600;"><i class="fa fa-heartbeat mr-2"/> Health Information</h5>
+
+                                        <div class="form-group">
+                                            <label>Medical Conditions</label>
+                                            <textarea class="form-control" name="medical_conditions" rows="2" placeholder="List any medical conditions..."><t t-if="pet" t-esc="pet.medical_conditions"/></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Allergies</label>
+                                            <textarea class="form-control" name="allergies" rows="2" placeholder="List any allergies..."><t t-if="pet" t-esc="pet.allergies"/></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Special Needs</label>
+                                            <textarea class="form-control" name="special_needs" rows="2" placeholder="Describe any special needs..."><t t-if="pet" t-esc="pet.special_needs"/></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Additional Notes</label>
+                                            <textarea class="form-control" name="notes" rows="3" placeholder="Any additional information..."><t t-if="pet" t-esc="pet.notes"/></textarea>
+                                        </div>
+
+                                        <div class="text-center mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fa fa-check mr-2"/> Save Pet
+                                            </button>
+                                            <a href="/my/pets" class="btn btn-secondary btn-lg ml-2" style="border-radius: 10px; padding: 0.875rem 2.5rem;">
+                                                <i class="fa fa-times mr-2"/> Cancel
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

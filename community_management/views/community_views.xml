@@ -1,0 +1,368 @@
+<odoo>
+    <!-- Form View with Notebook -->
+    <record id="view_form_community_management" model="ir.ui.view">
+        <field name="name">community.management.form</field>
+        <field name="model">community.management</field>
+        <field name="arch" type="xml">
+            <form string="Community">
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Buildings Smart Button -->
+                        <button name="action_view_buildings"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-building"
+                        >
+                            Buildings
+                        </button>
+
+                        <!-- Floors Smart Button -->
+                        <button name="action_view_floors"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-level-up"
+                        >
+                            Floors
+                        </button>
+
+                        <!-- Flats Smart Button -->
+                        <button name="action_view_flats"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-home">
+                            Flats
+                        </button>
+                    </div>
+
+                    <field name="logo" widget="image" class="oe_avatar"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                            <field name="state_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="city"/>
+                            <field name="street"/>
+                            <field name="zip"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+
+                    <!--                     Notebook with Nearby Facilities as Kanban-->
+                    <notebook>
+                        <page string="Nearby Facilities">
+                            <field name="nearby_facility_ids" mode="kanban">
+                                <kanban>
+                                    <field name="facility_image"/>
+                                    <field name="name"/>
+                                    <field name="facility_type"/>
+                                    <field name="distance"/>
+                                    <field name="description"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_card" style="width: 250px; margin: 10px;">
+                                                <div class="oe_kanban_content">
+                                                    <div t-if="record.facility_image.raw_value"
+                                                         style="text-align: center; margin-bottom: 10px;">
+                                                        <img t-att-src="kanban_image('nearby.facility', 'facility_image', record.id.raw_value)"
+                                                             style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px;"/>
+                                                    </div>
+                                                    <div class="oe_kanban_details">
+                                                        <strong>
+                                                            <field name="name"/>
+                                                        </strong>
+                                                        <br/>
+                                                        <span class="badge badge-pill badge-info">
+                                                            <field name="facility_type"/>
+                                                        </span>
+                                                        <br/>
+                                                        <span t-if="record.distance.raw_value" style="color: #666;">
+                                                            <i class="fa fa-map-marker"/>
+                                                            <field name="distance"/>
+                                                            km away
+                                                        </span>
+                                                        <br/>
+                                                        <div t-if="record.description.raw_value" class="text-muted"
+                                                             style="margin-top: 8px; font-size: 12px;">
+                                                            <field name="description"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+
+                        <!-- Buildings Page -->
+                        <page string="Buildings">
+                            <field name="building_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="total_floors"/>
+                                </list>
+                                <!--                                <form>-->
+                                <!--                                    <group>-->
+                                <!--                                        <field name="name"/>-->
+                                <!--                                        <field name="community_id" readonly="1"/>-->
+                                <!--                                        <field name="total_floors"/>-->
+                                <!--                                        <field name="building_image"/>-->
+                                <!--                                    </group>-->
+                                <!--                                </form>-->
+                            </field>
+                        </page>
+
+                        <!-- Floors Page -->
+                        <page string="Floors">
+                            <field name="floor_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="building_id"/>
+                                    <field name="total_flats"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="building_id"/>
+                                        <field name="total_flats"/>
+                                        <field name="floor_plan"/>
+                                        <field name="description"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page string="Flats">
+                            <field name="flat_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="building_id"/>
+                                    <field name="floor_id"/>
+                                    <field name="flat_type_id"/>
+                                    <field name="status"/>
+                                    <field name="rent_price"/>
+                                </list>
+
+                            </field>
+                        </page>
+
+
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_community_management" model="ir.ui.view">
+        <field name="name">community.management.list</field>
+        <field name="model">community.management</field>
+        <field name="arch" type="xml">
+            <list string="Community">
+                <field name="name"/>
+                <field name="country_id"/>
+                <field name="state_id"/>
+                <field name="city"/>
+                <field name="street"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_community_management" model="ir.ui.view">
+        <field name="name">community.management.kanban</field>
+        <field name="model">community.management</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="logo"/>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <field name="country_id"/>
+                <field name="description"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <div t-if="record.logo.raw_value" style="text-align: center; margin-bottom: 10px;">
+                                    <img t-att-src="kanban_image('community.management', 'logo', record.id.raw_value)"
+                                         style="width: 80px; height: 80px; border-radius: 50%;"/>
+                                </div>
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                                <br/>
+                                <span t-if="record.city.raw_value">
+                                    <field name="city"/>
+                                </span>
+                                <span t-if="record.state_id.raw_value">-
+                                    <field name="state_id"/>
+                                </span>
+                                <br/>
+                                <span t-if="record.country_id.raw_value">
+                                    <field name="country_id"/>
+                                </span>
+                                <br/>
+                                <div t-if="record.description.raw_value" class="text-muted">
+                                    <field name="description"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_community_management" model="ir.actions.act_window">
+        <field name="name">Communities</field>
+        <field name="res_model">community.management</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+
+    <record id="view_partner_form_inherit_aadhar" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.aadhar</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Insert Aadhar after VAT -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="aadhar_number" placeholder="Enter Aadhar Number"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_partner_filter_inherit_mobile" model="ir.ui.view">
+        <field name="name">res.partner.search.inherit.mobile</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+
+            <!-- Add Mobile Filter -->
+            <xpath expr="//filter[@name='customer']" position="after">
+                <filter
+                        name="mobile_filter"
+                        string="Mobile Number"
+                        domain="[('mobile', '!=', False)]"
+                />
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <record id="action_res_partner_contacts" model="ir.actions.act_window">
+        <field name="name">Contacts</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_contact_management" name="Contacts" parent="tenant_details_menu"
+              action="action_res_partner_contacts" sequence="30"/>
+
+
+    <!-- Main menu -->
+    <menuitem
+            id="menu_community_management_root"
+            name="Community Management"
+            sequence="10"
+    />
+
+    <!-- Master Data under Community Management -->
+    <menuitem
+            id="menu_master_data_root"
+            name="Master Data"
+            parent="menu_community_management_root"
+            sequence="20"
+    />
+
+
+    <!-- Communities submenu under Master Data -->
+    <menuitem
+            id="menu_community_management"
+            name="Communities"
+            parent="menu_master_data_root"
+            action="action_community_management"
+            sequence="10"
+    />
+
+    <record id="view_partner_form_family_button" model="ir.ui.view">
+        <field name="name">res.partner.family.smart.button</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart Button Position -->
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+
+                <button name="action_open_family_members"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-users">
+                    <field name="family_member_ids" widget="statinfo"
+                           string="Family Members"/>
+                </button>
+
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_partner_form_pet_button" model="ir.ui.view">
+        <field name="name">res.partner.pet.smart.button</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button name="action_open_pet_details"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-paw">
+                    <field name="pet_ids"
+                           widget="statinfo"
+                           string="Pets"/>
+                </button>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <record id="view_partner_form_vehicle_button" model="ir.ui.view">
+        <field name="name">res.partner.vehicle.smart.button</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+
+                <button name="action_open_vehicle_details"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-car">
+                    <field name="vehicle_ids"
+                           widget="statinfo"
+                           string="Vehicles"/>
+                </button>
+
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>
+

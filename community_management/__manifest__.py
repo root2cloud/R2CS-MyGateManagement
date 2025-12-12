@@ -1,0 +1,52 @@
+{
+    'name': 'Community Management',
+    'version': '1.0',
+    'summary': 'Community, building, flat and room management for MyGate project',
+    'author': 'Regonda Soujanya',
+    'category': 'Community',
+    'application': True,
+    'depends': ['base', 'web', 'website', 'portal', 'account', 'mail'],
+    # Added website dependency for portal features
+    'data': [
+        'security/ir.model.access.csv',
+        'security/family_member_security.xml',
+        'security/vehicle_security.xml',
+        'security/amenity_security.xml',
+        'data/pet_cron.xml',
+        'security/pet_security.xml',
+        'views/community_views.xml',
+        'views/building_views.xml',
+        'views/flat_views.xml',
+        'views/portal_family_member_template.xml',
+        'views/pet_views.xml',
+        'views/portal_pet_template.xml',
+        'views/portal_vehicle_template.xml',
+        'views/inquiry_form_template.xml',
+        'views/customer_inquiry_views.xml',
+        'views/floor_views.xml',
+        'views/flat_transaction_views.xml',
+        'views/family_member_views.xml',
+        'views/vehicle_views.xml',
+        'reports/lease_agreement_report.xml',
+        'views/maintenance_views.xml',
+
+        # 'views/custom_helpdesk_team_views.xml',
+        # 'views/portal_templates.xml',
+        'views/notice_board_views.xml',
+        'views/portal_notice_board_templates.xml',
+        'views/amenity_views.xml',
+        'views/portal_profile_overview.xml',
+        # 'views/portal_tenant_templates.xml',
+
+        # not completed below one
+        # 'views/amenity_portal_templates.xml',w
+        'views/demo_template.xml',
+        'views/community_lead_views.xml',
+        'views/community_dashboard_kanban.xml',
+        # 'views/community_dashboard_action.xml',
+
+    ],
+    'installable': True,
+    'auto_install': False,
+    'description': 'Custom module for MyGate community management system.',
+}

@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="amenity_booking_portal_user_rule" model="ir.rule">
+            <field name="name">Amenity Booking: Portal User Own Bookings</field>
+            <field name="model_id" ref="model_amenity_booking"/>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[('tenant_id', '=', user.partner_id.id)]</field>
+        </record>
+    </data>
+</odoo>

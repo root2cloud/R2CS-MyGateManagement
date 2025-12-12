@@ -1,0 +1,40 @@
+<!-- filename: views/community_dashboard_views.xml -->
+<odoo>
+    <!-- Action -->
+    <record id="action_community_dashboard" model="ir.actions.act_window">
+        <field name="name">Community Dashboard</field>
+        <field name="res_model">community.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu (adjust parent to your module's main menu) -->
+    <menuitem id="menu_community_dashboard_root" name="Community Dashboard" sequence="1"/>
+    <menuitem id="menu_community_dashboard" name="Overview Dashboard" parent="menu_community_dashboard_root" action="action_community_dashboard" sequence="10"/>
+
+    <!-- Form View -->
+    <record id="view_community_dashboard_form" model="ir.ui.view">
+        <field name="name">community.dashboard.form</field>
+        <field name="model">community.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Community Dashboard">
+                <header>
+                    <button name="action_refresh_dashboard" type="object" string="Refresh" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="community_id" options="{'no_create': True, 'no_edit': True}"/>
+                            <field name="floor_id" options="{'no_create': True, 'no_edit': True}"/>
+                        </group>
+                        <group>
+                            <field name="building_id" options="{'no_create': True, 'no_edit': True}"/>
+                            <field name="flat_id" options="{'no_create': True, 'no_edit': True}"/>
+                        </group>
+                    </group>
+                    <field name="dashboard_html" nolabel="1" widget="html" options="{'height': '800px'}"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

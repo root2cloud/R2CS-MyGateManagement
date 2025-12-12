@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="email_template_lease_agreement" model="mail.template">
+        <field name="name">Lease Agreement - Send to Tenant</field>
+        <field name="model_id" ref="model_flat_transaction"/>
+        <field name="subject">Lease Agreement - Flat ${object.flat_id.name}</field>
+        <field name="email_from">${user.email or user.company_id.email}</field>
+        <field name="email_to">${object.tenant_id.email}</field>
+        <field name="body_html" type="html"><![CDATA[
+<div style="font-family: Arial, sans-serif; padding: 20px;">
+    <p>Dear ${object.tenant_id.name},</p>
+
+    <p>We are pleased to share your lease agreement for <strong>Flat ${object.flat_id.name}</strong>.</p>
+
+    <p>Please find the lease agreement document attached to this email for your reference.</p>
+
+    <p>If you have any questions or need assistance, please don't hesitate to contact us.</p>
+
+    <p>Best regards,<br/>
+    ${user.name}<br/>
+    ${user.company_id.name}</p>
+</div>
+]]></field>
+        <field name="report_template_ids" eval="[(4, ref('action_report_lease_agreement'))]"/>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

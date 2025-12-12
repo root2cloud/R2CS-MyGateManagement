@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- 1. List of Amenities -->
+        <template id="portal_amenities_list" name="My Amenities">
+            <t t-call="website.layout">
+                <div class="container py-5">
+                    <h2 class="mb-4">Available Amenities</h2>
+                    <div class="row">
+                        <t t-foreach="amenities" t-as="amenity">
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <t t-if="amenity.image">
+                                        <img t-att-src="website.image_url(amenity, 'image')" class="card-img-top" style="height:200px; object-fit:cover;"/>
+                                    </t>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title"><t t-esc="amenity.name"/></h5>
+                                        <p class="card-text text-muted"><t t-esc="amenity.description or 'No description'"/></p>
+                                        <a t-att-href="'/my/amenity/' + str(amenity.id)" class="btn btn-primary mt-auto">Book Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- 2. Booking Page for One Amenity -->
+        <template id="portal_amenity_booking" name="Book Amenity">
+            <t t-call="website.layout">
+                <div class="container py-5">
+                    <h2>Book: <t t-esc="amenity.name"/></h2>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <t t-if="amenity.image">
+                                <img t-att-src="website.image_url(amenity, 'image')" class="img-fluid rounded shadow" style="max-height:350px;"/>
+                            </t>
+                        </div>
+                        <div class="col-md-7">
+                            <p><strong>Description:</strong> <t t-esc="amenity.description or '—'"/></p>
+
+                            <div class="mb-4">
+                                <label class="form-label">Select Date</label>
+                                <input type="date" class="form-control" t-att-value="selected_date"
+                                       onchange="window.location.href='/my/amenity/'+amenity.id+'?selected_date='+this.value"/>
+                            </div>
+
+                            <h5>Available Slots – <t t-esc="selected_date"/></h5>
+
+                            <t t-if="available_slots">
+                                <form id="booking_form">
+                                    <input type="hidden" name="amenity_id" t-att-value="amenity.id"/>
+                                    <input type="hidden" name="booking_date" t-att-value="selected_date"/>
+
+                                    <div class="row">
+                                        <t t-foreach="available_slots" t-as="slot">
+                                            <div class="col-6 mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="slot_ids" t-att-value="slot.id"/>
+                                                    <label class="form-check-label">
+                                                        <t t-esc="slot.display_name"/>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <button type="button" class="btn btn-success mt-3" onclick="bookSlots()">
+                                        Book Selected Slots
+                                    </button>
+                                </form>
+                            </t>
+                            <t t-else="">
+                                <div class="alert alert-warning">No slots available on this date.</div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    function bookSlots() {
+                        const slots = Array.from(document.querySelectorAll('input[name="slot_ids"]:checked'))
+                                            .map(cb => cb.value);
+                        if (slots.length === 0) return alert('Please select at least one slot');
+
+                        odoo.define('amenity.booking', function(require) {
+                            var ajax = require('web.ajax');
+                            ajax.jsonRpc('/my/amenity/book', 'call', {
+                                amenity_id: document.querySelector('input[name="amenity_id"]').value,
+                                booking_date: document.querySelector('input[name="booking_date"]').value,
+                                slot_ids: slots
+                            }).then(result => {
+                                alert(result.success ? result.message : result.message);
+                                if (result.success) location.reload();
+                            });
+                        });
+                    }
+                </script>
+            </t>
+        </template>
+
+        <!-- 3. Add Menu in Portal (THIS WAS CAUSING THE PARSE ERROR BEFORE) -->
+        <template id="amenity_portal_menu" inherit_id="portal.portal_my_home_menu">
+            <xpath expr="//ul" position="inside">
+                <li class="nav-item">
+                    <a href="/my/amenities" class="nav-link">Amenities Booking</a>
+                </li>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

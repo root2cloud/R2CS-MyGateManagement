@@ -1,0 +1,303 @@
+<odoo>
+    <!-- Form View -->
+    <record id="view_form_flat_management" model="ir.ui.view">
+        <field name="name">flat.management.form</field>
+        <field name="model">flat.management</field>
+        <field name="arch" type="xml">
+            <form string="Flat">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="available,occupied"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Smart Button for Lease Transactions ONLY -->
+                        <button name="action_view_transactions" type="object" class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                invisible="transaction_count == 0">
+                            <field name="transaction_count" widget="statinfo" string="Leases"/>
+                        </button>
+                    </div>
+
+                    <field name="flat_image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Flat Number/Name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Basic Information">
+                            <field name="building_id" options="{'no_create': True}"/>
+                            <field name="floor_id" options="{'no_create': True}"/>
+                            <field name="flat_type_id" />
+                            <field name="area"/>
+                        </group>
+                        <group string="Pricing">
+                            <field name="rent_price"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Current Lease Information" invisible="status != 'occupied'">
+                        <group>
+                            <field name="lease_owner_id" readonly="1"/>
+                            <field name="tenant_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="lease_start_date" readonly="1"/>
+                            <field name="lease_end_date" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Rooms">
+                            <field name="room_ids" mode="kanban">
+                                <kanban>
+                                    <field name="name"/>
+                                    <field name="room_type"/>
+                                    <field name="area"/>
+                                    <field name="room_image"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_card" style="width: 200px;">
+                                                <div class="oe_kanban_details">
+                                                    <!-- Room Image -->
+                                                    <div style="text-align: center; margin-bottom: 8px;">
+                                                        <t t-if="record.room_image.raw_value">
+                                                            <img t-att-src="kanban_image('room.management', 'room_image', record.id.raw_value)"
+                                                                 style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px;"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <div style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                                                                <i class="fa fa-home"
+                                                                   style="font-size: 48px; color: #ccc;"/>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+
+                                                    <!-- Room Details -->
+                                                    <div style="padding: 8px;">
+                                                        <strong>
+                                                            <field name="name"/>
+                                                        </strong>
+                                                        <br/>
+                                                        <span class="badge badge-info" style="font-size: 11px;">
+                                                            <field name="room_type"/>
+                                                        </span>
+                                                        <br/>
+                                                        <span style="color: #666; font-size: 12px;">
+                                                            <i class="fa fa-arrows-alt"/>
+                                                            <field name="area"/>
+                                                            sq.ft
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+
+                                <!-- Form for creating/editing rooms -->
+                                <form string="Room">
+                                    <group>
+                                        <field name="room_type"/>
+                                        <field name="area"/>
+                                        <field name="room_image" widget="image"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page string="Lease History">
+                            <field name="transaction_ids">
+                                <list>
+                                    <field name="lease_owner_id"/>
+                                    <field name="tenant_id"/>
+                                    <field name="rent_price"/>
+                                    <field name="lease_start_date"/>
+                                    <field name="lease_end_date"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status == 'confirmed'"
+                                           decoration-info="status == 'draft'"
+                                           decoration-warning="status == 'expired'"
+                                           decoration-danger="status in ['terminated', 'cancelled']"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_list_flat_management" model="ir.ui.view">
+        <field name="name">flat.management.list</field>
+        <field name="model">flat.management</field>
+        <field name="arch" type="xml">
+            <list string="Flats">
+                <field name="name"/>
+                <field name="building_id"/>
+                <field name="floor_id"/>
+                <field name="flat_type_id"/>
+                <field name="area"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'occupied'"
+                       decoration-info="status == 'available'"/>
+                <field name="lease_owner_id"/>
+                <field name="tenant_id"/>
+                <field name="rent_price"/>
+                <field name="transaction_count" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_kanban_flat_management" model="ir.ui.view">
+        <field name="name">flat.management.kanban</field>
+        <field name="model">flat.management</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="flat_image"/>
+                <field name="name"/>
+                <field name="building_id"/>
+                <field name="floor_id"/>
+                <field name="flat_type_id"/>
+                <field name="area"/>
+                <field name="status"/>
+                <field name="lease_owner_id"/>
+                <field name="tenant_id"/>
+                <field name="rent_price"/>
+                <field name="transaction_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <div t-if="record.flat_image.raw_value"
+                                     style="text-align: center; margin-bottom: 10px;">
+                                    <img t-att-src="kanban_image('flat.management', 'flat_image', record.id.raw_value)"
+                                         style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;"/>
+                                </div>
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                                <br/>
+                                <span class="badge badge-primary">
+                                    <field name="flat_type_id"/>
+                                </span>
+                                <span t-attf-class="badge badge-pill badge-#{record.status.raw_value == 'available' ? 'success' : 'info'}">
+                                    <field name="status"/>
+                                </span>
+                                <span t-if="record.transaction_count.raw_value > 0"
+                                      class="badge badge-pill badge-warning">
+                                    <i class="fa fa-file-text"/>
+                                    <field name="transaction_count"/>
+                                    Lease(s)
+                                </span>
+                                <br/>
+                                <span>
+                                    <i class="fa fa-building"/>
+                                    <field name="building_id"/>
+                                </span>
+                                <br/>
+                                <span t-if="record.floor_id.raw_value">
+                                    <i class="fa fa-layer-group"/>
+                                    <field name="floor_id"/>
+                                </span>
+                                <br/>
+                                <span>
+                                    <i class="fa fa-arrows-alt"/>
+                                    <field name="area"/>
+                                    sq.ft.
+                                </span>
+                                <br/>
+                                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+                                    <span t-if="record.lease_owner_id.raw_value">
+                                        <i class="fa fa-user-circle"/>
+                                        Lease Owner:
+                                        <field name="lease_owner_id"/>
+                                    </span>
+                                    <br/>
+                                    <span t-if="record.tenant_id.raw_value">
+                                        <i class="fa fa-user"/>
+                                        Tenant:
+                                        <field name="tenant_id"/>
+                                    </span>
+                                    <br/>
+                                    <span t-if="record.rent_price.raw_value">
+                                        <i class="fa fa-tag"/>
+                                        Rent:
+                                        <field name="rent_price"/>/month
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_search_flat_management" model="ir.ui.view">
+        <field name="name">flat.management.search</field>
+        <field name="model">flat.management</field>
+        <field name="arch" type="xml">
+            <search string="Flats">
+                <field name="name"/>
+                <field name="building_id"/>
+                <field name="lease_owner_id"/>
+                <field name="tenant_id"/>
+                <filter name="filter_available" string="Available" domain="[('status', '=', 'available')]"/>
+                <filter name="filter_occupied" string="Occupied" domain="[('status', '=', 'occupied')]"/>
+                <separator/>
+                <filter name="filter_has_lease_owner" string="Has Lease Owner"
+                        domain="[('lease_owner_id', '!=', False)]"/>
+                <filter name="filter_has_tenant" string="Has Tenant" domain="[('tenant_id', '!=', False)]"/>
+<!--                <filter name="filter_has_transactions" string="Has Lease History"-->
+<!--                        domain="[('transaction_ids', '!=', False)]"/>-->
+                <group expand="0" string="Group By">
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                    <filter name="group_flat_type" string="Flat Type" context="{'group_by': 'flat_type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_flat_management" model="ir.actions.act_window">
+        <field name="name">Flats</field>
+        <field name="res_model">flat.management</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_flat_management"
+              name="Flats"
+              parent="menu_master_data_root"
+              action="action_flat_management"
+              sequence="4"/>
+
+
+    <record id="view_flat_type_list" model="ir.ui.view">
+        <field name="name">flat.type.list</field>
+        <field name="model">flat.type</field>
+        <field name="arch" type="xml">
+            <list string="Flat Types">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+
+    <record id="flat_type_action" model="ir.actions.act_window">
+        <field name="name">Flat Types</field>
+        <field name="res_model">flat.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_flat_type" name="Flat Types" parent="menu_master_data_root" action="flat_type_action"
+              sequence="1"/>
+</odoo>
