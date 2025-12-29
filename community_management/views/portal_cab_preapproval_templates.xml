@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="portal_cab_preapproval" name="Cab Pre-Approval">
+        <t t-call="portal.portal_layout">
+            <style>
+                .classic-container {
+                    background: #ffffff;
+                    min-height: 100vh;
+                    padding: 30px 0;
+                }
+                .main-card {
+                    background: #ffffff;
+                    border-radius: 12px;
+                    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+                    border: 1px solid #e9ecef;
+                }
+                .elegant-header {
+                    color: #2c3e50;
+                    font-weight: 700;
+                    margin-bottom: 25px;
+                    text-align: center;
+                }
+                .classic-tabs .nav-link {
+                    background: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-bottom: none;
+                    color: #6c757d;
+                    font-weight: 600;
+                    padding: 12px 25px;
+                    border-radius: 8px 8px 0 0;
+                    margin: 0 2px;
+                    transition: all 0.3s ease;
+                }
+                .classic-tabs .nav-link:hover {
+                    background: #e9ecef;
+                    color: #495057;
+                }
+                .classic-tabs .nav-link.active {
+                    background: #ffffff;
+                    color: #3498db;
+                    border-color: #dee2e6;
+                    border-bottom: 2px solid #ffffff;
+                    position: relative;
+                    z-index: 1;
+                }
+                .tab-content {
+                    border: 1px solid #dee2e6;
+                    border-top: none;
+                    border-radius: 0 0 8px 8px;
+                    background: #ffffff;
+                    padding: 20px;
+                    margin-top: -1px;
+                }
+                .form-card {
+                    background: #ffffff;
+                    border-radius: 8px;
+                }
+                .elegant-form .form-control, .elegant-form .form-select {
+                    background: #ffffff;
+                    border: 2px solid #e9ecef;
+                    border-radius: 8px;
+                    padding: 10px 15px;
+                    transition: all 0.3s;
+                    font-weight: 500;
+                }
+                .elegant-form .form-control:focus, .elegant-form .form-select:focus {
+                    border-color: #3498db;
+                    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+                }
+                .primary-btn {
+                    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+                    border: none;
+                    border-radius: 8px;
+                    padding: 12px;
+                    font-weight: 600;
+                    font-size: 16px;
+                    transition: all 0.3s;
+                    color: white;
+                }
+                .primary-btn:hover {
+                    background: linear-gradient(135deg, #2980b9 0%, #1f6396 100%);
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+                }
+                .info-card {
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border-left: 4px solid #3498db;
+                    padding: 15px;
+                }
+                .approval-item {
+                    background: #ffffff;
+                    border: 1px solid #e9ecef;
+                    border-radius: 8px;
+                    margin-bottom: 8px;
+                    transition: all 0.3s;
+                }
+                .approval-item:hover {
+                    border-color: #3498db;
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+                }
+                .section-title {
+                    color: #2c3e50;
+                    font-weight: 600;
+                    padding-bottom: 8px;
+                    margin-bottom: 15px;
+                    border-bottom: 2px solid #3498db;
+                }
+                .vehicle-input {
+                    background: #f8f9fa;
+                    border: 2px solid #e9ecef;
+                    border-radius: 8px;
+                    font-size: 18px;
+                    letter-spacing: 3px;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                .status-badge {
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+                .time-input-group {
+                    display: flex;
+                    gap: 10px;
+                }
+                .time-input-group .form-control {
+                    flex: 1;
+                }
+            </style>
+
+            <div class="classic-container">
+                <div class="container" style="max-width: 480px;">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <h4 class="elegant-header">Allow Future Entries</h4>
+                    </div>
+
+                    <!-- Main Card -->
+                    <div class="main-card">
+                        <!-- Tabs Navigation -->
+                        <ul class="nav classic-tabs justify-content-center" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="cab-once-tab"
+                                   data-bs-toggle="tab" href="#cab-once" role="tab">
+                                    Once
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="cab-freq-tab"
+                                   data-bs-toggle="tab" href="#cab-freq" role="tab">
+                                    Frequently
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            <!-- ONCE TAB -->
+                            <div class="tab-pane fade show active" id="cab-once" role="tabpanel">
+                                <div class="form-card">
+                                    <form method="POST" action="/my/cab/preapproval" class="elegant-form">
+                                        <input type="hidden" name="mode" value="once"/>
+
+                                        <p class="mb-3 text-muted">
+                                            Allow my cab to enter <strong>today</strong> once in next
+                                        </p>
+
+                                        <div class="mb-3">
+                                            <select name="once_valid_hours" class="form-select">
+                                                <option value="1">1 hour</option>
+                                                <option value="2">2 hours</option>
+                                                <option value="4">4 hours</option>
+                                                <option value="24">Full day</option>
+                                            </select>
+                                        </div>
+
+                                        <p class="mb-2 text-muted">Add last 4-digits of vehicle no.</p>
+                                        <div class="d-flex justify-content-center mb-4">
+                                            <input type="text" name="vehicle_last4"
+                                                   maxlength="4"
+                                                   class="form-control text-center vehicle-input"
+                                                   style="max-width: 140px;"/>
+                                        </div>
+
+                                        <button type="submit" class="btn primary-btn w-100 fw-bold">
+                                            ✓ Approve Entry
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- FREQUENT TAB -->
+                            <div class="tab-pane fade" id="cab-freq" role="tabpanel">
+                                <div class="form-card">
+                                    <form method="POST" action="/my/cab/preapproval" class="elegant-form">
+                                        <input type="hidden" name="mode" value="frequent"/>
+
+                                        <div class="mb-3">
+                                            <label class="form-label mb-1">Select Days of Week</label>
+                                            <select name="freq_days" class="form-select">
+                                                <option value="all">All days of Week</option>
+                                                <option value="weekdays">Weekdays</option>
+<!--                                                <option value="custom">Custom</option>-->
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label mb-1">Select Validity</label>
+                                            <select name="freq_validity" class="form-select">
+                                                <option value="1m">For 1 month</option>
+                                                <option value="3m">For 3 months</option>
+                                                <option value="6m" selected="1">For 6 months</option>
+                                                <option value="12m">For 12 months</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label mb-1">Select time slot</label>
+                                            <div class="time-input-group">
+                                                <input type="time" name="freq_time_from"
+                                                       value="00:00"
+                                                       class="form-control"/>
+                                                <input type="time" name="freq_time_to"
+                                                       value="23:59"
+                                                       class="form-control"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label mb-1">Select Entries Per Day</label>
+                                            <select name="entries_per_day" class="form-select">
+                                                <option value="one">One Entry</option>
+                                                <option value="multi">Multiple Entries</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label mb-1">Company Name</label>
+                                            <input type="text" name="company_name"
+                                                   class="form-control"
+                                                   placeholder="Company name"/>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="form-label mb-1">Add last 4-digits of vehicle no.</label>
+                                            <div class="d-flex justify-content-center">
+                                                <input type="text" name="vehicle_last4"
+                                                       maxlength="4"
+                                                       class="form-control text-center vehicle-input"
+                                                       style="max-width: 140px;"/>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn primary-btn w-100 fw-bold">
+                                            ✓ Set Recurring Access
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CREATED CAB DETAILS -->
+                    <t t-if="pre">
+                        <div class="mt-4">
+                            <h5 class="section-title">Created Cab Approval</h5>
+                            <div class="info-card">
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-semibold">
+                                            <t t-esc="pre.mode == 'once' and 'Once' or 'Frequently'"/>
+                                        </span>
+                                        <span class="badge bg-success status-badge"
+                                              t-if="pre.state == 'active'">Active</span>
+                                        <span class="badge bg-secondary status-badge"
+                                              t-if="pre.state == 'expired'">Expired</span>
+                                        <span class="badge bg-danger status-badge"
+                                              t-if="pre.state == 'cancelled'">Cancelled</span>
+                                    </div>
+                                </div>
+
+                                <p class="mb-2">
+                                    <strong>Resident:</strong>
+                                    <span class="ms-2">
+                                        <t t-esc="pre.resident_id.name"/>
+                                    </span>
+                                </p>
+
+                                <p class="mb-2" t-if="pre.vehicle_last4">
+                                    <strong>Vehicle:</strong>
+                                    <span class="ms-2 fw-bold text-primary">
+                                        ****<t t-esc="pre.vehicle_last4"/>
+                                    </span>
+                                </p>
+
+                                <t t-if="pre.mode == 'once'">
+                                    <p class="mb-2">
+                                        <strong>Mode:</strong>
+                                        <span class="ms-2">
+                                            Once (today + <t t-esc="pre.once_valid_hours"/> hour(s))
+                                        </span>
+                                    </p>
+                                </t>
+                                <t t-else="">
+                                    <p class="mb-2">
+                                        <strong>Mode:</strong>
+                                        <span class="ms-2">Frequently</span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Days:</strong>
+                                        <span class="ms-2">
+                                            <t t-esc="pre.freq_days"/>
+                                        </span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Validity:</strong>
+                                        <span class="ms-2">
+                                            <t t-esc="pre.freq_validity"/>
+                                        </span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Time Slot:</strong>
+                                        <span class="ms-2">
+                                            <t t-esc="pre.freq_time_from"/> – <t t-esc="pre.freq_time_to"/>
+                                        </span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Entries / Day:</strong>
+                                        <span class="ms-2">
+                                            <t t-esc="pre.entries_per_day"/>
+                                        </span>
+                                    </p>
+                                    <p class="mb-2" t-if="pre.company_name">
+                                        <strong>Company:</strong>
+                                        <span class="ms-2">
+                                            <t t-esc="pre.company_name"/>
+                                        </span>
+                                    </p>
+                                </t>
+
+                                <p class="mb-0" t-if="pre.start_datetime">
+                                    <strong>Valid Window:</strong>
+                                    <span class="ms-2 text-primary fw-semibold">
+                                        <t t-esc="pre.start_datetime"/> – <t t-esc="pre.end_datetime"/>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- EXISTING APPROVALS LIST -->
+                    <div class="mt-4">
+                        <h5 class="section-title">Your Cab Approvals</h5>
+                        <t t-if="pres">
+                            <t t-foreach="pres" t-as="p" t-key="p.id">
+                                <div class="approval-item">
+                                    <div class="card-body py-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-semibold"
+                                                      t-esc="p.mode == 'once' and 'Once' or 'Frequently'"/>
+                                                <span class="badge bg-success ms-2 status-badge"
+                                                      t-if="p.state == 'active'">Active</span>
+                                                <span class="badge bg-secondary ms-2 status-badge"
+                                                      t-if="p.state == 'expired'">Expired</span>
+                                                <span class="badge bg-danger ms-2 status-badge"
+                                                      t-if="p.state == 'cancelled'">Cancelled</span>
+                                            </div>
+                                            <small t-if="p.vehicle_last4" class="fw-bold text-primary">
+                                                #<t t-esc="p.vehicle_last4"/>
+                                            </small>
+                                        </div>
+                                        <small t-if="p.start_datetime" class="text-muted">
+                                            <t t-esc="p.start_datetime"/> – <t t-esc="p.end_datetime"/>
+                                        </small>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <p class="text-muted small mb-0 text-center">
+                                No cab approvals yet.
+                            </p>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bootstrap JS for tabs functionality -->
+            <script>
+                // Bootstrap tab functionality
+                document.addEventListener('DOMContentLoaded', function() {
+                    var tabEls = document.querySelectorAll('a[data-bs-toggle="tab"]');
+                    tabEls.forEach(function(tabEl) {
+                        tabEl.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            var target = document.querySelector(this.getAttribute('href'));
+
+                            // Hide all tab panes
+                            document.querySelectorAll('.tab-pane').forEach(function(pane) {
+                                pane.classList.remove('show', 'active');
+                            });
+
+                            // Remove active class from all tab links
+                            document.querySelectorAll('.nav-link').forEach(function(link) {
+                                link.classList.remove('active');
+                            });
+
+                            // Show target pane and activate tab link
+                            target.classList.add('show', 'active');
+                            this.classList.add('active');
+                        });
+                    });
+                });
+            </script>
+        </t>
+    </template>
+</odoo>
+
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<odoo>-->
+<!--    <template id="portal_cab_preapproval" name="Cab Pre-Approval">-->
+<!--        <t t-call="portal.portal_layout">-->
+<!--            <div class="container mt-4" style="max-width: 480px;">-->
+
+<!--                &lt;!&ndash; Header &ndash;&gt;-->
+<!--                <h4 class="mb-3 text-center">Allow Future Entries</h4>-->
+
+<!--                &lt;!&ndash; Tabs &ndash;&gt;-->
+<!--                <ul class="nav nav-tabs justify-content-center mb-3" role="tablist">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link active" id="cab-once-tab"-->
+<!--                           data-bs-toggle="tab" href="#cab-once" role="tab">-->
+<!--                            Once-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" id="cab-freq-tab"-->
+<!--                           data-bs-toggle="tab" href="#cab-freq" role="tab">-->
+<!--                            Frequently-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+
+<!--                <div class="tab-content">-->
+
+<!--                    &lt;!&ndash; ONCE TAB &ndash;&gt;-->
+<!--                    <div class="tab-pane fade show active" id="cab-once" role="tabpanel">-->
+<!--                        <div class="card mb-3">-->
+<!--                            <div class="card-body">-->
+
+<!--                                <form method="POST" action="/my/cab/preapproval">-->
+<!--                                    <input type="hidden" name="mode" value="once"/>-->
+
+<!--                                    <p class="mb-1">-->
+<!--                                        Allow my cab to enter <strong>today</strong> once in next-->
+<!--                                    </p>-->
+
+<!--                                    <div class="mb-3">-->
+<!--                                        <select name="once_valid_hours" class="form-select">-->
+<!--                                            <option value="1">1 hour</option>-->
+<!--                                            <option value="2">2 hours</option>-->
+<!--                                            <option value="4">4 hours</option>-->
+<!--                                            <option value="24">Full day</option>-->
+<!--                                        </select>-->
+<!--                                    </div>-->
+
+<!--                                    <p class="mb-1">Add last 4-digits of vehicle no.</p>-->
+<!--                                    <div class="d-flex justify-content-center mb-4">-->
+<!--                                        <input type="text" name="vehicle_last4"-->
+<!--                                               maxlength="4"-->
+<!--                                               class="form-control text-center"-->
+<!--                                               style="max-width: 140px;"/>-->
+<!--                                    </div>-->
+
+<!--                                    <button type="submit"-->
+<!--                                            class="btn btn-warning w-100 fw-bold">-->
+<!--                                        ✓-->
+<!--                                    </button>-->
+<!--                                </form>-->
+
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; FREQUENT TAB &ndash;&gt;-->
+<!--                    <div class="tab-pane fade" id="cab-freq" role="tabpanel">-->
+<!--                        <div class="card mb-3">-->
+<!--                            <div class="card-body">-->
+
+<!--                                <form method="POST" action="/my/cab/preapproval">-->
+<!--                                    <input type="hidden" name="mode" value="frequent"/>-->
+
+<!--                                    <div class="mb-3">-->
+<!--                                        <label class="form-label mb-1">Select Days of Week</label>-->
+<!--                                        <select name="freq_days" class="form-select">-->
+<!--                                            <option value="all">All days of Week</option>-->
+<!--                                            <option value="weekdays">Weekdays</option>-->
+<!--                                            <option value="custom">Custom</option>-->
+<!--                                        </select>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="mb-3">-->
+<!--                                        <label class="form-label mb-1">Select Validity</label>-->
+<!--                                        <select name="freq_validity" class="form-select">-->
+<!--                                            <option value="1m">For 1 month</option>-->
+<!--                                            <option value="3m">For 3 months</option>-->
+<!--                                            <option value="6m" selected="1">For 6 months</option>-->
+<!--                                            <option value="12m">For 12 months</option>-->
+<!--                                        </select>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="mb-3">-->
+<!--                                        <label class="form-label mb-1">Select time slot</label>-->
+<!--                                        <div class="row g-2">-->
+<!--                                            <div class="col-6">-->
+<!--                                                <input type="time" name="freq_time_from"-->
+<!--                                                       value="00:00"-->
+<!--                                                       class="form-control"/>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-6">-->
+<!--                                                <input type="time" name="freq_time_to"-->
+<!--                                                       value="23:59"-->
+<!--                                                       class="form-control"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="mb-3">-->
+<!--                                        <label class="form-label mb-1">Select Entries Per Day</label>-->
+<!--                                        <select name="entries_per_day" class="form-select">-->
+<!--                                            <option value="one">One Entry</option>-->
+<!--                                            <option value="multi">Multiple Entries</option>-->
+<!--                                        </select>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="mb-3">-->
+<!--                                        <label class="form-label mb-1">Company Name</label>-->
+<!--                                        <input type="text" name="company_name"-->
+<!--                                               class="form-control"-->
+<!--                                               placeholder="Company name"/>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="mb-4">-->
+<!--                                        <label class="form-label mb-1">Add last 4-digits of vehicle no.</label>-->
+<!--                                        <div class="d-flex justify-content-center">-->
+<!--                                            <input type="text" name="vehicle_last4"-->
+<!--                                                   maxlength="4"-->
+<!--                                                   class="form-control text-center"-->
+<!--                                                   style="max-width: 140px;"/>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+<!--                                    <button type="submit"-->
+<!--                                            class="btn btn-warning w-100 fw-bold">-->
+<!--                                        ✓-->
+<!--                                    </button>-->
+<!--                                </form>-->
+
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; CREATED CAB DETAILS &ndash;&gt;-->
+<!--                <t t-if="pre">-->
+<!--                    <div class="mt-4">-->
+<!--                        <h5 class="mb-2">Created Cab Approval</h5>-->
+<!--                        <div class="card">-->
+<!--                            <div class="card-body py-2">-->
+<!--                                <div class="mb-1">-->
+<!--                                    <span class="fw-semibold">-->
+<!--                                        <t t-esc="pre.mode == 'once' and 'Once' or 'Frequently'"/>-->
+<!--                                    </span>-->
+<!--                                    <span class="badge bg-success ms-2"-->
+<!--                                          t-if="pre.state == 'active'">Active</span>-->
+<!--                                    <span class="badge bg-secondary ms-2"-->
+<!--                                          t-if="pre.state == 'expired'">Expired</span>-->
+<!--                                    <span class="badge bg-danger ms-2"-->
+<!--                                          t-if="pre.state == 'cancelled'">Cancelled</span>-->
+<!--                                </div>-->
+
+<!--                                <p class="mb-1">-->
+<!--                                    <strong>Resident:</strong>-->
+<!--                                    <t t-esc="pre.resident_id.name"/>-->
+<!--                                </p>-->
+
+<!--                                <p class="mb-1" t-if="pre.vehicle_last4">-->
+<!--                                    <strong>Vehicle:</strong>-->
+<!--                                    ****<t t-esc="pre.vehicle_last4"/>-->
+<!--                                </p>-->
+
+<!--                                <t t-if="pre.mode == 'once'">-->
+<!--                                    <p class="mb-1">-->
+<!--                                        <strong>Mode:</strong>-->
+<!--                                        Once (today + <t t-esc="pre.once_valid_hours"/> hour(s))-->
+<!--                                    </p>-->
+<!--                                </t>-->
+<!--                                <t t-else="">-->
+<!--                                    <p class="mb-1">-->
+<!--                                        <strong>Mode:</strong> Frequently-->
+<!--                                    </p>-->
+<!--                                    <p class="mb-1">-->
+<!--                                        <strong>Days:</strong>-->
+<!--                                        <t t-esc="pre.freq_days"/>-->
+<!--                                    </p>-->
+<!--                                    <p class="mb-1">-->
+<!--                                        <strong>Validity:</strong>-->
+<!--                                        <t t-esc="pre.freq_validity"/>-->
+<!--                                    </p>-->
+<!--                                    <p class="mb-1">-->
+<!--                                        <strong>Time Slot:</strong>-->
+<!--                                        <t t-esc="pre.freq_time_from"/> –-->
+<!--                                        <t t-esc="pre.freq_time_to"/>-->
+<!--                                    </p>-->
+<!--                                    <p class="mb-1">-->
+<!--                                        <strong>Entries / Day:</strong>-->
+<!--                                        <t t-esc="pre.entries_per_day"/>-->
+<!--                                    </p>-->
+<!--                                    <p class="mb-1" t-if="pre.company_name">-->
+<!--                                        <strong>Company:</strong>-->
+<!--                                        <t t-esc="pre.company_name"/>-->
+<!--                                    </p>-->
+<!--                                </t>-->
+
+<!--                                <p class="mb-0" t-if="pre.start_datetime">-->
+<!--                                    <strong>Valid Window:</strong>-->
+<!--                                    <t t-esc="pre.start_datetime"/> –-->
+<!--                                    <t t-esc="pre.end_datetime"/>-->
+<!--                                </p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </t>-->
+
+<!--                &lt;!&ndash; EXISTING APPROVALS LIST &ndash;&gt;-->
+<!--                <div class="mt-4">-->
+<!--                    <h5 class="mb-2">Your Cab Approvals</h5>-->
+<!--                    <t t-if="pres">-->
+<!--                        <t t-foreach="pres" t-as="p" t-key="p.id">-->
+<!--                            <div class="card mb-2">-->
+<!--                                <div class="card-body py-2">-->
+<!--                                    <div class="d-flex justify-content-between align-items-center">-->
+<!--                                        <div>-->
+<!--                                            <span class="fw-semibold"-->
+<!--                                                  t-esc="p.mode == 'once' and 'Once' or 'Frequently'"/>-->
+<!--                                            <span class="badge bg-success ms-2"-->
+<!--                                                  t-if="p.state == 'active'">Active</span>-->
+<!--                                            <span class="badge bg-secondary ms-2"-->
+<!--                                                  t-if="p.state == 'expired'">Expired</span>-->
+<!--                                            <span class="badge bg-danger ms-2"-->
+<!--                                                  t-if="p.state == 'cancelled'">Cancelled</span>-->
+<!--                                        </div>-->
+<!--                                        <small t-if="p.vehicle_last4">-->
+<!--                                            #<t t-esc="p.vehicle_last4"/>-->
+<!--                                        </small>-->
+<!--                                    </div>-->
+<!--                                    <small t-if="p.start_datetime">-->
+<!--                                        <t t-esc="p.start_datetime"/> –-->
+<!--                                        <t t-esc="p.end_datetime"/>-->
+<!--                                    </small>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </t>-->
+<!--                    </t>-->
+<!--                    <t t-else="">-->
+<!--                        <p class="text-muted small mb-0">-->
+<!--                            No cab approvals yet.-->
+<!--                        </p>-->
+<!--                    </t>-->
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </t>-->
+<!--    </template>-->
+<!--</odoo>-->

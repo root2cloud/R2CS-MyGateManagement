@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================= -->
+    <!-- list VIEW -->
+    <!-- ========================= -->
+    <record id="view_resident_access_request_list" model="ir.ui.view">
+        <field name="name">resident.access.request.list</field>
+        <field name="model">resident.access.request</field>
+        <field name="arch" type="xml">
+            <list string="Resident Access Requests">
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="community_id"/>
+                <field name="building_id"/>
+                <field name="flat_id"/>
+                <field name="occupancy_type"/>
+                <field name="state"/>
+                <field name="submitted_date"/>
+                <field name="lease_start_date"/>
+                <field name="lease_end_date"/>
+                <field name="owner_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- FORM VIEW -->
+    <!-- ========================= -->
+    <record id="view_resident_access_request_form" model="ir.ui.view">
+        <field name="name">resident.access.request.form</field>
+        <field name="model">resident.access.request</field>
+        <field name="arch" type="xml">
+            <form string="Resident Access Request">
+
+                <header>
+                    <button name="action_submit"
+                            type="object"
+                            string="Submit"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+
+                    <button name="action_approve"
+                            type="object"
+                            string="Approve"
+                            class="btn-success"
+                            invisible="state != 'pending'"/>
+
+                    <button name="action_reject"
+                            type="object"
+                            string="Reject"
+                            class="btn-danger"
+                            invisible="state != 'pending'"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,approved,rejected"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group string="Requester Details">
+                            <field name="name"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+
+                        <group string="Location Details">
+                            <field name="community_id"/>
+                            <field name="building_id"/>
+                            <field name="floor_id"/>
+                            <field name="flat_id"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Occupancy">
+                            <field name="occupancy_type"/>
+                            <field name="approver_id"/>
+                            <field name="lease_start_date"/>
+                            <field name="lease_end_date"/>
+                            <field name="owner_id"/>
+                        </group>
+
+                        <group string="Documents">
+                            <field name="rental_agreement_datas" filename="rental_agreement_filename"/>
+                        </group>
+                    </group>
+
+                    <group string="System Info" invisible="1">
+                        <field name="partner_id"/>
+                        <field name="user_id"/>
+                        <field name="submitted_date"/>
+                    </group>
+
+                </sheet>
+
+                <chatter>
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </chatter>
+
+            </form>
+        </field>
+    </record>
+
+
+    <!-- ========================= -->
+    <!-- ACTION -->
+    <!-- ========================= -->
+    <record id="action_resident_access_request" model="ir.actions.act_window">
+        <field name="name">Resident Access Requests</field>
+        <field name="res_model">resident.access.request</field>
+        <field name="view_mode">list,form</field>
+
+    </record>
+
+    <!-- ========================= -->
+    <!-- MENU -->
+    <!-- ========================= -->
+
+
+    <menuitem id="menu_resident_access_request"
+              name="Access Requests"
+              parent="menu_master_data_root"
+              action="action_resident_access_request"
+              sequence="10"/>
+
+</odoo>

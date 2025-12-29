@@ -1,0 +1,42 @@
+<script>
+    // Existing modal script...
+
+    let lastNoticeCount = <t t-esc="len(notices)"/>;
+    let lastViewed = new Date('<t t-esc="last_viewed"/>'); // Assuming last_viewed is datetime
+
+    function checkForNewNotices() {
+        fetch(window.location.href, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newCount = doc.querySelectorAll('.notice-card').length;
+                if (newCount > lastNoticeCount) {
+                    // New notice!
+                    if (Notification.permission === "granted") {
+                        new Notification("New Community Notice!", {
+                            body: "A new announcement has been posted!",
+                            icon: "/web/image/website/1/favicon/"
+                        });
+                        // Play sound
+                        new Audio('/community_management/static/src/sound/notification.mp3').play();
+                    } else if (Notification.permission !== "denied") {
+                        Notification.requestPermission();
+                    }
+                    // Blink title
+                    let blink = setInterval(() => {
+                        document.title = document.title === "New Notice!" ? "Community Dashboard" : "New Notice!";
+                    }, 1000);
+                    setTimeout(() => clearInterval(blink), 10000);
+                    lastNoticeCount = newCount;
+                    location.reload(); // Optional: reload to show new
+                }
+            });
+    }
+
+    if ('Notification' in window) {
+        Notification.requestPermission();
+    }
+
+    setInterval(checkForNewNotices, 30000); // Check every 30 seconds
+</script>

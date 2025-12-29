@@ -8,3 +8,11 @@ from . import notice_board_portal
 # from . import amenity_portal
 # from . import portal_tenant
 from . import community_lead_controller
+from . import portal_access_request
+# from . import festival_dashboard
+from . import portal_daily_slots
+from . import portal_guest_invite
+from . import portal_party_group_invite
+from . import portal_cab_preapproval
+from . import portal_delivery_pass
+from . import portal_security_guards

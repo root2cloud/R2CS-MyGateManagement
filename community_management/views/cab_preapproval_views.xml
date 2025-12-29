@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="view_cab_preapproval_list" model="ir.ui.view">
+        <field name="name">cab.preapproval.list</field>
+        <field name="model">cab.preapproval</field>
+        <field name="arch" type="xml">
+            <list string="Cab Pre-Approvals">
+                <field name="resident_id"/>
+                <field name="mode"/>
+                <field name="state"/>
+                <field name="start_datetime"/>
+                <field name="end_datetime"/>
+                <field name="vehicle_last4"/>
+                <field name="company_name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_cab_preapproval_form" model="ir.ui.view">
+        <field name="name">cab.preapproval.form</field>
+        <field name="model">cab.preapproval</field>
+        <field name="arch" type="xml">
+            <form string="Cab Pre-Approval">
+                <sheet>
+                    <group>
+                        <field name="resident_id"/>
+                        <field name="mode"/>
+                        <field name="state"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Once">
+                            <group>
+                                <field name="once_date"/>
+                                <field name="once_valid_hours"/>
+                                <field name="vehicle_last4"/>
+                            </group>
+                        </page>
+
+                        <page string="Frequently">
+                            <group>
+                                <field name="freq_days"/>
+                                <field name="freq_validity"/>
+                                <group>
+                                    <field name="freq_time_from" widget="float_time"/>
+                                    <field name="freq_time_to" widget="float_time"/>
+                                </group>
+                                <field name="entries_per_day"/>
+                                <field name="company_name"/>
+                            </group>
+                        </page>
+
+                        <page string="Computed Window">
+                            <group>
+                                <field name="start_datetime"/>
+                                <field name="end_datetime"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <footer>
+                    <!-- Simple buttons without attrs/state conditions -->
+                    <button name="action_activate"
+                            type="object"
+                            string="Activate"
+                            class="btn-primary"/>
+                    <button name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            class="btn-secondary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_cab_preapproval" model="ir.actions.act_window">
+        <field name="name">Cab Pre-Approvals</field>
+        <field name="res_model">cab.preapproval</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu (adjust parent to your real menu) -->
+    <menuitem id="menu_cab_preapproval_root"
+              name="Cab Pre-Approvals"
+              parent="menu_flat_transaction_menu"
+              action="action_cab_preapproval"
+              sequence="20"/>
+</odoo>

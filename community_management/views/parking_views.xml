@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Parking Slot Form View -->
+    <record id="view_parking_slot_form" model="ir.ui.view">
+        <field name="name">parking.slot.form</field>
+        <field name="model">parking.slot</field>
+        <field name="arch" type="xml">
+            <form string="Parking Slot">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="community_id" options="{'no_create': True}"/>
+                            <field name="building_id" domain="[('community_id', '=', community_id)]" options="{'no_create': True}"/>
+                            <field name="type"/>
+                            <field name="status" readonly="1"/>
+                            <field name="flat_id" domain="[('building_id.community_id', '=', community_id)]"/>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Any notes about this slot..."/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Parking Slot list/List View -->
+    <record id="view_parking_slot_list" model="ir.ui.view">
+        <field name="name">parking.slot.list</field>
+        <field name="model">parking.slot</field>
+        <field name="arch" type="xml">
+            <list string="Parking Slots" decoration-success="status=='available'" decoration-danger="status=='assigned'">
+                <field name="name"/>
+                <field name="community_id"/>
+                <field name="building_id"/>
+                <field name="type"/>
+                <field name="status"/>
+                <field name="flat_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Parking Slot Kanban View -->
+    <record id="view_parking_slot_kanban" model="ir.ui.view">
+        <field name="name">parking.slot.kanban</field>
+        <field name="model">parking.slot</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="status"/>
+                <field name="type"/>
+                <field name="flat_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <strong class="o_kanban_record_title"><t t-esc="record.name.value"/></strong>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <t t-if="record.community_id.value">
+                                    <div>Community: <t t-esc="record.community_id.value"/></div>
+                                </t>
+                                <t t-if="record.building_id.value">
+                                    <div>Building: <t t-esc="record.building_id.value"/></div>
+                                </t>
+                                <div>Type: <t t-esc="record.type.value"/></div>
+                                <div class="text-success" t-if="record.status.raw_value === 'available'">Available</div>
+                                <div class="text-danger" t-if="record.status.raw_value === 'assigned'">
+                                    Assigned to: <t t-esc="record.flat_id.value"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_parking_slot_search" model="ir.ui.view">
+        <field name="name">parking.slot.search</field>
+        <field name="model">parking.slot</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="community_id"/>
+                <field name="building_id"/>
+                <field name="flat_id"/>
+                <filter name="available" string="Available" domain="[('status', '=', 'available')]"/>
+                <filter name="assigned" string="Assigned" domain="[('status', '=', 'assigned')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Community" name="group_community" domain="[]" context="{'group_by': 'community_id'}"/>
+                    <filter string="Building" name="group_building" domain="[]" context="{'group_by': 'building_id'}"/>
+                    <filter string="Status" name="group_status" domain="[]" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_parking_slot" model="ir.actions.act_window">
+        <field name="name">Parking Slots</field>
+        <field name="res_model">parking.slot</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="search_view_id" ref="view_parking_slot_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first parking slot!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_parking_root"
+              name="Parking"
+              sequence="30"
+              parent="menu_master_data_root"/>  <!-- Replace with actual parent menu ID -->
+
+    <menuitem id="menu_parking_slots"
+              name="Parking Slots"
+              parent="menu_parking_root"
+              action="action_parking_slot"
+              sequence="10"/>
+              <!-- groups="your_module.group_parking_manager" -->  <!-- Uncomment and use if restricting access -->
+
+</odoo>

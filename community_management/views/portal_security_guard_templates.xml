@@ -1,0 +1,254 @@
+<odoo>
+    <template id="portal_community_management_template" name="Community Management Members">
+        <t t-call="website.layout">
+            <!-- ALL YOUR EXISTING STYLES - NO CHANGE -->
+            <style>
+                .security-guard-card, .community-role-card {
+                transition: all 0.3s ease !important;
+                border-radius: 20px !important;
+                border: none !important;
+                overflow: hidden;
+                }
+                .security-guard-card:hover, .community-role-card:hover {
+                transform: translateY(-10px) !important;
+                box-shadow: 0 20px 40px rgba(0,123,255,0.15) !important;
+                }
+                .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                position: relative;
+                overflow: hidden;
+                }
+                .bg-gradient-community {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+                position: relative;
+                overflow: hidden;
+                }
+                .bg-gradient-primary::before, .bg-gradient-community::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+                animation: shine 3s infinite;
+                }
+                @keyframes shine {
+                0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+                100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+                }
+                .card-icon { position: absolute; top: 1rem; left: 1rem; }
+                .card-icon i { color: rgba(255,255,255,0.2); font-size: 3rem; }
+                .card-main-content { position: relative; z-index: 2; }
+                .contact-info .info-item {
+                display: flex; align-items: center; font-size: 0.95rem;
+                padding: 0.5rem 0; border-bottom: 1px solid #f8f9fa;
+                }
+                .contact-info .info-item:last-child { border-bottom: none; }
+                .info-icon { width: 24px; text-align: center; font-size: 1.2rem; margin-right: 0.75rem; }
+                .portal-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white; padding: 3rem 0; margin-bottom: 3rem;
+                border-radius: 20px; position: relative; overflow: hidden;
+                }
+                .btn-whatsapp {
+                background-color: #25D366 !important; border-color: #25D366 !important; color: white !important;
+                }
+                .btn-whatsapp:hover { background-color: #128C7E !important; border-color: #128C7E !important; }
+                @media (max-width: 768px) {
+                .security-guard-card, .community-role-card { margin-bottom: 1.5rem; }
+                }
+            </style>
+
+            <div class="container my-5">
+                <!-- MAIN HEADER -->
+                <div class="portal-header text-center position-relative">
+                    <div class="container position-relative">
+                        <i class="fa fa-building fa-4x mb-3 d-block"></i>
+                        <h1 class="display-4 fw-bold mb-3">Community Management</h1>
+                        <p class="lead mb-0">
+                            <t t-esc="len(community_members)"/>
+                            Committee Members |
+                            <t t-esc="len(security_guards)"/>
+                            Security Guards
+                        </p>
+                    </div>
+                </div>
+
+                <!-- COMMUNITY ROLES SECTION (TOP) -->
+                <t t-if="community_members">
+                    <div class="mb-5">
+                        <h2 class="text-center mb-5">
+                            <i class="fa fa-user-tie text-primary me-3"></i>
+                            Community Management Team
+                        </h2>
+                        <div class="row g-4">
+                            <t t-foreach="community_members" t-as="member">
+                                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                                    <div class="card h-100 community-role-card shadow-lg">
+                                        <div class="card-header bg-gradient-community text-white p-4 position-relative">
+                                            <div class="card-icon">
+                                                <i class="fa fa-user-tie"></i>
+                                            </div>
+                                            <div class="card-main-content text-center">
+                                                <h4 class="card-title mb-1 fw-bold">
+                                                    <t t-esc="member.name or 'Unnamed Member'"/>
+                                                </h4>
+                                                <span class="badge bg-light text-dark px-3 py-2">
+                                                    <t t-esc="dict({
+                                                    'president': '🏛️ President',
+                                                    'secretary': '📋 Secretary',
+                                                    'treasurer': '💰 Treasurer',
+                                                    'committee_member': '👥 Committee',
+                                                    'resident_representative': '🏠 Resident Rep'
+                                                }).get(member.community_role, 'Member')"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <div class="contact-info">
+                                                <div class="info-item">
+                                                    <i class="fa fa-phone info-icon text-success"></i>
+                                                    <strong>Phone:</strong>
+                                                    <span class="ms-2 fw-medium" t-field="member.phone"/>
+                                                </div>
+                                                <div class="info-item">
+                                                    <i class="fa fa-envelope info-icon text-primary"></i>
+                                                    <strong>Email:</strong>
+                                                    <span class="ms-2 fw-medium" t-field="member.email"/>
+                                                </div>
+                                                <div class="info-item">
+                                                    <i class="fa fa-map-marker-alt info-icon text-warning"></i>
+                                                    <strong>Address:</strong>
+                                                    <span class="ms-2" t-field="member.street"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-light border-0 p-4">
+                                            <div class="row g-2 h-100">
+                                                <div class="col-4">
+                                                    <a t-att-href="'mailto:' + (member.email or '')"
+                                                       class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-center">
+                                                        <i class="fa fa-envelope me-1"></i>
+                                                        <span class="d-none d-md-inline">Email</span>
+                                                    </a>
+                                                </div>
+                                                <t t-if="member.phone">
+                                                    <div class="col-4">
+                                                        <a t-att-href="'skype:' + member.phone + '?call'"
+                                                           class="btn btn-success w-100 h-100 d-flex align-items-center justify-content-center">
+                                                            <i class="fa fa-phone me-1"></i>
+                                                            <span class="d-none d-md-inline">Phone</span>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <t t-set="whatsapp_number"
+                                                           t-value="member.phone.replace(' ', '').replace('+91', '').replace('-', '').lstrip('0')"/>
+                                                        <a t-att-href="'https://wa.me/91' + whatsapp_number"
+                                                           class="btn btn-whatsapp w-100 h-100 d-flex align-items-center justify-content-center"
+                                                           target="_blank">
+                                                            <i class="fab fa-whatsapp me-1"></i>
+                                                            <span class="d-none d-md-inline">WhatsApp</span>
+                                                        </a>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- SECURITY GUARDS SECTION (BOTTOM) -->
+                <t t-if="security_guards">
+                    <div class="mb-5">
+                        <h2 class="text-center mb-5">
+                            <i class="fa fa-shield-alt text-danger me-3"></i>
+                            Security Guards
+                        </h2>
+                        <div class="row g-4">
+                            <t t-foreach="security_guards" t-as="guard">
+                                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                                    <div class="card h-100 security-guard-card shadow-lg">
+                                        <div class="card-header bg-gradient-primary text-white p-4 position-relative">
+                                            <div class="card-icon">
+                                                <i class="fa fa-user-shield"></i>
+                                            </div>
+                                            <div class="card-main-content text-center">
+                                                <h4 class="card-title mb-1 fw-bold">
+                                                    <t t-esc="guard.name or 'Unnamed Guard'"/>
+                                                </h4>
+                                                <span class="badge bg-light text-dark px-3 py-2">✓ Security Guard</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <div class="contact-info">
+                                                <div class="info-item">
+                                                    <i class="fa fa-phone info-icon text-success"></i>
+                                                    <strong>Phone:</strong>
+                                                    <span class="ms-2 fw-medium" t-field="guard.phone"/>
+                                                </div>
+                                                <div class="info-item">
+                                                    <i class="fa fa-envelope info-icon text-primary"></i>
+                                                    <strong>Email:</strong>
+                                                    <span class="ms-2 fw-medium" t-field="guard.email"/>
+                                                </div>
+                                                <div class="info-item">
+                                                    <i class="fa fa-map-marker-alt info-icon text-warning"></i>
+                                                    <strong>Address:</strong>
+                                                    <span class="ms-2" t-field="guard.street"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-light border-0 p-4">
+                                            <div class="row g-2 h-100">
+                                                <div class="col-4">
+                                                    <a t-att-href="'mailto:' + (guard.email or '')"
+                                                       class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-center">
+                                                        <i class="fa fa-envelope me-1"></i>
+                                                        <span class="d-none d-md-inline">Email</span>
+                                                    </a>
+                                                </div>
+                                                <t t-if="guard.phone">
+                                                    <div class="col-4">
+                                                        <a t-att-href="'skype:' + guard.phone + '?call'"
+                                                           class="btn btn-success w-100 h-100 d-flex align-items-center justify-content-center">
+                                                            <i class="fa fa-phone me-1"></i>
+                                                            <span class="d-none d-md-inline">Phone</span>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <t t-set="whatsapp_number"
+                                                           t-value="guard.phone.replace(' ', '').replace('+91', '').replace('-', '').lstrip('0')"/>
+                                                        <a t-att-href="'https://wa.me/91' + whatsapp_number"
+                                                           class="btn btn-whatsapp w-100 h-100 d-flex align-items-center justify-content-center"
+                                                           target="_blank">
+                                                            <i class="fab fa-whatsapp me-1"></i>
+                                                            <span class="d-none d-md-inline">WhatsApp</span>
+                                                        </a>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- EMPTY STATE -->
+                <t t-if="not community_members and not security_guards">
+                    <div class="text-center py-10 my-5">
+                        <i class="fa fa-users fa-5x text-muted mb-4 opacity-50"></i>
+                        <h3 class="text-muted mb-3">No Community Personnel Found</h3>
+                        <p class="text-muted lead">No security guards or committee members assigned yet.</p>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>
+

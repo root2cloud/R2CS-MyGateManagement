@@ -11,7 +11,6 @@ class Flat(models.Model):
     floor_id = fields.Many2one('floor.management', string='Floor',
                                domain="[('building_id', '=', building_id)]", tracking=True)
 
-
     flat_type_id = fields.Many2one('flat.type', string='Flat Type', required=True, tracking=True)
 
     area = fields.Float(string='Area (sq.ft.)', tracking=True)
@@ -33,7 +32,7 @@ class Flat(models.Model):
     lease_owner_id = fields.Many2one('res.partner', string='Lease Owner',
                                      help="Person who holds lease rights (if any)", tracking=True)
     tenant_id = fields.Many2one('res.partner', string='Tenant',
-                               help="Person who lives in the flat", tracking=True)
+                                help="Person who lives in the flat", tracking=True)
 
     # Dates
     lease_start_date = fields.Date(string='Lease Start Date', tracking=True)
@@ -45,10 +44,39 @@ class Flat(models.Model):
                                        compute='_compute_transaction_count'
                                        )
 
+
+    parking_slot_ids = fields.One2many('parking.slot', 'flat_id', string='Parking Slots')
+    parking_count = fields.Integer(string='Parking Count',
+                                   compute='_compute_parking_count',
+                                   store=True)
+
+    @api.depends('parking_slot_ids')
+    def _compute_parking_count(self):
+        for record in self:
+            record.parking_count = len(record.parking_slot_ids)
+    #
+    def action_view_parking_slots(self):
+        """View parking slots assigned to this flat"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Parking Slots - {self.name}',
+            'res_model': 'parking.slot',
+            'view_mode': 'list,form,kanban',
+            'domain': [('flat_id', '=', self.id)],
+            'context': {
+                'default_flat_id': self.id,
+                'default_community_id': self.building_id.community_id.id,
+                'default_building_id': self.building_id.id
+            },
+            'target': 'current',
+        }
+
     @api.depends('transaction_ids')
     def _compute_transaction_count(self):
         for record in self:
             record.transaction_count = len(record.transaction_ids)
+
     #
     @api.onchange('building_id')
     def _onchange_building_id(self):
@@ -74,8 +102,8 @@ class Flat(models.Model):
         }
 
 
-
 from odoo import models, fields
+
 
 class FlatType(models.Model):
     _name = 'flat.type'

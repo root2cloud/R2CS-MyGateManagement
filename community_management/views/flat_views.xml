@@ -16,6 +16,17 @@
                                 invisible="transaction_count == 0">
                             <field name="transaction_count" widget="statinfo" string="Leases"/>
                         </button>
+
+                        <button name="action_view_parking_slots"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-car"
+
+                        >
+                            <field name="parking_count" widget="statinfo" string="Parking Slots"/>
+                        </button>
+
+
                     </div>
 
                     <field name="flat_image" widget="image" class="oe_avatar"/>
@@ -29,7 +40,7 @@
                         <group string="Basic Information">
                             <field name="building_id" options="{'no_create': True}"/>
                             <field name="floor_id" options="{'no_create': True}"/>
-                            <field name="flat_type_id" />
+                            <field name="flat_type_id"/>
                             <field name="area"/>
                         </group>
                         <group string="Pricing">
@@ -255,8 +266,8 @@
                 <filter name="filter_has_lease_owner" string="Has Lease Owner"
                         domain="[('lease_owner_id', '!=', False)]"/>
                 <filter name="filter_has_tenant" string="Has Tenant" domain="[('tenant_id', '!=', False)]"/>
-<!--                <filter name="filter_has_transactions" string="Has Lease History"-->
-<!--                        domain="[('transaction_ids', '!=', False)]"/>-->
+                <!--                <filter name="filter_has_transactions" string="Has Lease History"-->
+                <!--                        domain="[('transaction_ids', '!=', False)]"/>-->
                 <group expand="0" string="Group By">
                     <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
                     <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>

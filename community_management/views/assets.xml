@@ -1,5 +1,10 @@
 <odoo>
-  <template id="assets_frontend" name="community_management assets" inherit_id="web.assets_frontend">
-    <link rel="stylesheet" href="/community_management/static/src/css/portal_family.css"/>
-  </template>
+    <template id="assets_frontend_guest_invite"
+              inherit_id="web.assets_frontend"
+              name="Guest Invite Assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript"
+                    src="/community_management/static/src/js/guest_invite_share.js"/>
+        </xpath>
+    </template>
 </odoo>

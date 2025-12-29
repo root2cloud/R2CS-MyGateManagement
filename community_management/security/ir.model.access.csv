@@ -52,3 +52,46 @@ access_community_lead_user,access.community.lead.user,model_community_lead,base.
 access_community_lead_public,access.community.lead.public,model_community_lead,base.group_public,1,0,1,0
 
 access_community_dashboard_user,Community Dashboard User,model_community_dashboard,,1,1,1,1
+
+
+access_parking_slot,parking.slot,model_parking_slot,,1,1,1,1
+
+
+access_resident_access_request_user,Resident Access Request User,model_resident_access_request,base.group_user,1,1,1,0
+
+access_community_festival,community.festival,model_community_festival,,1,1,1,1
+access_community_expense_line,community.expense.line,model_community_expense_line,,1,1,1,1
+
+
+access_res_partner_category,access.res.partner.category.custom,model_res_partner_category_custom,,1,1,1,1
+
+access_daily_slot,access.res.partner.daily.slot,model_res_partner_daily_slot,,1,1,1,1
+
+access_daily_slot_portal,access.res.partner.daily.slot.portal,model_res_partner_daily_slot,base.group_portal,1,0,0,0
+
+access_guest_invite_user,access.guest.invite.user,model_guest_invite,base.group_user,1,1,1,1
+access_guest_invite_line_user,access.guest.invite.line.user,model_guest_invite_line,base.group_user,1,1,1,1
+
+access_party_group_invite_user,access.party.group.invite.user,model_party_group_invite,base.group_user,1,1,1,1
+access_cab_preapproval_user,access.cab.preapproval.user,model_cab_preapproval,,1,1,1,1
+access_delivery_pass,access.delivery.pass,model_community_delivery_pass,,1,1,1,1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

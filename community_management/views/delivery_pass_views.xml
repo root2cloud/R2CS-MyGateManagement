@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Form view -->
+    <record id="view_form_delivery_pass" model="ir.ui.view">
+        <field name="name">community.delivery.pass.form</field>
+        <field name="model">community.delivery.pass</field>
+        <field name="arch" type="xml">
+            <form string="Delivery Pass">
+                <sheet>
+                    <group>
+                        <field name="resident_id"/>
+                        <field name="mode"/>
+                        <field name="state" readonly="1"/>
+                    </group>
+
+                    <group>
+                        <field name="is_surprise"/>
+                        <field name="allow_leave_at_gate"/>
+                        <field name="company_name"/>
+                    </group>
+
+                    <notebook>
+                        <!-- ONCE TAB -->
+                        <page string="Once">
+                            <group>
+                                <field name="once_date"/>
+                                <field name="once_start_time"/>
+                                <!-- New selection options already on field -->
+                                <field name="once_valid_hours"/>
+                            </group>
+                        </page>
+
+                        <!-- FREQUENT TAB -->
+                        <page string="Frequently">
+                            <group>
+                                <field name="freq_days"/>
+                                <group>
+                                    <field name="freq_time_from"/>
+                                    <field name="freq_time_to"/>
+                                </group>
+                                <!-- Select Validity -->
+                                <field name="freq_validity"/>
+                                <field name="freq_valid_till" readonly="1"/>
+                                <field name="entries_per_day"/>
+                            </group>
+                        </page>
+                    </notebook>
+
+                    <group>
+                        <field name="start_datetime" readonly="1"/>
+                        <field name="end_datetime" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST view -->
+    <record id="view_list_delivery_pass" model="ir.ui.view">
+        <field name="name">community.delivery.pass.list</field>
+        <field name="model">community.delivery.pass</field>
+        <field name="arch" type="xml">
+            <list string="Delivery Passes">
+                <field name="resident_id"/>
+                <field name="mode"/>
+                <field name="is_surprise"/>
+                <field name="allow_leave_at_gate"/>
+                <field name="company_name"/>
+                <field name="freq_validity"/>
+                <field name="freq_valid_till"/>
+                <field name="start_datetime"/>
+                <field name="end_datetime"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action & menu -->
+    <record id="action_delivery_pass" model="ir.actions.act_window">
+        <field name="name">Delivery Passes</field>
+        <field name="res_model">community.delivery.pass</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <menuitem id="menu_delivery_pass"
+              name="Delivery Passes"
+              parent="menu_flat_transaction_menu"
+              action="action_delivery_pass"
+              sequence="10"/>
+</odoo>
+
+
+

@@ -137,7 +137,44 @@ class Community(models.Model):
             record.flat_ids = flats
 
 
-#
+
+    # ----
+
+    # Updates to community.py (add these to the existing Community model)
+
+    parking_count = fields.Integer(string='Parking Slots',
+                                   compute='_compute_parking_count',
+                                   store=True)
+
+    @api.depends('building_ids')  # Dependency can be adjusted if needed
+    def _compute_parking_count(self):
+        for record in self:
+            slots = self.env['parking.slot'].search([('community_id', '=', record.id)])
+            record.parking_count = len(slots)
+
+    def action_view_parking_slots(self):
+        """Open Parking Slots list for this community"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Parking Slots - {self.name}',
+            'res_model': 'parking.slot',
+            'view_mode': 'list,form,kanban',
+            'domain': [('community_id', '=', self.id)],
+            'context': {'default_community_id': self.id},
+            'target': 'current',
+        }
+
+    festivalcount = fields.Integer(string="Festivals",
+                                   compute="_compute_festivalcount",
+                                   store=True)
+    festivalids = fields.One2many('community.festival', 'community_id', string="Festivals")
+
+    @api.depends('festivalids')
+    def _compute_festivalcount(self):
+        for record in self:
+            record.festivalcount = len(record.festivalids)
+
 
 
 class ResPartner(models.Model):

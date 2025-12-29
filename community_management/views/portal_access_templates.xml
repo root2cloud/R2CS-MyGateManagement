@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="resident_request_template" name="Resident Portal Access Request">
+        <t t-call="website.layout">
+            <title>Request Resident Portal Access</title>
+
+            <div id="wrap" class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                            <div class="card-header text-white py-4 text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h2 class="mb-0">
+                                    <i class="fa fa-key fa-lg me-3"></i>
+                                    Request Resident Portal Access
+                                </h2>
+                                <p class="mb-0 mt-2 opacity-75">Fill in your details to get access to your society portal</p>
+                            </div>
+
+                            <div class="card-body p-5">
+                                <t t-if="error">
+                                    <div class="alert alert-danger">
+                                        <strong>Error:</strong> <t t-esc="error"/>
+                                    </div>
+                                </t>
+
+                                <form action="/resident/request/submit" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                    <!-- Personal Details -->
+                                    <h5 class="mb-4 text-primary"><i class="fa fa-user me-2"></i>Personal Information</h5>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="name" class="form-control" required="required"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Phone <span class="text-danger">*</span></label>
+                                            <input type="text" name="phone" class="form-control" required="required"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                                            <input type="email" name="email" class="form-control" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Address Details -->
+                                    <h5 class="mb-4 text-primary"><i class="fa fa-home me-2"></i>Address Details</h5>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-3">
+                                            <label class="form-label">Community <span class="text-danger">*</span></label>
+                                            <select name="community_id" class="form-select" required="required" onchange="loadBuildings()">
+                                                <option value="">Select...</option>
+                                                <t t-foreach="communities" t-as="c">
+                                                    <option t-att-value="c.id" t-esc="c.name"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Building <span class="text-danger">*</span></label>
+                                            <select name="building_id" id="building_id" class="form-select" required="required" onchange="loadFloorsAndFlats()">
+                                                <option value="">First select community</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Floor (Optional)</label>
+                                            <select name="floor_id" id="floor_id" class="form-select">
+                                                <option value="">Select floor</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Flat No. <span class="text-danger">*</span></label>
+                                            <select name="flat_id" id="flat_id" class="form-select" required="required">
+                                                <option value="">First select building</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Occupancy & Document -->
+                                    <h5 class="mb-4 text-primary"><i class="fa fa-users me-2"></i>Additional Information</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">You are <span class="text-danger">*</span></label>
+                                            <select name="occupancy_type" class="form-select" required="required">
+                                                <t t-foreach="occupancy_types" t-as="ot">
+                                                    <option t-att-value="ot[0]" t-esc="ot[1]"/>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <!-- === NEW FIELDS ADDED HERE === -->
+                                        <div class="col-md-3">
+                                            <label class="form-label">Lease Start Date</label>
+                                            <input type="date" name="lease_start_date" class="form-control"/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Lease End Date</label>
+                                            <input type="date" name="lease_end_date" class="form-control"/>
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <label class="form-label">Owner (if renting)</label>
+                                            <input type="text" name="owner_id" class="form-control" placeholder="Search owner by name or email (optional)"/>
+                                            <small class="text-muted">Type to search existing owners</small>
+                                        </div>
+                                        <!-- =============================== -->
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Rental Agreement (Optional)</label>
+                                            <div class="input-group">
+                                                <input type="file" name="rental_agreement_datas" class="form-control"/>
+                                            </div>
+                                            <small class="text-muted">PDF or image recommended</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid mt-5">
+                                        <button type="submit" class="btn btn-lg btn-success shadow" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                            <i class="fa fa-paper-plane me-2"></i>
+                                            Submit Request
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function loadBuildings() {
+                    const communityId = document.querySelector('[name="community_id"]').value;
+                    const buildingSelect = document.getElementById('building_id');
+                    const floorSelect = document.getElementById('floor_id');
+                    const flatSelect = document.getElementById('flat_id');
+
+                    buildingSelect.innerHTML = '<option value="">Loading...</option>';
+                    floorSelect.innerHTML = '<option value="">Select floor (optional)</option>';
+                    flatSelect.innerHTML = '<option value="">Select flat</option>';
+
+                    if (!communityId) {
+                        buildingSelect.innerHTML = '<option value="">First select community</option>';
+                        return;
+                    }
+
+                    fetch('/resident/get_buildings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ params: { community_id: parseInt(communityId) } })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        buildingSelect.innerHTML = '<option value="">Select building</option>';
+                        data.result.forEach(b => {
+                            const opt = document.createElement('option');
+                            opt.value = b.id;
+                            opt.text = b.name;
+                            buildingSelect.appendChild(opt);
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error loading buildings:', err);
+                        buildingSelect.innerHTML = '<option value="">Error loading</option>';
+                    });
+                }
+
+                function loadFloorsAndFlats() {
+                    const buildingId = document.getElementById('building_id').value;
+                    const floorSelect = document.getElementById('floor_id');
+                    const flatSelect = document.getElementById('flat_id');
+
+                    floorSelect.innerHTML = '<option value="">Loading...</option>';
+                    flatSelect.innerHTML = '<option value="">Loading...</option>';
+
+                    if (!buildingId) return;
+
+                    Promise.all([
+                        fetch('/resident/get_floors', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ params: { building_id: parseInt(buildingId) } })
+                        }).then(r => r.json()),
+                        fetch('/resident/get_flats', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ params: { building_id: parseInt(buildingId) } })
+                        }).then(r => r.json())
+                    ])
+                    .then(([floorsData, flatsData]) => {
+                        floorSelect.innerHTML = '<option value="">Select floor (optional)</option>';
+                        floorsData.result.forEach(f => {
+                            const opt = document.createElement('option');
+                            opt.value = f.id;
+                            opt.text = f.name;
+                            floorSelect.appendChild(opt);
+                        });
+
+                        flatSelect.innerHTML = '<option value="">Select flat</option>';
+                        flatsData.result.forEach(fl => {
+                            const opt = document.createElement('option');
+                            opt.value = fl.id;
+                            opt.text = fl.name;
+                            flatSelect.appendChild(opt);
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error loading floors/flats:', err);
+                        floorSelect.innerHTML = '<option value="">Error</option>';
+                        flatSelect.innerHTML = '<option value="">Error</option>';
+                    });
+                }
+            </script>
+        </t>
+    </template>
+
+    <template id="resident_request_success_template" name="Request Submitted Successfully">
+        <t t-call="website.layout">
+            <title>Request Submitted</title>
+            <div id="wrap" class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-7 text-center">
+                        <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                            <div class="card-header py-5 text-white" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                <i class="fa fa-check-circle fa-5x mb-3"></i>
+                                <h2>Request Submitted Successfully!</h2>
+                            </div>
+                            <div class="card-body p-5">
+                                <p class="lead">Thank you for submitting your access request.</p>
+                                <p class="text-muted fs-5">
+                                    Approval may take up to <strong>72 hours</strong>.<br/>
+                                    Once approved, you will receive an email with a link to set your password and access the resident portal.
+                                </p>
+                                <a href="/" class="btn btn-primary btn-lg mt-4 px-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border:none;">
+                                    <i class="fa fa-home me-2"></i> Back to Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

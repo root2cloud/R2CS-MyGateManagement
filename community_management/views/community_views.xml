@@ -33,6 +33,15 @@
                                 icon="fa-home">
                             Flats
                         </button>
+                        <!-- NEW: Parking Slots Smart Button -->
+                        <button name="action_view_parking_slots"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-car"
+
+                        >
+                            Parking Slots
+                        </button>
                     </div>
 
                     <field name="logo" widget="image" class="oe_avatar"/>
@@ -150,8 +159,17 @@
 
                             </field>
                         </page>
-
-
+                        <page string="Festival Expenses">
+                            <field name="festivalids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="date_start"/>
+                                    <field name="date_end"/>
+                                    <field name="total_expense" widget="monetary"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
                 <chatter/>
@@ -362,6 +380,9 @@
 
         </field>
     </record>
+
+
+
 
 
 </odoo>

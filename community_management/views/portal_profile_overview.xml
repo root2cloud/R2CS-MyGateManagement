@@ -106,8 +106,9 @@
 
                                     <!-- Flat Info -->
 
-                                    <div class="info-group mt-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; width: 100%;">
-<!--                                        '''-->
+                                    <div class="info-group mt-3"
+                                         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; width: 100%;">
+                                        <!--                                        '''-->
                                         <div class="info-item">
                                             <i class="fa fa-building"></i>
                                             <span>
@@ -163,6 +164,26 @@
                                                 </span>
                                             </div>
                                         </t>
+                                        <!--                                        -&#45;&#45;-->
+                                        <div class="info-item parking-highlight">
+                                            <i class="fa fa-car"/>
+                                            <span>
+                                                Parking Slot(s):
+                                                <t t-if="flat.parking_slot_ids">
+                                                    <strong>
+                                                        <t t-foreach="flat.parking_slot_ids" t-as="slot">
+                                                            <t t-esc="slot.name"/>
+                                                            <t t-if="not slot_last">,</t>
+                                                        </t>
+                                                    </strong>
+                                                </t>
+                                                <t t-else="">
+                                                    <strong>None Assigned</strong>
+                                                </t>
+                                            </span>
+                                        </div>
+
+                                        <!--                                        &#45;&#45;-->
                                     </div>
 
                                     <!-- 🛏️ ROOMS INSIDE FLAT -->
@@ -416,4 +437,5 @@
             </div>
         </t>
     </template>
+
 </odoo>

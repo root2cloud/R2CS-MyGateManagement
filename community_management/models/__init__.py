@@ -16,3 +16,12 @@ from . import amenity_booking
 # from . import tenant_request
 from . import community_lead
 from . import community_dashboard
+from . import parking
+from . import resident_request
+from . import festival
+from . import res_partner
+from . import daily_slot
+from . import guest_invite
+from . import party_group_invite
+from . import cab_preapproval
+from .import delivery_pass
