@@ -1,59 +1,89 @@
 <odoo>
     <template id="portal_delivery_pass" name="Delivery Pre‑Approval">
         <t t-call="portal.portal_layout">
+            <!-- Main Container -->
             <div class="container mt-4" style="max-width: 480px;">
-                <div class="position-relative"
-                     style="border-radius: 20px 20px 0 0; overflow: hidden; background-color: #ffffff; box-shadow: 0 -4px 12px rgba(0,0,0,0.15);">
-                    <!--  Top scooter icon  -->
-                    <div class="d-flex justify-content-center" style="margin-top: 0px;">
-                        <div style="width:64px;height:64px; border-radius:50%; background:#ffd500; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.25);">
-                            <i class="fa fa-motorcycle" style="font-size:26px;color:#000;"/>
+
+                <!-- Card Container -->
+                <div class="position-relative overflow-hidden rounded-4 shadow-lg bg-white">
+
+                    <!-- Header Section -->
+                    <div class="position-relative overflow-hidden" style="border-radius: 20px 20px 0 0;">
+
+                        <!-- Decorative Gradient Background -->
+                        <div class="position-absolute top-0 start-0 w-100 h-100"
+                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.1;"></div>
+
+                        <!-- Scooter Icon -->
+                        <div class="position-relative z-1 d-flex justify-content-center pt-5 pb-3">
+                            <div class="delivery-icon d-flex align-items-center justify-content-center">
+                                <i class="fa fa-motorcycle text-dark fs-4"></i>
+                            </div>
                         </div>
+
+                        <!-- Tabs Navigation -->
+                        <div class="position-relative z-1 d-flex border-bottom">
+                            <button type="button"
+                                    class="btn-tab flex-grow-1 text-center py-3 border-0 bg-transparent once-tab active">
+                                <span class="fw-semibold text-primary">Once</span>
+                            </button>
+                            <button type="button"
+                                    class="btn-tab flex-grow-1 text-center py-3 border-0 bg-transparent freq-tab">
+                                <span class="fw-semibold text-muted">Frequently</span>
+                            </button>
+                        </div>
+
+                        <!-- Active Tab Indicator -->
+                        <div class="tab-indicator once-underline"></div>
                     </div>
-                    <!--  Tabs  -->
-                    <div class="d-flex justify-content-around mt-2">
-                        <button type="button" class="btn btn-link flex-grow-1 text-center py-2 border-0 once-tab active"
-                                style="font-weight:600;">Once
-                        </button>
-                        <button type="button" class="btn btn-link flex-grow-1 text-center py-2 border-0 freq-tab "
-                                style="font-weight:600;">Frequently
-                        </button>
-                    </div>
-                    <div class="once-underline" style="height:3px;background:#4b2ca0;width:50%;"/>
-                    <!--  Form  -->
-                    <form action="/my/delivery-pass" method="post" class="p-3 pt-4">
+
+                    <!-- Form Section -->
+                    <form action="/my/delivery-pass" method="post" class="p-4 pt-3">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <input type="hidden" name="mode" class="mode-input" value="once"/>
-                        <!--  Surprise Delivery card  -->
-                        <div class="p-3 mb-3 d-flex align-items-center" style="border-radius:16px;background:#f4e8ff;">
-                            <div class="form-check me-2">
-                                <input class="form-check-input surprise-checkbox" type="checkbox" id="surpriseChk"
-                                       name="is_surprise"/>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="fw-bold">Surprise Delivery</div>
-                                <div class="small text-muted">This allows deliveries without notifying your flat
-                                    members.
+
+                        <!-- Surprise Delivery Card -->
+                        <div class="card-hover mb-4 p-3 rounded-3" style="background: linear-gradient(135deg, #f6d5f7 0%, #fbe9d7 100%);">
+                            <div class="d-flex align-items-center">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input surprise-checkbox"
+                                           type="checkbox"
+                                           id="surpriseChk"
+                                           name="is_surprise"
+                                           style="width: 1.2em; height: 1.2em;"/>
                                 </div>
-                            </div>
-                            <div>
-                                <span class="fa fa-gift" style="font-size:22px;color:#9b59b6;"/>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-semibold text-dark">Surprise Delivery</h6>
+                                    <p class="mb-0 small text-muted">Allow deliveries without notifying flat members</p>
+                                </div>
+                                <div class="ps-2">
+                                    <i class="fa fa-gift fa-lg" style="color: #9b59b6;"></i>
+                                </div>
                             </div>
                         </div>
-                        <!--  ONCE block  -->
+
+                        <!-- Once Block -->
                         <div class="once-block">
                             <div class="mb-3">
-                                <label class="form-label mb-1">Select Date</label>
-                                <input type="date" class="form-control" name="once_date" required="required"/>
+                                <label class="form-label fw-medium mb-2 text-dark">Select Date</label>
+                                <input type="date"
+                                       class="form-control form-control-lg rounded-2"
+                                       name="once_date"
+                                       style="border: 2px solid #e9ecef; transition: all 0.3s;"/>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row g-3 mb-3">
                                 <div class="col-6">
-                                    <label class="form-label mb-1">Starting from</label>
-                                    <input type="time" class="form-control" name="once_start_time" value="10:00"/>
+                                    <label class="form-label fw-medium mb-2 text-dark">Starting from</label>
+                                    <input type="time"
+                                           class="form-control form-control-lg rounded-2"
+                                           name="once_start_time"
+                                           value="10:00"
+                                           style="border: 2px solid #e9ecef;"/>
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label mb-1">Valid for</label>
-                                    <select class="form-select" name="once_valid_hours">
+                                    <label class="form-label fw-medium mb-2 text-dark">Valid for</label>
+                                    <select class="form-select form-select-lg rounded-2" name="once_valid_hours"
+                                            style="border: 2px solid #e9ecef;">
                                         <option value="1">1 Hour</option>
                                         <option value="2">2 Hours</option>
                                         <option value="4">4 Hours</option>
@@ -64,127 +94,165 @@
                                 </div>
                             </div>
                         </div>
-                        <!--  FREQUENT block  -->
+
+                        <!-- Frequent Block -->
                         <div class="freq-block d-none">
                             <div class="mb-3">
-                                <label class="form-label mb-1">Select Days of Week</label>
-                                <select class="form-select" name="freq_days">
+                                <label class="form-label fw-medium mb-2 text-dark">Select Days of Week</label>
+                                <select class="form-select form-select-lg rounded-2" name="freq_days"
+                                        style="border: 2px solid #e9ecef;">
                                     <option value="all">All days of Week</option>
                                     <option value="weekdays">Mon–Fri</option>
                                     <option value="weekends">Sat–Sun</option>
                                 </select>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row g-3 mb-3">
                                 <div class="col-6">
-                                    <label class="form-label mb-1">Select time slot</label>
-                                    <input type="time" class="form-control" name="freq_time_from" value="00:00"/>
+                                    <label class="form-label fw-medium mb-2 text-dark">From time</label>
+                                    <input type="time"
+                                           class="form-control form-control-lg rounded-2"
+                                           name="freq_time_from"
+                                           value="00:00"
+                                           style="border: 2px solid #e9ecef;"/>
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label mb-1"/>
-                                    <input type="time" class="form-control" name="freq_time_to" value="23:59"/>
+                                    <label class="form-label fw-medium mb-2 text-dark">To time</label>
+                                    <input type="time"
+                                           class="form-control form-control-lg rounded-2"
+                                           name="freq_time_to"
+                                           value="23:59"
+                                           style="border: 2px solid #e9ecef;"/>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label mb-1">Select Validity</label>
-                                <select class="form-select" name="freq_validity">
-                                    <option value="1w">1 Week</option>
-                                    <option value="15d">15 Days</option>
-                                    <option value="1m">1 Month</option>
-                                    <option value="6m" selected="selected">6 Months</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label mb-1">Select Entries Per Day</label>
-                                <select class="form-select" name="entries_per_day">
-                                    <option value="one">One Entry</option>
-                                    <option value="multi">Multiple Entries</option>
-                                </select>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="form-label fw-medium mb-2 text-dark">Validity</label>
+                                    <select class="form-select form-select-lg rounded-2" name="freq_validity"
+                                            style="border: 2px solid #e9ecef;">
+                                        <option value="1w">1 Week</option>
+                                        <option value="15d">15 Days</option>
+                                        <option value="1m">1 Month</option>
+                                        <option value="6m" selected="selected">6 Months</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fw-medium mb-2 text-dark">Entries/Day</label>
+                                    <select class="form-select form-select-lg rounded-2" name="entries_per_day"
+                                            style="border: 2px solid #e9ecef;">
+                                        <option value="one">One Entry</option>
+                                        <option value="multi">Multiple</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <!--  Company  -->
-                        <div class="mb-3">
-                            <label class="form-label mb-1">Company Name</label>
-                            <input type="text" class="form-control" name="company_name" placeholder="Company name"/>
+
+                        <!-- Company Name -->
+                        <div class="mb-4">
+                            <label class="form-label fw-medium mb-2 text-dark">Company Name</label>
+                            <input type="text"
+                                   class="form-control form-control-lg rounded-2"
+                                   name="company_name"
+                                   placeholder="Enter company name"
+                                   style="border: 2px solid #e9ecef;"/>
                         </div>
-                        <!--  Leave at Gate / info  -->
+
+                        <!-- Leave at Gate -->
                         <div class="mb-3 leave-gate-wrapper">
-                            <div class="form-check">
-                                <input class="form-check-input leave-gate-checkbox" type="checkbox" id="leaveGateChk"
-                                       name="allow_leave_at_gate" checked="checked"/>
-                                <label class="form-check-label" for="leaveGateChk">Leave at Gate</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input leave-gate-checkbox"
+                                       type="checkbox"
+                                       id="leaveGateChk"
+                                       name="allow_leave_at_gate"
+                                       checked="checked"
+                                       style="width: 3em; height: 1.5em;"/>
+                                <label class="form-check-label ms-2 fw-medium text-dark" for="leaveGateChk">
+                                    Leave at Gate
+                                </label>
                             </div>
                         </div>
-                        <div class="mb-3 text-muted small d-none surprise-info">Leave at Gate is disabled for surprise
-                            deliveries
+
+                        <!-- Surprise Info -->
+                        <div class="alert alert-info d-none surprise-info rounded-2 mb-4">
+                            <i class="fa fa-info-circle me-2"></i>
+                            Leave at Gate is disabled for surprise deliveries
                         </div>
-                        <!--  Bottom bar button  -->
-                        <div style="background:#ffd500;margin:-16px -16px -16px -16px; padding:12px 0;text-align:center;">
-                            <button type="submit" style="border:none;background:transparent;">
-                                <span class="fa fa-check" style="font-size:22px;"/>
+
+                        <!-- Submit Button -->
+                        <div class="mt-5 pt-3 border-top">
+                            <button type="submit"
+                                    class="btn-submit w-100 py-3 rounded-3 border-0 d-flex align-items-center justify-content-center">
+                                <i class="fa fa-check-circle me-2 fa-lg"></i>
+                                <span class="fw-bold fs-5">Create Delivery Pass</span>
                             </button>
                         </div>
                     </form>
                 </div>
-                <!--  List of existing passes  -->
-                <!--  List of existing passes  -->
-                <div class="mt-4">
-                    <h6>Your Delivery Passes</h6>
+
+                <!-- Existing Passes List -->
+                <div class="mt-5">
+                    <h5 class="mb-4 fw-bold text-dark">Your Delivery Passes</h5>
                     <t t-if="passes">
                         <t t-foreach="passes" t-as="p">
-                            <div class="card mb-2 shadow-sm" style="border-radius:12px;">
-                                <div class="card-body py-2 px-3">
-                                    <!--  Top row: mode + company + status  -->
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <div>
-                                            <span class="badge"
-                                                  t-attf-style="background:#4b2ca0;color:#fff;font-size:11px;">
+                            <div class="card-hover mb-3 border-0 rounded-3 shadow-sm overflow-hidden">
+                                <div class="card-body p-4">
+                                    <!-- Header -->
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="mode-badge rounded-pill px-3 py-1 me-3">
                                                 <t t-esc="p.mode == 'once' and 'Once' or 'Frequently'"/>
                                             </span>
-                                            <span class="ms-2 fw-semibold" t-esc="p.company_name or 'No company'"/>
+                                            <h6 class="mb-0 fw-bold text-dark" t-esc="p.company_name or 'No company'"/>
                                         </div>
-                                        <span class="badge"
-                                              t-attf-style="font-size:11px; background: #{p.state == 'active' and '#28a745' or (p.state == 'expired' and '#6c757d' or '#dc3545')}; color:#fff;">
+                                        <span class="status-badge rounded-pill px-3 py-1"
+                                              t-attf-style="background: #{p.state == 'active' and '#d1fae5' or (p.state == 'expired' and '#f3f4f6' or '#fee2e2')}; color: #{p.state == 'active' and '#065f46' or (p.state == 'expired' and '#6b7280' or '#991b1b')};">
                                             <t t-esc="p.state.capitalize()"/>
                                         </span>
                                     </div>
-                                    <!--  Schedule info  -->
-                                    <div class="small text-muted">
-                                        <t t-if="p.mode == 'once'">
-                                            <span>On</span>
-                                            <span t-esc="p.once_date"/>
-                                            <span>from</span>
-                                            <span t-esc="p.once_start_time"/>
-                                            <span>for</span>
-                                            <span t-esc="p.once_valid_hours and dict(p._fields['once_valid_hours'].selection).get(p.once_valid_hours) or ''"/>
-                                        </t>
-                                        <t t-else="">
-                                            <span t-esc="p.freq_days or 'All days'"/>
-                                            <span>|</span>
-                                            <span t-esc="p.freq_time_from"/>
-                                            <span>-</span>
-                                            <span t-esc="p.freq_time_to"/>
-                                            <span>|</span>
-                                            <span t-esc="p.freq_validity and dict(p._fields['freq_validity'].selection).get(p.freq_validity) or ''"/>
-                                        </t>
+
+                                    <!-- Schedule Details -->
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center text-muted mb-2">
+                                            <i class="fa fa-calendar me-2 fa-sm"></i>
+                                            <span class="small">
+                                                <t t-if="p.mode == 'once'">
+                                                    <span t-esc="p.once_date"/> •
+                                                    <span t-esc="p.once_start_time"/> •
+                                                    <span t-esc="p.once_valid_hours and dict(p._fields['once_valid_hours'].selection).get(p.once_valid_hours) or ''"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-esc="p.freq_days or 'All days'"/> •
+                                                    <span t-esc="p.freq_time_from"/>-<span t-esc="p.freq_time_to"/> •
+                                                    <span t-esc="p.freq_validity and dict(p._fields['freq_validity'].selection).get(p.freq_validity) or ''"/>
+                                                </t>
+                                            </span>
+                                        </div>
+
+                                        <div class="d-flex align-items-center text-muted mb-2">
+                                            <i class="fa fa-clock me-2 fa-sm"></i>
+                                            <span class="small">
+                                                <span class="text-dark fw-medium">Window:</span>
+                                                <span t-esc="p.start_datetime"/> → <span t-esc="p.end_datetime"/>
+                                            </span>
+                                        </div>
                                     </div>
-                                    <!--  Computed window  -->
-                                    <div class="small mt-1">
-                                        <span class="text-muted">Window:</span>
-                                        <span t-esc="p.start_datetime"/>
-                                        →
-                                        <span t-esc="p.end_datetime"/>
-                                    </div>
-                                    <!--  Flags  -->
-                                    <div class="small mt-1">
+
+                                    <!-- Badges -->
+                                    <div class="d-flex flex-wrap gap-2">
                                         <t t-if="p.is_surprise">
-                                            <span class="badge bg-warning text-dark me-1">Surprise</span>
+                                            <span class="badge rounded-pill px-3 py-1"
+                                                  style="background: linear-gradient(135deg, #f6d5f7 0%, #fbe9d7 100%); color: #7c3aed;">
+                                                <i class="fa fa-gift me-1 fa-xs"></i> Surprise
+                                            </span>
                                         </t>
                                         <t t-if="p.allow_leave_at_gate">
-                                            <span class="badge bg-info text-dark">Leave at Gate</span>
+                                            <span class="badge rounded-pill px-3 py-1 bg-info bg-opacity-10 text-info">
+                                                <i class="fa fa-home me-1 fa-xs"></i> Leave at Gate
+                                            </span>
                                         </t>
                                         <t t-if="p.entries_per_day">
-                                            <span class="badge bg-light text-muted border ms-1">
-                                                <t t-esc="p.entries_per_day == 'one' and 'One entry / day' or 'Multiple entries / day'"/>
+                                            <span class="badge rounded-pill px-3 py-1 bg-light text-muted border">
+                                                <i class="fa fa-door-open me-1 fa-xs"></i>
+                                                <t t-esc="p.entries_per_day == 'one' and 'One entry/day' or 'Multiple entries/day'"/>
                                             </span>
                                         </t>
                                     </div>
@@ -193,55 +261,156 @@
                         </t>
                     </t>
                     <t t-else="">
-                        <p class="text-muted small mb-0">No delivery passes yet.</p>
+                        <div class="text-center py-5">
+                            <i class="fa fa-truck fa-3x text-muted mb-3 opacity-25"></i>
+                            <p class="text-muted mb-0">No delivery passes created yet</p>
+                        </div>
                     </t>
                 </div>
             </div>
 
-<!--            Tabs + Surprise JS-->
+            <!-- Custom Styles -->
+            <style>
+                .delivery-icon {
+                    width: 72px;
+                    height: 72px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #ffd500 0%, #ffed4e 100%);
+                    box-shadow: 0 4px 12px rgba(255, 213, 0, 0.3);
+                    border: 3px solid white;
+                }
 
+                .btn-tab {
+                    position: relative;
+                    transition: all 0.3s ease;
+                }
+
+                .btn-tab.active {
+                    background: rgba(75, 44, 160, 0.05);
+                }
+
+                .btn-tab:hover:not(.active) {
+                    background: rgba(0, 0, 0, 0.02);
+                }
+
+                .tab-indicator {
+                    height: 3px;
+                    background: linear-gradient(90deg, #4b2ca0 0%, #667eea 100%);
+                    width: 50%;
+                    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+                }
+
+                .card-hover {
+                    transition: all 0.3s ease;
+                    border: 1px solid #e9ecef;
+                }
+
+                .card-hover:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
+                }
+
+                .form-control-lg, .form-select-lg {
+                    padding: 0.75rem 1rem;
+                    font-size: 1rem;
+                }
+
+                .form-control:focus, .form-select:focus {
+                    border-color: #4b2ca0 !important;
+                    box-shadow: 0 0 0 0.25rem rgba(75, 44, 160, 0.15);
+                }
+
+                .btn-submit {
+                    background: linear-gradient(135deg, #4b2ca0 0%, #667eea 100%);
+                    color: white;
+                    transition: all 0.3s ease;
+                }
+
+                .btn-submit:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 15px rgba(75, 44, 160, 0.3);
+                }
+
+                .mode-badge {
+                    background: linear-gradient(135deg, #4b2ca0 0%, #667eea 100%);
+                    color: white;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                }
+
+                .status-badge {
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                }
+
+                .badge {
+                    font-weight: 500;
+                    padding: 0.35em 0.65em;
+                }
+            </style>
+
+            <!-- JavaScript -->
             <script>
-                (function () {
-                const onceTab = document.querySelector('.once-tab');
-                const freqTab = document.querySelector('.freq-tab');
-                const onceBlock = document.querySelector('.once-block');
-                const freqBlock = document.querySelector('.freq-block');
-                const underline = document.querySelector('.once-underline');
-                const modeInput = document.querySelector('.mode-input');
-                const surpriseChk = document.querySelector('.surprise-checkbox');
-                const leaveWrap = document.querySelector('.leave-gate-wrapper');
-                const leaveChk = document.querySelector('.leave-gate-checkbox');
-                const surpriseInfo = document.querySelector('.surprise-info');
-                if (!onceTab) { return; }
-                onceTab.addEventListener('click', function () {
-                onceTab.classList.add('active');
-                freqTab.classList.remove('active');
-                onceBlock.classList.remove('d-none');
-                freqBlock.classList.add('d-none');
-                underline.style.marginLeft = '0';
-                modeInput.value = 'once';
+                document.addEventListener('DOMContentLoaded', function() {
+                    const onceTab = document.querySelector('.once-tab');
+                    const freqTab = document.querySelector('.freq-tab');
+                    const onceBlock = document.querySelector('.once-block');
+                    const freqBlock = document.querySelector('.freq-block');
+                    const underline = document.querySelector('.tab-indicator');
+                    const modeInput = document.querySelector('.mode-input');
+                    const surpriseChk = document.querySelector('.surprise-checkbox');
+                    const leaveWrap = document.querySelector('.leave-gate-wrapper');
+                    const leaveChk = document.querySelector('.leave-gate-checkbox');
+                    const surpriseInfo = document.querySelector('.surprise-info');
+
+                    if (!onceTab) return;
+
+                    // Tab Switching
+                    onceTab.addEventListener('click', function() {
+                        onceTab.classList.add('active');
+                        freqTab.classList.remove('active');
+                        onceTab.querySelector('span').classList.add('text-primary');
+                        onceTab.querySelector('span').classList.remove('text-muted');
+                        freqTab.querySelector('span').classList.add('text-muted');
+                        freqTab.querySelector('span').classList.remove('text-primary');
+
+                        onceBlock.classList.remove('d-none');
+                        freqBlock.classList.add('d-none');
+                        underline.style.marginLeft = '0';
+                        underline.style.width = '50%';
+                        modeInput.value = 'once';
+                    });
+
+                    freqTab.addEventListener('click', function() {
+                        freqTab.classList.add('active');
+                        onceTab.classList.remove('active');
+                        freqTab.querySelector('span').classList.add('text-primary');
+                        freqTab.querySelector('span').classList.remove('text-muted');
+                        onceTab.querySelector('span').classList.add('text-muted');
+                        onceTab.querySelector('span').classList.remove('text-primary');
+
+                        onceBlock.classList.add('d-none');
+                        freqBlock.classList.remove('d-none');
+                        underline.style.marginLeft = '50%';
+                        underline.style.width = '50%';
+                        modeInput.value = 'frequent';
+                    });
+
+                    // Surprise Delivery Toggle
+                    function toggleSurprise() {
+                        if (surpriseChk.checked) {
+                            leaveWrap.classList.add('d-none');
+                            leaveChk.checked = false;
+                            surpriseInfo.classList.remove('d-none');
+                        } else {
+                            leaveWrap.classList.remove('d-none');
+                            surpriseInfo.classList.add('d-none');
+                        }
+                    }
+
+                    surpriseChk.addEventListener('change', toggleSurprise);
+                    toggleSurprise();
                 });
-                freqTab.addEventListener('click', function () {
-                freqTab.classList.add('active');
-                onceTab.classList.remove('active');
-                onceBlock.classList.add('d-none');
-                freqBlock.classList.remove('d-none');
-                underline.style.marginLeft = '50%';
-                modeInput.value = 'frequent';
-                });
-                function toggleSurprise() {
-                if (surpriseChk.checked) {
-                leaveWrap.classList.add('d-none');
-                leaveChk.checked = false;
-                surpriseInfo.classList.remove('d-none');
-                } else {
-                leaveWrap.classList.remove('d-none');
-                surpriseInfo.classList.add('d-none');
-                }
-                }
-                surpriseChk.addEventListener('change', toggleSurprise);
-                toggleSurprise();
-                })();
             </script>
         </t>
     </template>

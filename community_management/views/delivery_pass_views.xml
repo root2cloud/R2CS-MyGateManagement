@@ -84,11 +84,7 @@
     </record>
 
 
-    <menuitem id="menu_delivery_pass"
-              name="Delivery Passes"
-              parent="menu_flat_transaction_menu"
-              action="action_delivery_pass"
-              sequence="10"/>
+
 </odoo>
 
 

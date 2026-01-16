@@ -74,10 +74,6 @@
         </field>
     </record>
 
-    <menuitem id="menu_res_partner_category"
-              name="Categories"
-              parent="menu_master_data_root"
-              action="action_res_partner_category"
-              sequence="10"/>
+
 
 </odoo>

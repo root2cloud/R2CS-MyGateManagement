@@ -1,0 +1,8 @@
+<odoo>
+    <record id="visiting_help_entry_portal_rule" model="ir.rule">
+        <field name="name">Portal: Own Visiting Help Entries</field>
+        <field name="model_id" ref="model_community_visiting_help_entry"/>
+        <field name="domain_force">[('tenant_id','=',user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+</odoo>

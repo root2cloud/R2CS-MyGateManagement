@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main Portal Page: My Community Flats -->
+    <template id="portal_my_flats" name="My Community Flats">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">My Flats &amp; Availability</t>
+
+            <!-- Custom Styles -->
+            <style>
+                .flat-portal-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                }
+
+                .gradient-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                }
+
+                .stat-card {
+                border-radius: 16px;
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+                }
+
+                .stat-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+                }
+
+                .nav-pills-custom .nav-link {
+                background: #f8f9fa;
+                color: #555;
+                font-weight: 600;
+                padding: 14px 24px;
+                border-radius: 50px;
+                transition: all 0.35s ease;
+                margin: 0 4px;
+                }
+
+                .nav-pills-custom .nav-link.active {
+                background: linear-gradient(90deg, #667eea, #764ba2) !important;
+                color: white !important;
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+                transform: translateY(-2px);
+                }
+
+                .flat-card {
+                border-radius: 16px;
+                overflow: hidden;
+                border: none;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+                transition: all 0.4s ease;
+                background: white;
+                cursor: pointer;
+                }
+
+                .flat-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+                }
+
+                .flat-image-container {
+                position: relative;
+                overflow: hidden;
+                }
+
+                .flat-image-container img {
+                transition: transform 0.7s ease;
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+                }
+
+                .flat-card:hover .flat-image-container img {
+                transform: scale(1.12);
+                }
+
+                .status-badge {
+                font-size: 0.95rem;
+                font-weight: 600;
+                padding: 8px 16px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                border-radius: 50px !important;
+                }
+
+                @media (max-width: 768px) {
+                .stat-card .display-4 {
+                font-size: 2.5rem;
+                }
+                .nav-pills-custom .nav-link {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+                }
+                }
+            </style>
+
+            <div class="container flat-portal-container my-5">
+                <!-- Header -->
+                <div class="text-center mb-5 py-5 gradient-header">
+                    <h1 class="display-4 fw-bold mb-2">Community Flats Overview</h1>
+                    <p class="lead opacity-90 fs-4">Click any flat to see detailed information</p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="stat-card text-center py-4"
+                             style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
+                            <h5 class="fw-bold mb-2">Total Flats</h5>
+                            <div class="display-4 fw-bolder" t-esc="len(all_flats)"/>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="stat-card text-center py-4"
+                             style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);">
+                            <h5 class="fw-bold mb-2 text-success">Available Now</h5>
+                            <div class="display-4 fw-bolder text-success" t-esc="len(available_flats)"/>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="stat-card text-center py-4"
+                             style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                            <h5 class="fw-bold mb-2 text-danger">Occupied</h5>
+                            <div class="display-4 fw-bolder text-danger" t-esc="len(occupied_flats)"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs Navigation -->
+                <ul class="nav nav-pills nav-pills-custom justify-content-center mb-5" id="flatsTabs" role="tablist">
+                    <li class="nav-item mx-1" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all"
+                                type="button" role="tab">All Flats
+                        </button>
+                    </li>
+                    <li class="nav-item mx-1" role="presentation">
+                        <button class="nav-link" id="available-tab" data-bs-toggle="pill" data-bs-target="#available"
+                                type="button" role="tab">Available
+                        </button>
+                    </li>
+                    <li class="nav-item mx-1" role="presentation">
+                        <button class="nav-link" id="occupied-tab" data-bs-toggle="pill" data-bs-target="#occupied"
+                                type="button" role="tab">Occupied
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="flatsTabContent">
+                    <div class="tab-pane fade show active" id="all" role="tabpanel">
+                        <t t-call="community_management.portal_flats_grid">
+                            <t t-set="flats" t-value="all_flats"/>
+                        </t>
+                    </div>
+
+                    <div class="tab-pane fade" id="available" role="tabpanel">
+                        <t t-call="community_management.portal_flats_grid">
+                            <t t-set="flats" t-value="available_flats"/>
+                        </t>
+                    </div>
+
+                    <div class="tab-pane fade" id="occupied" role="tabpanel">
+                        <t t-call="community_management.portal_flats_grid">
+                            <t t-set="flats" t-value="occupied_flats"/>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <t t-if="not all_flats">
+                    <div class="text-center py-5 my-5 bg-light rounded-4 shadow-sm">
+                        <i class="fa fa-building fa-5x text-muted mb-4 d-block"></i>
+                        <h4 class="text-muted mb-3">No flats found</h4>
+                        <p class="text-secondary">Contact your community administration for more information.</p>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- Reusable Flat Cards Grid Template (clickable) -->
+    <template id="portal_flats_grid">
+        <div class="row g-4">
+            <t t-foreach="flats" t-as="flat">
+                <div class="col-lg-4 col-md-6">
+                    <a t-att-href="'/my/flat/' + str(flat.id)" class="text-decoration-none text-reset">
+                        <div class="card flat-card h-100 position-relative">
+                            <!-- Status Badge -->
+                            <span class="position-absolute top-0 end-0 m-3 status-badge"
+                                  t-attf-style="background-color: #{ 'var(--bs-success)' if flat.status == 'available' else 'var(--bs-danger)' }; color: white;">
+                                <t t-esc="flat.status.capitalize()"/>
+                            </span>
+
+                            <!-- Image -->
+                            <div class="flat-image-container ratio ratio-4x3 bg-dark">
+                                <t t-if="flat.flat_image">
+                                    <img t-attf-src="/web/image/flat.management/{{ flat.id }}/flat_image"
+                                         t-att-alt="flat.name + ' image'"
+                                         class="card-img-top object-fit-cover"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="d-flex align-items-center justify-content-center h-100 text-white-50">
+                                        <i class="fa fa-building fa-5x opacity-50"></i>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold mb-1">
+                                    <t t-esc="flat.name"/>
+                                </h5>
+
+                                <p class="text-muted mb-3 small">
+                                    <i class="fa fa-building me-2"></i>
+                                    <t t-esc="flat.building_id.name or '-'"/>
+                                    •
+                                    <i class="fa fa-layer-group ms-2 me-2"></i>
+                                    <t t-esc="flat.floor_id.name or 'N/A'"/>
+                                </p>
+
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="badge bg-light text-dark px-3 py-2">
+                                            <t t-esc="flat.flat_type_id.name or 'Standard'"/>
+                                        </span>
+
+                                        <t t-if="flat.rent_price">
+                                            <strong class="text-primary fs-5">
+                                                <t t-esc="flat.currency_id.symbol or '$'"/>
+                                                <t t-esc="flat.rent_price"/>
+                                                <small class="text-muted">/mo</small>
+                                            </strong>
+                                        </t>
+                                    </div>
+
+                                    <div class="small text-muted">
+                                        <t t-if="flat.tenant_id">
+                                            <i class="fa fa-user me-1"></i>
+                                            Tenant:
+                                            <strong t-esc="flat.tenant_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <i class="fa fa-user-slash me-1 text-muted"></i>
+                                            No tenant assigned
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </t>
+        </div>
+    </template>
+
+    <!-- Flat Detail Page -->
+    <!-- Flat Detail Page - Updated with Skype & WhatsApp Web -->
+    <template id="portal_flat_detail" name="Flat Detail - Portal">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">Flat
+                <t t-esc="flat.name"/>
+            </t>
+
+            <div class="container my-5">
+
+                <!-- Header / Hero -->
+                <div class="card bg-dark text-white mb-5 overflow-hidden shadow-lg">
+                    <div class="position-relative">
+                        <t t-if="flat.flat_image">
+                            <img t-attf-src="/web/image/flat.management/{{ flat.id }}/flat_image"
+                                 class="card-img" style="height: 350px; object-fit: cover; opacity: 0.75;"/>
+                        </t>
+                        <div class="position-absolute bottom-0 start-0 end-0 p-5 bg-gradient-dark">
+                            <h1 class="display-4 fw-bold mb-2">
+                                <t t-esc="flat.name"/>
+                            </h1>
+                            <p class="lead mb-1">
+                                <i class="fa fa-building me-2"></i>
+                                <t t-esc="flat.building_id.name or '-'"/>
+                                •
+                                <i class="fa fa-layer-group ms-2 me-2"></i>
+                                <t t-esc="flat.floor_id.name or 'N/A'"/>
+                            </p>
+                            <span t-attf-class="badge fs-5 px-4 py-2 bg-#{ 'success' if flat.status == 'available' else 'danger' }">
+                                <t t-esc="flat.status.capitalize()"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Info Row -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="text-muted mb-1">Area</h5>
+                                <h3 class="fw-bold">
+                                    <t t-esc="flat.area"/>
+                                    sq.ft
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="text-muted mb-1">Type</h5>
+                                <h3 class="fw-bold">
+                                    <t t-esc="flat.flat_type_id.name or '—'"/>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="text-muted mb-1">Rent</h5>
+                                <h3 class="fw-bold text-success">
+                                    <t t-if="flat.rent_price">
+                                        <t t-esc="flat.currency_id.symbol"/>
+                                        <t t-esc="flat.rent_price"/>
+                                        <small>/mo</small>
+                                    </t>
+                                    <t t-else="">—</t>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Resident Info - Updated Contact Buttons -->
+                <t t-if="flat.tenant_id">
+                    <div class="card mb-5 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Current Resident</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Tenant:</strong>
+                                    <t t-esc="flat.tenant_id.name"/>
+                                    <br/>
+                                    <strong>Lease Owner:</strong>
+                                    <t t-esc="flat.lease_owner_id.name or '—'"/>
+                                    <br/>
+                                    <strong>Tenant Email:</strong>
+                                    <t t-esc="flat.tenant_id.email or '—'"/>
+                                    <br/>
+                                    <strong>Tenant Mobile:</strong>
+                                    <t t-esc="flat.tenant_id.mobile or '—'"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Period:</strong>
+                                    <br/>
+                                    <t t-esc="flat.lease_start_date or '—'"/>
+                                    →
+                                    <t t-esc="flat.lease_end_date or 'Ongoing'"/>
+                                </div>
+                            </div>
+
+                            <!-- Contact Buttons -->
+                            <div class="mt-4 text-center">
+                                <t t-if="flat.tenant_id.mobile">
+                                    <a t-att-href="'callto:' + flat.tenant_id.mobile"
+                                       class="btn btn-primary me-3 mb-2"
+                                       target="_blank" rel="noopener noreferrer">
+                                        <i class="fa fa-phone me-1"></i>
+                                        Connect
+<!--                                        all via Skype-->
+                                    </a>
+                                    <!-- Skype Call Button -->
+                                    <!--                                    <a t-att-href="'skype:' + flat.tenant_id.mobile + '?call'"-->
+                                    <!--                                       class="btn btn-primary me-3 mb-2"-->
+                                    <!--                                       target="_blank" rel="noopener noreferrer">-->
+                                    <!--                                        <i class="fa fa-phone me-1"></i>-->
+                                    <!--                                        Call via Skype-->
+                                    <!--                                    </a>-->
+
+                                    <!-- WhatsApp Web Button -->
+                                    <a t-att-href="'https://web.whatsapp.com/send?phone=' + flat.tenant_id.mobile.replace('+', '').replace(' ', '')"
+                                       class="btn btn-success mb-2"
+                                       target="_blank" rel="noopener noreferrer">
+                                        <i class="fa fa-whatsapp me-1"></i>
+                                        Message on WhatsApp
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <p class="text-muted">No mobile number available for contact</p>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Rooms Section -->
+                <h3 class="mb-4">Rooms in this flat</h3>
+
+                <t t-if="rooms">
+                    <div class="row g-4">
+                        <t t-foreach="rooms" t-as="room">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="ratio ratio-4x3 bg-dark">
+                                        <t t-if="room.room_image">
+                                            <img t-attf-src="/web/image/room.management/{{ room.id }}/room_image"
+                                                 class="object-fit-cover"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="d-flex align-items-center justify-content-center text-white-50">
+                                                <i class="fa fa-home fa-4x opacity-50"></i>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">
+                                            <t t-esc="room.name"/>
+                                        </h5>
+                                        <div class="text-muted">
+                                            <t t-esc="room.room_type.replace('_', ' ').title()"/>
+                                            •
+                                            <strong>
+                                                <t t-esc="room.area"/>
+                                            </strong>
+                                            sq.ft
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="alert alert-info text-center py-5">
+                        No rooms defined for this flat yet.
+                    </div>
+                </t>
+
+                <!-- Back Button -->
+                <div class="text-center mt-5">
+                    <a href="/my/flats" class="btn btn-lg btn-outline-primary px-5">
+                        ← Back to all flats
+                    </a>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -287,34 +287,7 @@
         <field name="context">{}</field>
     </record>
 
-    <menuitem id="menu_contact_management" name="Contacts" parent="tenant_details_menu"
-              action="action_res_partner_contacts" sequence="30"/>
 
-
-    <!-- Main menu -->
-    <menuitem
-            id="menu_community_management_root"
-            name="Community Management"
-            sequence="10"
-    />
-
-    <!-- Master Data under Community Management -->
-    <menuitem
-            id="menu_master_data_root"
-            name="Master Data"
-            parent="menu_community_management_root"
-            sequence="20"
-    />
-
-
-    <!-- Communities submenu under Master Data -->
-    <menuitem
-            id="menu_community_management"
-            name="Communities"
-            parent="menu_master_data_root"
-            action="action_community_management"
-            sequence="10"
-    />
 
     <record id="view_partner_form_family_button" model="ir.ui.view">
         <field name="name">res.partner.family.smart.button</field>

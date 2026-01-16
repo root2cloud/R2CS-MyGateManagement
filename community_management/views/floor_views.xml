@@ -105,6 +105,5 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_floor_management" name="Floors" parent="menu_master_data_root"
-              action="action_floor_management" sequence="3"/>
+
 </odoo>

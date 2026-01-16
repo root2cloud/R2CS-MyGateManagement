@@ -1,62 +1,107 @@
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo import models, fields, api
+from datetime import date
 
-class Amenity(models.Model):
-    _name = 'amenity.amenity'
-    _description = 'Community Amenity'
+
+class CommunityAmenity(models.Model):
+    _name = 'community.amenity'
+    _description = 'Community Amenities'
 
     name = fields.Char(string='Amenity Name', required=True)
     description = fields.Text(string='Description')
-    image = fields.Image(string='Image')
-    slot_ids = fields.One2many('amenity.time.slot', 'amenity_id', string='Time Slots')
+    amenity_type = fields.Selection([
+        ('free', 'Free'),
+        ('paid', 'Paid')
+    ], string='Type', required=True, default='free')
+    amount = fields.Float(string='Amount (₹)', default=0.0)
+    max_booking_per_day = fields.Integer(string='Max Bookings Per Day', default=1)
     active = fields.Boolean(default=True)
+    booking_ids = fields.One2many('community.amenity.booking', 'amenity_id', string='Bookings')
 
-class AmenityTimeSlot(models.Model):
-    _name = 'amenity.time.slot'
-    _description = 'Amenity Time Slot'
-    _order = 'start_time'
+    @api.constrains('amenity_type', 'amount')
+    def _check_paid_amenity_amount(self):
+        for record in self:
+            if record.amenity_type == 'paid' and record.amount <= 0:
+                raise models.ValidationError('Paid amenity must have amount greater than 0')
 
-    amenity_id = fields.Many2one('amenity.amenity', string='Amenity', required=True, ondelete='cascade')
-    start_time = fields.Float(string='Start Time', required=True)
-    end_time = fields.Float(string='End Time', required=True)
-    display_name = fields.Char(string='Display Name',
-                               compute='_compute_display_name',
-                               store=True)
 
-    @api.depends('start_time', 'end_time')
-    def _compute_display_name(self):
-        for slot in self:
-            start_hour, start_minute = divmod(int(slot.start_time * 60), 60)
-            end_hour, end_minute = divmod(int(slot.end_time * 60), 60)
-            slot.display_name = f"{start_hour:02d}:{start_minute:02d} - {end_hour:02d}:{end_minute:02d}"
-
-class AmenityBooking(models.Model):
-    _name = 'amenity.booking'
+class CommunityAmenityBooking(models.Model):
+    _name = 'community.amenity.booking'
     _description = 'Amenity Booking'
-    _order = 'booking_date desc, time_slot_id'
 
-    amenity_id = fields.Many2one('amenity.amenity', string='Amenity', required=True, ondelete='cascade')
-    time_slot_id = fields.Many2one('amenity.time.slot', string='Time Slot', required=True, ondelete='cascade')
+    amenity_id = fields.Many2one('community.amenity', string='Amenity', required=True, ondelete='cascade')
+    partner_id = fields.Many2one('res.partner', string='User', required=True, ondelete='cascade')
     booking_date = fields.Date(string='Booking Date', required=True)
-    tenant_id = fields.Many2one('res.partner', string='Booked By', required=True)
+    remarks = fields.Text(string='Remarks')
+    attachment = fields.Binary(string='Attachment')
+    attachment_filename = fields.Char(string='Filename')
+    invoice_id = fields.Many2one('account.move', string='Invoice')
+    amount = fields.Float(string='Amount (₹)', compute='_compute_amount', store=True)
+    payment_status = fields.Selection([
+        ('unpaid', 'Unpaid'),
+        ('paid', 'Paid'),
+        ('partial', 'Partial'),
+        ('N/A', 'N/A')
+    ], string='Payment Status', default='N/A', tracking=True)
     state = fields.Selection([
-        ('confirmed', 'Confirmed'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
         ('cancelled', 'Cancelled')
-    ], string='Status', default='confirmed', required=True)
+    ], string='Status', default='pending', tracking=True)
 
-    payment_option = fields.Selection([
-        ('pay_now', 'Pay Now'),
-        ('pay_later', 'Pay Later')
-    ], string="Payment Option", default="pay_later")
-
-    _sql_constraints = [
-        ('unique_booking', 'unique(amenity_id, time_slot_id, booking_date)',
-         'This time slot has already been booked for the selected date.')
-    ]
+    @api.depends('amenity_id')
+    def _compute_amount(self):
+        for record in self:
+            if record.amenity_id.amenity_type == 'paid':
+                record.amount = record.amenity_id.amount
+            else:
+                record.amount = 0.0
 
     @api.constrains('booking_date')
     def _check_booking_date(self):
         for record in self:
-            if record.booking_date < fields.Date.today():
-                raise ValidationError(_("You cannot book an amenity for a past date."))
+            if record.booking_date < date.today():
+                raise models.ValidationError('Booking date cannot be in the past')
 
+    @api.constrains('amenity_id', 'booking_date')
+    def _check_daily_limit(self):
+        for record in self:
+            bookings = self.search([
+                ('amenity_id', '=', record.amenity_id.id),
+                ('booking_date', '=', record.booking_date),
+                ('state', '!=', 'cancelled'),
+                ('id', '!=', record.id)
+            ])
+            if len(bookings) >= record.amenity_id.max_booking_per_day:
+                raise models.ValidationError(
+                    f"Maximum {record.amenity_id.max_booking_per_day} bookings allowed for {record.booking_date}"
+                )
+
+    def create_invoice(self):
+        """Create invoice for paid amenity booking"""
+        if self.amenity_id.amenity_type != 'paid':
+            return
+
+        invoice_vals = {
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_id.id,
+            'ref': f'Amenity Booking - {self.amenity_id.name} - {self.booking_date}',
+            'invoice_line_ids': [(0, 0, {
+                'name': f'{self.amenity_id.name} - Booking on {self.booking_date}',
+                'quantity': 1,
+                'price_unit': self.amenity_id.amount,
+            })]
+        }
+
+        invoice = self.env['account.move'].sudo().create(invoice_vals)
+        self.invoice_id = invoice.id
+        self.payment_status = 'unpaid'
+
+    def is_payment_complete(self):
+        """Check if invoice is paid and update payment status"""
+        if self.invoice_id:
+            if self.invoice_id.payment_state == 'paid':
+                self.payment_status = 'paid'
+            elif self.invoice_id.payment_state == 'partial':
+                self.payment_status = 'partial'
+            else:
+                self.payment_status = 'unpaid'

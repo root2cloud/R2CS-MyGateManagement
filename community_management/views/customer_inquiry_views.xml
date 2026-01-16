@@ -110,7 +110,7 @@
         <field name="view_mode">kanban,list,form</field>
     </record>
 
+
     <!-- Menu -->
-    <menuitem id="menu_customer_inquiry" name="Customer Inquiries" parent="menu_community_management_root"
-              action="action_customer_inquiry" sequence="10"/>
+
 </odoo>

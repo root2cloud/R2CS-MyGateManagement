@@ -223,9 +223,5 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_pet_management"
-              name="Pets"
-              parent="tenant_details_menu"
-              action="action_pet_management"
-              sequence="7"/>
+
 </odoo>

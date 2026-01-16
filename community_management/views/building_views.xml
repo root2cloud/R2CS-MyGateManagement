@@ -44,6 +44,5 @@
         <field name="res_model">building.management</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem id="menu_building_management" name="Buildings" parent="menu_master_data_root"
-              action="action_building_management"/>
+
 </odoo>

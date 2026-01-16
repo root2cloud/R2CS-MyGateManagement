@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Rule 1: ALL users can read all active posts -->
+    <record id="community_post_rule_all_users_read" model="ir.rule">
+        <field name="name">Community Post: All Users Read Access</field>
+        <field name="model_id" ref="model_community_post"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="global" eval="True"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Rule 2: Users can create their own posts -->
+    <record id="community_post_rule_user_create" model="ir.rule">
+        <field name="name">Community Post: User Create Access</field>
+        <field name="model_id" ref="model_community_post"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="global" eval="True"/>
+        <field name="perm_create" eval="True"/>
+    </record>
+
+    <!-- Rule 3: Users can edit only their own posts -->
+    <record id="community_post_rule_user_edit_own" model="ir.rule">
+        <field name="name">Community Post: User Edit Own Posts</field>
+        <field name="model_id" ref="model_community_post"/>
+        <field name="domain_force">[('author_id', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Rules for Community Post Like model - all users can create -->
+    <record id="community_post_like_rule_all" model="ir.rule">
+        <field name="name">Community Post Like: All Users Access</field>
+        <field name="model_id" ref="model_community_post_like"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="global" eval="True"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Only restriction: Users can only edit/delete their own posts -->
+    <record id="community_post_rule_user_own" model="ir.rule">
+        <field name="name">Community Post: User Can Edit Own Posts</field>
+        <field name="model_id" ref="model_community_post"/>
+        <field name="domain_force">['|', ('author_id', '=', user.id), ('active', '=', True)]</field>
+        <field name="global" eval="False"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Users can create likes for any post -->
+    <record id="community_post_like_rule_all" model="ir.rule">
+        <field name="name">Community Post Like: All Access</field>
+        <field name="model_id" ref="model_community_post_like"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="global" eval="True"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Users can create views for any post -->
+    <record id="community_post_view_rule_all" model="ir.rule">
+        <field name="name">Community Post View: All Access</field>
+        <field name="model_id" ref="model_community_post_view"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="global" eval="True"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

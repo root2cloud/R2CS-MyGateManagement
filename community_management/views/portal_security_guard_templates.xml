@@ -135,11 +135,18 @@
                                                 </div>
                                                 <t t-if="member.phone">
                                                     <div class="col-4">
-                                                        <a t-att-href="'skype:' + member.phone + '?call'"
-                                                           class="btn btn-success w-100 h-100 d-flex align-items-center justify-content-center">
+                                                        <a t-att-href="'callto:' + member.phone"
+                                                           class="btn btn-primary"
+                                                           target="_blank" rel="noopener noreferrer">
                                                             <i class="fa fa-phone me-1"></i>
-                                                            <span class="d-none d-md-inline">Phone</span>
+                                                            Connect
+                                                            <!--                                        all via Skype-->
                                                         </a>
+                                                        <!--                                                        <a t-att-href="'skype:' + member.phone + '?call'"-->
+                                                        <!--                                                           class="btn btn-success w-100 h-100 d-flex align-items-center justify-content-center">-->
+                                                        <!--                                                            <i class="fa fa-phone me-1"></i>-->
+                                                        <!--                                                            <span class="d-none d-md-inline">Phone</span>-->
+                                                        <!--                                                        </a>-->
                                                     </div>
                                                     <div class="col-4">
                                                         <t t-set="whatsapp_number"
@@ -213,11 +220,18 @@
                                                 </div>
                                                 <t t-if="guard.phone">
                                                     <div class="col-4">
-                                                        <a t-att-href="'skype:' + guard.phone + '?call'"
-                                                           class="btn btn-success w-100 h-100 d-flex align-items-center justify-content-center">
+                                                        <a t-att-href="'callto:' + member.phone"
+                                                           class="btn btn-primary "
+                                                           target="_blank" rel="noopener noreferrer">
                                                             <i class="fa fa-phone me-1"></i>
-                                                            <span class="d-none d-md-inline">Phone</span>
+                                                            Connect
+                                                            <!--                                        all via Skype-->
                                                         </a>
+<!--                                                        <a t-att-href="'skype:' + guard.phone + '?call'"-->
+<!--                                                           class="btn btn-success w-100 h-100 d-flex align-items-center justify-content-center">-->
+<!--                                                            <i class="fa fa-phone me-1"></i>-->
+<!--                                                            <span class="d-none d-md-inline">Phone</span>-->
+<!--                                                        </a>-->
                                                     </div>
                                                     <div class="col-4">
                                                         <t t-set="whatsapp_number"

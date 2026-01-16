@@ -169,10 +169,17 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_guest_invite_form')})]"/>
     </record>
 
+    <record id="cron_expire_guest_invites" model="ir.cron">
+    <field name="name">Expire Guest Invites</field>
+    <field name="model_id" ref="model_guest_invite"/>
+    <field name="state">code</field>
+    <field name="code">model.cron_expire_invites()</field>
+    <field name="interval_number">1</field>  <!-- Every 1 unit -->
+    <field name="interval_type">hours</field>  <!-- Check hourly -->
+      <!-- Unlimited runs -->
+    <field name="active" eval="True"/>
+</record>
+
     <!-- MENU -->
-    <menuitem id="menu_guest_invite_root"
-              name="Guest Invites"
-              parent="menu_flat_transaction_menu"
-              action="action_guest_invite"
-              sequence="50"/>
+
 </odoo>

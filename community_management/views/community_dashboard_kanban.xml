@@ -9,8 +9,7 @@
     </record>
 
     <!-- Menu (adjust parent to your module's main menu) -->
-    <menuitem id="menu_community_dashboard_root" name="Community Dashboard" sequence="1"/>
-    <menuitem id="menu_community_dashboard" name="Overview Dashboard" parent="menu_community_dashboard_root" action="action_community_dashboard" sequence="10"/>
+
 
     <!-- Form View -->
     <record id="view_community_dashboard_form" model="ir.ui.view">

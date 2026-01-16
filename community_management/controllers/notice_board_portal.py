@@ -27,4 +27,4 @@ class NoticeBoardPortal(http.Controller):
         # Mark all as read
         partner.sudo().write({'last_notice_viewed': datetime.now()})
 
-        return request.render('community_management.portal_notice_board', values)
+        return request.render('community_management.portal_notice_boards', values)

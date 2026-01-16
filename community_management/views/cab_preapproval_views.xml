@@ -86,9 +86,5 @@
     </record>
 
     <!-- Menu (adjust parent to your real menu) -->
-    <menuitem id="menu_cab_preapproval_root"
-              name="Cab Pre-Approvals"
-              parent="menu_flat_transaction_menu"
-              action="action_cab_preapproval"
-              sequence="20"/>
+
 </odoo>

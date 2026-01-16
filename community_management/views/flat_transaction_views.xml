@@ -248,9 +248,5 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_flat_transaction_menu" name="Lease Transactions" parent="menu_community_management_root"
-              sequence="5"/>
 
-    <menuitem id="menu_flat_transaction" name="Lease Transactions" parent="menu_flat_transaction_menu"
-              action="action_flat_transaction" sequence="5"/>
 </odoo>

@@ -1,0 +1,902 @@
+<!-- visiting_help_portal_templates.xml -->
+<odoo>
+    <!-- Main List View Template -->
+    <template id="visiting_help_portal_my_entries" name="My Visiting Help Entries">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Visiting Help Entries</t>
+
+            <!-- Embedded CSS -->
+            <style>
+                /* Gradient Classes */
+                .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                }
+                .bg-gradient-info {
+                background: linear-gradient(135deg, #667eea 0%, #4facfe 100%) !important;
+                }
+                .bg-gradient-success {
+                background: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%) !important;
+                }
+                .bg-gradient-warning {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+                }
+                .bg-gradient-secondary {
+                background: linear-gradient(135deg, #868e96 0%, #495057 100%) !important;
+                }
+                .bg-gradient-light {
+                background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%) !important;
+                }
+
+                /* Card Hover Effects */
+                .card-hover:hover {
+                transform: translateY(-5px);
+                transition: all 0.3s ease;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+                }
+
+                /* Custom Badges */
+                .badge-gradient {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                }
+
+                /* Custom Button */
+                .btn-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                transition: all 0.3s ease;
+                }
+
+                .btn-gradient-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+                color: white;
+                }
+
+                /* Custom Table Styles */
+                .table-hover tbody tr:hover {
+                background-color: rgba(102, 126, 234, 0.05) !important;
+                }
+
+                /* Custom Checkbox */
+                .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border-color: #667eea !important;
+                }
+
+                /* Gap utility for flex items */
+                .gap-1 { gap: 0.25rem; }
+                .gap-2 { gap: 0.5rem; }
+                .gap-3 { gap: 1rem; }
+
+                /* Smooth Transitions */
+                .smooth-transition {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                /* Modal Styles */
+                .visiting-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1050;
+                overflow: hidden;
+                outline: 0;
+                background-color: rgba(0,0,0,0.5);
+                }
+
+                .visiting-modal.show {
+                display: block;
+                }
+
+                .visiting-modal-dialog {
+                position: relative;
+                width: auto;
+                margin: 10px;
+                pointer-events: none;
+                }
+
+                @media (min-width: 576px) {
+                .visiting-modal-dialog {
+                max-width: 500px;
+                margin: 30px auto;
+                }
+                }
+
+                .visiting-modal-content {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                pointer-events: auto;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid rgba(0,0,0,.2);
+                border-radius: 0.3rem;
+                outline: 0;
+                }
+
+                .visiting-modal-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                padding: 1rem 1rem;
+                border-bottom: 1px solid #dee2e6;
+                border-top-left-radius: 0.3rem;
+                border-top-right-radius: 0.3rem;
+                }
+
+                .visiting-modal-body {
+                position: relative;
+                flex: 1 1 auto;
+                padding: 1rem;
+                }
+
+                .visiting-modal-footer {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                padding: 1rem;
+                border-top: 1px solid #dee2e6;
+                }
+
+                .visiting-modal-backdrop {
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1040;
+                background-color: #000;
+                display: none;
+                }
+
+                .visiting-modal-backdrop.show {
+                opacity: 0.5;
+                }
+            </style>
+
+            <div class="container-fluid mt-4">
+                <!-- Header with Gradient -->
+                <div class="bg-gradient-primary rounded-lg p-4 mb-4 shadow-sm">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h2 class="h3 mb-0 text-white">
+                                <i class="fa fa-calendar-check-o mr-2"></i>
+                                Visiting Help Entries
+                            </h2>
+                            <p class="text-white-75 mb-0">
+                                Manage your visiting help requests and permissions
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <!-- Use data attributes instead of onclick -->
+                            <button type="button" class="btn btn-light btn-gradient-primary smooth-transition"
+                                    id="newEntryBtn">
+                                <i class="fa fa-plus mr-1"></i>
+                                New Entry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-gradient-info border-0 shadow-sm text-white h-100 card-hover smooth-transition">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h6 class="text-uppercase text-black-50 mb-1">Active Entries</h6>
+                                        <h2 class="mb-0">
+                                            <t t-esc="len(entries.filtered(lambda e: e.state == 'active'))"/>
+                                        </h2>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fa fa-check-circle fa-2x opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-gradient-success border-0 shadow-sm text-white h-100 card-hover smooth-transition">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h6 class="text-uppercase text-black-50 mb-1">One-Time Visits</h6>
+                                        <h2 class="mb-0">
+                                            <t t-esc="len(entries.filtered(lambda e: e.entry_type == 'once'))"/>
+                                        </h2>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fa fa-calendar fa-2x opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-gradient-warning border-0 shadow-sm text-white h-100 card-hover smooth-transition">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h6 class="text-uppercase text-black-50 mb-1">Frequent Visits</h6>
+                                        <h2 class="mb-0">
+                                            <t t-esc="len(entries.filtered(lambda e: e.entry_type == 'frequent'))"/>
+                                        </h2>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fa fa-repeat fa-2x opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entries Table -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0">My Visiting Entries</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Schedule</th>
+                                    <th>Validity</th>
+                                    <th>Company</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="not entries">
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5">
+                                            <div class="text-muted">
+                                                <i class="fa fa-inbox fa-3x mb-3"></i>
+                                                <p class="mb-0">No visiting help entries found</p>
+                                                <button type="button" class="btn btn-gradient-primary mt-3"
+                                                        id="firstEntryBtn">
+                                                    <i class="fa fa-plus mr-1"></i>
+                                                    Create Your First Entry
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-foreach="entries" t-as="entry">
+                                    <tr class="smooth-transition">
+                                        <td>
+                                            <span class="font-weight-bold">
+                                                <t t-esc="entry.category_id.name"/>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span t-attf-class="badge badge-gradient badge-{# 'info' if entry.entry_type == 'once' else 'success' #}">
+                                                <t t-esc="entry.entry_type"/>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <t t-if="entry.entry_type == 'once'">
+                                                <div>
+                                                    <small class="text-muted">Date:</small>
+                                                    <div>
+                                                        <t t-esc="entry.visit_date"/>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-muted">Time:</small>
+                                                    <div>
+                                                        <t t-esc="'{:.2f}'.format(entry.start_time)"/>
+                                                        hrs
+                                                    </div>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div>
+                                                    <small class="text-muted">Days:</small>
+                                                    <div>
+                                                        <t t-foreach="entry.day_ids" t-as="day" t-first="first">
+                                                            <span class="badge badge-light mr-1 mb-1">
+                                                                <t t-esc="day.name"/>
+                                                            </span>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-1">
+                                                    <small class="text-muted">Time:</small>
+                                                    <div>
+                                                        <t t-esc="'{:.2f}'.format(entry.time_from)"/>
+                                                        -
+                                                        <t t-esc="'{:.2f}'.format(entry.time_to)"/>
+                                                        hrs
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="entry.entry_type == 'once'">
+                                                <span class="badge badge-gradient">
+                                                    <t t-esc="dict(entry._fields['valid_for'].selection).get(entry.valid_for)"/>
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge badge-gradient">
+                                                    <t t-esc="dict(entry._fields['validity'].selection).get(entry.validity)"/>
+                                                </span>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="entry.company_name">
+                                                <t t-esc="entry.company_name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">-</span>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <span t-attf-class="badge badge-pill badge-{# 'success' if entry.state == 'active' else 'secondary' #} smooth-transition">
+                                                <t t-esc="entry.state"/>
+                                            </span>
+                                        </td>
+                                        <td class="text-right">
+                                            <a t-attf-href="/my/visiting-help/entry/#{entry.id}"
+                                               class="btn btn-sm btn-outline-primary smooth-transition">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Entry Modal -->
+            <div id="newEntryModal" class="visiting-modal" tabindex="-1">
+                <div class="visiting-modal-dialog modal-lg">
+                    <div class="visiting-modal-content">
+                        <div class="visiting-modal-header bg-gradient-primary text-white">
+                            <h5 class="modal-title">
+                                <i class="fa fa-plus mr-2"></i>New Visiting Help Entry
+                            </h5>
+                            <button type="button" class="close text-white" id="closeModalBtn">
+                                <span>&amp;times;</span>
+                            </button>
+                        </div>
+                        <!-- FIX: Added CSRF token to form -->
+                        <form id="entryForm" action="/my/visiting-help/entry/create" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="visiting-modal-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Category *</label>
+                                                <select name="category_id" class="form-control smooth-transition">
+                                                    <option value="">Select Category</option>
+                                                    <t t-foreach="categories" t-as="category">
+                                                        <option t-att-value="category.id">
+                                                            <t t-esc="category.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Entry Type *</label>
+                                                <select name="entry_type" class="form-control smooth-transition"
+                                                        id="entryTypeSelect">
+                                                    <option value="">Select Type</option>
+                                                    <option value="once">One-Time Visit</option>
+                                                    <option value="frequent">Frequent Visit</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- One-Time Visit Fields -->
+                                    <div id="onceFields" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Visit Date *</label>
+                                                    <input type="date" name="visit_date"
+                                                           class="form-control smooth-transition"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Start Time (Hours) *</label>
+                                                    <input type="number" step="0.01" name="start_time"
+                                                           class="form-control smooth-transition"
+                                                           placeholder="e.g., 9.00"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Valid For *</label>
+                                                    <select name="valid_for" class="form-control smooth-transition">
+                                                        <option value="">Select Duration</option>
+                                                        <option value="1">1 Hour</option>
+                                                        <option value="2">2 Hours</option>
+                                                        <option value="4">4 Hours</option>
+                                                        <option value="8">8 Hours</option>
+                                                        <option value="12">12 Hours</option>
+                                                        <option value="24">24 Hours</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Frequent Visit Fields -->
+                                    <div id="frequentFields" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Days of Week</label>
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <t t-foreach="week_days" t-as="day">
+                                                            <div class="form-check">
+                                                                <input type="checkbox"
+                                                                       class="custom-control-input smooth-transition"
+                                                                       t-att-id="'day_' + str(day.id)"
+                                                                       name="day_ids"
+                                                                       t-att-value="day.id"/>
+
+                                                                <label t-att-class="'custom-control-label badge badge-light smooth-transition'"
+                                                                       t-att-for="'day_' + str(day.id)">
+                                                                    <t t-esc="day.name"/> <!-- or day.name_get() or whatever displays the day -->
+                                                                </label>
+                                                            </div>
+                                                            <!--                                                            <div class="custom-control custom-checkbox">-->
+                                                            <!--                                                                <input type="checkbox" class="custom-control-input smooth-transition" t-attf-id="day_{{ day.id }}" name="day_ids" t-attf-value="{{ day.id }}"/>-->
+
+
+                                                            <!--&lt;!&ndash;                                                                <input type="checkbox"&ndash;&gt;-->
+                                                            <!--&lt;!&ndash;                                                                       class="custom-control-input smooth-transition"&ndash;&gt;-->
+                                                            <!--&lt;!&ndash;                                                                       t-att-id="'day_' + day.id"&ndash;&gt;-->
+                                                            <!--&lt;!&ndash;                                                                       name="day_ids"&ndash;&gt;-->
+                                                            <!--&lt;!&ndash;                                                                       t-att-value="day.id"/>&ndash;&gt;-->
+                                                            <!--                                                                <label t-att-class="'custom-control-label badge badge-light smooth-transition'"-->
+                                                            <!--                                                                       t-att-for="'day_' + day.id">-->
+                                                            <!--                                                                    <t t-esc="day.name"/>-->
+                                                            <!--                                                                </label>-->
+                                                            <!--                                                            </div>-->
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Time From (Hours) *</label>
+                                                    <input type="number" step="0.01" name="time_from"
+                                                           class="form-control smooth-transition"
+                                                           placeholder="e.g., 9.00"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Time To (Hours) *</label>
+                                                    <input type="number" step="0.01" name="time_to"
+                                                           class="form-control smooth-transition"
+                                                           placeholder="e.g., 17.00"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Validity *</label>
+                                                    <select name="validity" class="form-control smooth-transition">
+                                                        <option value="">Select Validity</option>
+                                                        <option value="1w">1 Week</option>
+                                                        <option value="15d">15 Days</option>
+                                                        <option value="1m">1 Month</option>
+                                                        <option value="6m">6 Months</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Entries Per Day *</label>
+                                                    <select name="entries_per_day"
+                                                            class="form-control smooth-transition">
+                                                        <option value="">Select Option</option>
+                                                        <option value="one">One Entry</option>
+                                                        <option value="multiple">Multiple Entries</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Common Fields -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Company Name</label>
+                                                <input type="text" name="company_name"
+                                                       class="form-control smooth-transition" placeholder="Optional"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="visiting-modal-footer">
+                                <button type="button" class="btn btn-secondary smooth-transition" id="cancelModalBtn">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-gradient-primary smooth-transition">
+                                    <i class="fa fa-check mr-1"></i>Create Entry
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Backdrop -->
+            <div id="modalBackdrop" class="visiting-modal-backdrop"></div>
+
+            <!-- JavaScript in a script tag at the end -->
+            <script>
+                // Wait for DOM to be fully loaded
+                document.addEventListener('DOMContentLoaded', function() {
+                // Get elements
+                const newEntryBtn = document.getElementById('newEntryBtn');
+                const firstEntryBtn = document.getElementById('firstEntryBtn');
+                const closeModalBtn = document.getElementById('closeModalBtn');
+                const cancelModalBtn = document.getElementById('cancelModalBtn');
+                const modal = document.getElementById('newEntryModal');
+                const backdrop = document.getElementById('modalBackdrop');
+                const entryTypeSelect = document.getElementById('entryTypeSelect');
+                const onceFields = document.getElementById('onceFields');
+                const frequentFields = document.getElementById('frequentFields');
+                const entryForm = document.getElementById('entryForm');
+
+                // Function to open modal
+                function openModal() {
+                modal.style.display = 'block';
+                backdrop.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                }
+
+                // Function to close modal
+                function closeModal() {
+                modal.style.display = 'none';
+                backdrop.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                entryForm.reset();
+                toggleEntryFields();
+                }
+
+                // Function to toggle fields based on entry type
+                function toggleEntryFields() {
+                const entryType = entryTypeSelect.value;
+
+                if (entryType === 'once') {
+                onceFields.style.display = 'block';
+                frequentFields.style.display = 'none';
+                } else if (entryType === 'frequent') {
+                onceFields.style.display = 'none';
+                frequentFields.style.display = 'block';
+                } else {
+                onceFields.style.display = 'none';
+                frequentFields.style.display = 'none';
+                }
+                }
+
+                // Event Listeners
+                if (newEntryBtn) {
+                newEntryBtn.addEventListener('click', openModal);
+                }
+
+                if (firstEntryBtn) {
+                firstEntryBtn.addEventListener('click', openModal);
+                }
+
+                if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', closeModal);
+                }
+
+                if (cancelModalBtn) {
+                cancelModalBtn.addEventListener('click', closeModal);
+                }
+
+                // Close modal when clicking on backdrop
+                backdrop.addEventListener('click', closeModal);
+
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' &amp; modal.style.display === 'block') {
+                closeModal();
+                }
+                });
+
+                // Toggle fields when entry type changes
+                if (entryTypeSelect) {
+                entryTypeSelect.addEventListener('change', toggleEntryFields);
+                }
+
+                // Initialize fields
+                toggleEntryFields();
+
+                // Prevent form submission if validation fails
+                entryForm.addEventListener('submit', function(event) {
+                const categoryId = entryForm.querySelector('[name="category_id"]').value;
+                const entryType = entryForm.querySelector('[name="entry_type"]').value;
+
+                if (!categoryId || !entryType) {
+                event.preventDefault();
+                alert('Please fill in all required fields.');
+                return false;
+                }
+
+                // Additional validation based on entry type
+                if (entryType === 'once') {
+                const visitDate = entryForm.querySelector('[name="visit_date"]').value;
+                const startTime = entryForm.querySelector('[name="start_time"]').value;
+                const validFor = entryForm.querySelector('[name="valid_for"]').value;
+
+                if (!visitDate || !startTime || !validFor) {
+                event.preventDefault();
+                alert('Please fill in all required fields for one-time visit.');
+                return false;
+                }
+                } else {
+                const timeFrom = entryForm.querySelector('[name="time_from"]').value;
+                const timeTo = entryForm.querySelector('[name="time_to"]').value;
+                const validity = entryForm.querySelector('[name="validity"]').value;
+                const entriesPerDay = entryForm.querySelector('[name="entries_per_day"]').value;
+
+                if (!timeFrom || !timeTo || !validity || !entriesPerDay) {
+                event.preventDefault();
+                alert('Please fill in all required fields for frequent visit.');
+                return false;
+                }
+                }
+
+                // Form is valid, allow submission
+                return true;
+                });
+                });
+            </script>
+        </t>
+    </template>
+
+    <!-- Entry Detail View Template -->
+    <template id="visiting_help_portal_entry_detail" name="Visiting Help Entry Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Visiting Help Entry Details</t>
+
+            <style>
+                .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                }
+                .bg-gradient-secondary {
+                background: linear-gradient(135deg, #868e96 0%, #495057 100%) !important;
+                }
+                .bg-gradient-light {
+                background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%) !important;
+                }
+                .badge-gradient {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                }
+                .smooth-transition {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .card-hover:hover {
+                transform: translateY(-5px);
+                transition: all 0.3s ease;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+                }
+            </style>
+
+            <div class="container-fluid mt-4">
+                <!-- Back Button -->
+                <div class="mb-4">
+                    <a href="/my/visiting-help" class="btn btn-outline-secondary smooth-transition">
+                        <i class="fa fa-arrow-left mr-1"></i>
+                        Back to List
+                    </a>
+                </div>
+
+                <!-- Detail Card with Gradient Header -->
+                <div class="card border-0 shadow-sm overflow-hidden">
+                    <div t-attf-class="card-header bg-gradient-{# 'primary' if entry.state == 'active' else 'secondary' #} text-black py-3 smooth-transition">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-ticket mr-2"></i>
+                                    Visiting Help Entry #
+                                    <t t-esc="entry.id"/>
+                                </h4>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge badge-light badge-pill">
+                                    <t t-esc="entry.create_date.strftime('%Y-%m-%d %H:%M') if entry.create_date else ''"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-6">
+                                <div class="card bg-gradient-light border-0 mb-3 card-hover smooth-transition">
+                                    <div class="card-body">
+                                        <h6 class="text-uppercase text-muted mb-3">Basic Information</h6>
+                                        <div class="row mb-2">
+                                            <div class="col-5 text-muted">Category:</div>
+                                            <div class="col-7 font-weight-bold">
+                                                <t t-esc="entry.category_id.name"/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-5 text-muted">Type:</div>
+                                            <div class="col-7">
+                                                <span t-attf-class="badge badge-gradient badge-{# 'info' if entry.entry_type == 'once' else 'success' #}">
+                                                    <t t-esc="entry.entry_type"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-5 text-muted">Status:</div>
+                                            <div class="col-7">
+                                                <span t-attf-class="badge badge-pill badge-{# 'success' if entry.state == 'active' else 'secondary' #} smooth-transition">
+                                                    <t t-esc="entry.state"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div t-if="entry.company_name" class="row mb-2">
+                                            <div class="col-5 text-muted">Company:</div>
+                                            <div class="col-7">
+                                                <t t-esc="entry.company_name"/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-5 text-muted">Created By:</div>
+                                            <div class="col-7">
+                                                <t t-esc="entry.tenant_id.name"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-md-6">
+                                <div class="card bg-gradient-light border-0 mb-3 card-hover smooth-transition">
+                                    <div class="card-body">
+                                        <h6 class="text-uppercase text-muted mb-3">
+                                            <t t-esc="'Schedule Details'"/>
+                                        </h6>
+
+                                        <t t-if="entry.entry_type == 'once'">
+                                            <div class="row mb-2">
+                                                <div class="col-5 text-muted">Visit Date:</div>
+                                                <div class="col-7 font-weight-bold">
+                                                    <t t-esc="entry.visit_date"/>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5 text-muted">Start Time:</div>
+                                                <div class="col-7">
+                                                    <t t-esc="'{:.2f}'.format(entry.start_time)"/>
+                                                    hours
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5 text-muted">Valid For:</div>
+                                                <div class="col-7">
+                                                    <span class="badge badge-gradient">
+                                                        <t t-esc="dict(entry._fields['valid_for'].selection).get(entry.valid_for)"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </t>
+
+                                        <t t-else="">
+                                            <div class="row mb-2">
+                                                <div class="col-5 text-muted">Days:</div>
+                                                <div class="col-7">
+                                                    <t t-foreach="entry.day_ids" t-as="day">
+                                                        <span class="badge badge-light mr-1 mb-1 smooth-transition">
+                                                            <t t-esc="day.name"/>
+                                                        </span>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5 text-muted">Time Slot:</div>
+                                                <div class="col-7">
+                                                    <t t-esc="'{:.2f}'.format(entry.time_from)"/>
+                                                    -
+                                                    <t t-esc="'{:.2f}'.format(entry.time_to)"/>
+                                                    hours
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5 text-muted">Validity:</div>
+                                                <div class="col-7">
+                                                    <span class="badge badge-gradient">
+                                                        <t t-esc="dict(entry._fields['validity'].selection).get(entry.validity)"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5 text-muted">Entries/Day:</div>
+                                                <div class="col-7">
+                                                    <t t-esc="dict(entry._fields['entries_per_day'].selection).get(entry.entries_per_day)"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code Section -->
+                        <div class="text-center mt-4">
+                            <div class="card border-0 bg-gradient-light card-hover smooth-transition">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-3">
+                                        <i class="fa fa-qrcode mr-2"></i>Entry Access Code
+                                    </h6>
+                                    <div class="bg-white rounded-lg p-3 d-inline-block shadow-sm smooth-transition">
+                                        <div class="font-weight-bold text-monospace mb-1">
+                                            VH-<t t-esc="entry.id"/>-
+                                            <t t-esc="entry.tenant_id.id"/>
+                                        </div>
+                                        <small class="text-muted">Show this code at entry point for access</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card-footer bg-white text-right">
+                        <a href="/my/visiting-help" class="btn btn-outline-secondary mr-2">
+                            <i class="fa fa-arrow-left mr-1"></i>
+                            Back to List
+                        </a>
+                        <!--                        <button type="button" class="btn btn-outline-primary" onclick="window.print()">-->
+                        <!--                            <i class="fa fa-print mr-1"></i> Print-->
+                        <!--                        </button>-->
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                // Add any JavaScript needed for the detail view here
+                console.log('Visiting Help Entry Detail loaded');
+                });
+            </script>
+        </t>
+    </template>
+</odoo>

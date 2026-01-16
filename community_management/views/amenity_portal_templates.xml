@@ -1,115 +1,788 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    <!-- Portal Amenities List -->
+    <template id="portal_amenities" name="Amenities List">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="row mb-4 align-items-end">
+                    <div class="col-md-6">
+                        <h3 class="fw-bold" style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            Select Amenity
+                        </h3>
+                        <p class="text-muted">Browse and book from our premium amenities</p>
+                    </div>
+                    <div class="col-md-6">
+                        <form method="get" action="/my/amenities" class="d-flex">
+                            <div class="input-group shadow-sm" style="border-radius: 10px; overflow: hidden;">
+                                <input type="text"
+                                       name="search"
+                                       class="form-control border-0 py-3"
+                                       placeholder="Search amenities..."
+                                       t-att-value="search"
+                                       style="background: #f8f9fa;"/>
+                                <button type="submit" class="btn text-white border-0 px-4"
+                                        style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);">
+                                    <i class="fa fa-search me-2"></i>
+                                    Search
+                                </button>
+                            </div>
+                            <a href="/my/amenities" class="btn ms-2 shadow-sm px-4"
+                               style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 10px; border: none;">
+                                Clear
+                            </a>
+                        </form>
+                    </div>
+                </div>
 
-        <!-- 1. List of Amenities -->
-        <template id="portal_amenities_list" name="My Amenities">
-            <t t-call="website.layout">
-                <div class="container py-5">
-                    <h2 class="mb-4">Available Amenities</h2>
-                    <div class="row">
-                        <t t-foreach="amenities" t-as="amenity">
-                            <div class="col-lg-4 col-md-6 mb-4">
-                                <div class="card h-100 shadow-sm">
-                                    <t t-if="amenity.image">
-                                        <img t-att-src="website.image_url(amenity, 'image')" class="card-img-top" style="height:200px; object-fit:cover;"/>
-                                    </t>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title"><t t-esc="amenity.name"/></h5>
-                                        <p class="card-text text-muted"><t t-esc="amenity.description or 'No description'"/></p>
-                                        <a t-att-href="'/my/amenity/' + str(amenity.id)" class="btn btn-primary mt-auto">Book Now</a>
+                <t t-if="amenities">
+                    <div class="list-group shadow-sm" style="border-radius: 12px; overflow: hidden; border: none;">
+                        <t t-foreach="amenities" t-as="a">
+                            <a t-att-href="'/my/amenities/book/%s' % a.id"
+                               class="list-group-item list-group-item-action border-0 py-4"
+                               style="border-bottom: 1px solid rgba(0,0,0,0.05) !important; transition: all 0.3s ease;">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                                             style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                            <i class="fa fa-star text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1 fw-semibold" t-esc="a.name"/>
+                                            <t t-if="a.amenity_type == 'paid'">
+                                                <small class="text-muted fw-medium">
+                                                    <i class="fa fa-indian-rupee-sign me-1"></i>
+                                                    <t t-esc="'{:,.2f}'.format(a.amount)"/>
+                                                </small>
+                                            </t>
+                                            <t t-else="">
+                                                <small class="text-muted">No charge applicable</small>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <t t-if="a.amenity_type == 'free'">
+                                            <span class="badge rounded-pill px-3 py-2 fw-semibold me-2"
+                                                  style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);">
+                                                Free
+                                            </span>
+                                        </t>
+                                        <t t-elif="a.amenity_type == 'paid'">
+                                            <span class="badge rounded-pill px-3 py-2 fw-semibold text-white me-2"
+                                                  style="background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%);">
+                                                Paid
+                                            </span>
+                                        </t>
+                                        <span class="text-primary">
+                                            <i class="fa fa-chevron-right fa-lg"></i>
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         </t>
                     </div>
-                </div>
-            </t>
-        </template>
-
-        <!-- 2. Booking Page for One Amenity -->
-        <template id="portal_amenity_booking" name="Book Amenity">
-            <t t-call="website.layout">
-                <div class="container py-5">
-                    <h2>Book: <t t-esc="amenity.name"/></h2>
-
-                    <div class="row">
-                        <div class="col-md-5">
-                            <t t-if="amenity.image">
-                                <img t-att-src="website.image_url(amenity, 'image')" class="img-fluid rounded shadow" style="max-height:350px;"/>
-                            </t>
-                        </div>
-                        <div class="col-md-7">
-                            <p><strong>Description:</strong> <t t-esc="amenity.description or '—'"/></p>
-
-                            <div class="mb-4">
-                                <label class="form-label">Select Date</label>
-                                <input type="date" class="form-control" t-att-value="selected_date"
-                                       onchange="window.location.href='/my/amenity/'+amenity.id+'?selected_date='+this.value"/>
+                </t>
+                <t t-else="">
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                                 style="width: 100px; height: 100px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                                <i class="fa fa-search fa-2x" style="color: #667eea;"></i>
                             </div>
+                        </div>
+                        <h4 class="text-muted fw-semibold mb-3">No amenities found</h4>
+                        <p class="text-muted mb-4">Try a different search or clear filters</p>
+                        <a href="/my/amenities" class="btn text-white fw-semibold px-4 py-3"
+                           style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 10px;">
+                            View All Amenities
+                        </a>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
 
-                            <h5>Available Slots – <t t-esc="selected_date"/></h5>
+    <!-- Book Amenity Page -->
+    <template id="portal_amenity_book" name="Book Amenity">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <div class="d-flex align-items-center">
+                                <a href="/my/amenities" class="btn btn-light rounded-circle me-3 shadow-sm d-flex align-items-center justify-content-center"
+                                   style="width: 45px; height: 45px;">
+                                    <i class="fa fa-arrow-left"></i>
+                                </a>
+                                <div>
+                                    <h3 class="fw-bold mb-0" t-esc="amenity.name"/>
+                                    <small class="text-muted">Complete booking details</small>
+                                </div>
+                            </div>
+                            <div>
+                                <t t-if="amenity.amenity_type == 'free'">
+                                    <span class="badge rounded-pill px-4 py-3 fw-bold shadow"
+                                          style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%); font-size: 1rem;">
+                                        Free Amenity
+                                    </span>
+                                </t>
+                                <t t-elif="amenity.amenity_type == 'paid'">
+                                    <span class="badge rounded-pill px-4 py-3 fw-bold shadow text-white"
+                                          style="background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%); font-size: 1rem;">
+                                        <i class="fa fa-indian-rupee-sign me-1"></i>
+                                        <t t-esc="'{:,.2f}'.format(amenity.amount)"/>
+                                    </span>
+                                </t>
+                            </div>
+                        </div>
 
-                            <t t-if="available_slots">
-                                <form id="booking_form">
+                        <!-- Details Card -->
+                        <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px; overflow: hidden;">
+                            <div class="card-header border-0 text-white py-3"
+                                 style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="fa fa-info-circle me-2"></i>
+                                    Amenity Details
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <t t-if="amenity.description">
+                                    <p t-esc="amenity.description" class="mb-0 p-3 rounded"
+                                       style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);"/>
+                                </t>
+                                <t t-else="">
+                                    <p class="text-muted mb-0 p-3 rounded text-center"
+                                       style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                                        No description available for this amenity.
+                                    </p>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Booking Form -->
+                        <div class="card border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+                            <div class="card-header border-0 text-white py-4"
+                                 style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="fa fa-calendar-plus me-2"></i>
+                                    Book This Amenity
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <form method="post" action="/my/amenities/confirm" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                     <input type="hidden" name="amenity_id" t-att-value="amenity.id"/>
-                                    <input type="hidden" name="booking_date" t-att-value="selected_date"/>
 
-                                    <div class="row">
-                                        <t t-foreach="available_slots" t-as="slot">
-                                            <div class="col-6 mb-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="slot_ids" t-att-value="slot.id"/>
-                                                    <label class="form-check-label">
-                                                        <t t-esc="slot.display_name"/>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </t>
+                                    <!-- Booking Date -->
+                                    <div class="form-group mb-4">
+                                        <label for="booking_date" class="form-label fw-semibold mb-3">
+                                            <i class="fa fa-calendar-days me-2" style="color: #667eea;"></i>
+                                            Select Booking Date
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="date"
+                                                   name="booking_date"
+                                                   id="booking_date"
+                                                   class="form-control py-3"
+                                                   required="required"
+                                                   t-att-min="datetime.date.today().isoformat()"
+                                                   style="border-radius: 10px; border: 2px solid #e0e0e0;"/>
+                                            <span class="input-group-text bg-white border-0">
+                                                <i class="fa fa-calendar text-muted"></i>
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    <button type="button" class="btn btn-success mt-3" onclick="bookSlots()">
-                                        Book Selected Slots
+                                    <!-- Remarks -->
+                                    <div class="form-group mb-4">
+                                        <label for="remarks" class="form-label fw-semibold mb-3">
+                                            <i class="fa fa-comment-dots me-2" style="color: #667eea;"></i>
+                                            Remarks (Optional)
+                                        </label>
+                                        <textarea name="remarks"
+                                                  id="remarks"
+                                                  class="form-control py-3"
+                                                  rows="4"
+                                                  placeholder="Enter any special requests or comments..."
+                                                  style="border-radius: 10px; border: 2px solid #e0e0e0; resize: none;"></textarea>
+                                    </div>
+
+                                    <!-- Attachments -->
+                                    <div class="form-group mb-4">
+                                        <label for="attachments" class="form-label fw-semibold mb-3">
+                                            <i class="fa fa-paperclip me-2" style="color: #667eea;"></i>
+                                            Upload Files (Optional)
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="file"
+                                                   name="attachments"
+                                                   id="attachments"
+                                                   class="form-control py-3"
+                                                   style="border-radius: 10px; border: 2px solid #e0e0e0;"/>
+                                            <span class="input-group-text bg-white border-0">
+                                                <i class="fa fa-upload text-muted"></i>
+                                            </span>
+                                        </div>
+                                        <small class="text-muted mt-2">
+                                            <i class="fa fa-info-circle me-1"></i>
+                                            Upload supporting documents if needed
+                                        </small>
+                                    </div>
+
+                                    <!-- Payment Alert for Paid Amenities -->
+                                    <t t-if="amenity.amenity_type == 'paid'">
+                                        <div class="alert border-0 mb-4 p-4 rounded"
+                                             style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-left: 4px solid #f7971e;">
+                                            <h6 class="fw-bold mb-2" style="color: #f7971e;">
+                                                <i class="fa fa-credit-card me-2"></i>
+                                                Payment Required
+                                            </h6>
+                                            <p class="mb-2">An invoice of <span class="fw-bold">₹
+                                                <t t-esc="'{:,.2f}'.format(amenity.amount)"/></span> will be generated.</p>
+                                            <p class="mb-0">You can pay the invoice from <strong>My Account → Invoices</strong> after booking.</p>
+                                        </div>
+                                    </t>
+
+                                    <!-- Submit Button -->
+                                    <button type="submit"
+                                            class="btn btn-lg w-100 text-white fw-bold py-3 mt-2 shadow"
+                                            style="border-radius: 10px; font-size: 1.1rem;">
+                                        <t t-if="amenity.amenity_type == 'free'">
+                                            <div style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%); border-radius: 10px;">
+                                                <i class="fa fa-check-circle me-2"></i>
+                                                Confirm Booking
+                                            </div>
+                                        </t>
+                                        <t t-elif="amenity.amenity_type == 'paid'">
+                                            <div style="background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%); border-radius: 10px;">
+                                                <i class="fa fa-lock me-2"></i>
+                                                Proceed to Booking (Payment Required)
+                                            </div>
+                                        </t>
                                     </button>
                                 </form>
-                            </t>
-                            <t t-else="">
-                                <div class="alert alert-warning">No slots available on this date.</div>
-                            </t>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </t>
+    </template>
 
-                <script>
-                    function bookSlots() {
-                        const slots = Array.from(document.querySelectorAll('input[name="slot_ids"]:checked'))
-                                            .map(cb => cb.value);
-                        if (slots.length === 0) return alert('Please select at least one slot');
+    <!-- Booking Success Page -->
+    <template id="portal_booking_successs" name="Booking Success">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                            <div class="card-body p-5 text-center">
+                                <!-- Success Icon -->
+                                <div class="mb-4">
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                         style="width: 100px; height: 100px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                        <i class="fa fa-check fa-3x text-white"></i>
+                                    </div>
+                                </div>
 
-                        odoo.define('amenity.booking', function(require) {
-                            var ajax = require('web.ajax');
-                            ajax.jsonRpc('/my/amenity/book', 'call', {
-                                amenity_id: document.querySelector('input[name="amenity_id"]').value,
-                                booking_date: document.querySelector('input[name="booking_date"]').value,
-                                slot_ids: slots
-                            }).then(result => {
-                                alert(result.success ? result.message : result.message);
-                                if (result.success) location.reload();
-                            });
-                        });
-                    }
-                </script>
-            </t>
-        </template>
+                                <!-- Title -->
+                                <h2 class="fw-bold mb-3"
+                                    style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    Booking Successful!
+                                </h2>
 
-        <!-- 3. Add Menu in Portal (THIS WAS CAUSING THE PARSE ERROR BEFORE) -->
-        <template id="amenity_portal_menu" inherit_id="portal.portal_my_home_menu">
-            <xpath expr="//ul" position="inside">
-                <li class="nav-item">
-                    <a href="/my/amenities" class="nav-link">Amenities Booking</a>
-                </li>
-            </xpath>
-        </template>
+                                <!-- Booking Details -->
+                                <div class="text-start p-4 mb-4 rounded"
+                                     style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 12px;">
+                                    <p class="mb-3 d-flex justify-content-between align-items-center">
+                                        <span class="fw-semibold">Amenity:</span>
+                                        <span t-esc="booking.amenity_id.name" class="fw-bold text-end"/>
+                                    </p>
+                                    <p class="mb-3 d-flex justify-content-between align-items-center">
+                                        <span class="fw-semibold">Booking Date:</span>
+                                        <span t-esc="booking.booking_date.strftime('%d %B %Y')" class="fw-bold text-end"/>
+                                    </p>
+                                    <t t-if="booking.amenity_id.amenity_type == 'paid'">
+                                        <p class="mb-3 d-flex justify-content-between align-items-center">
+                                            <span class="fw-semibold">Amount Due:</span>
+                                            <span class="fw-bold text-end" style="color: #f7971e;">
+                                                <i class="fa fa-indian-rupee-sign"></i>
+                                                <t t-esc="'{:,.2f}'.format(booking.amount)"/>
+                                            </span>
+                                        </p>
+                                        <div class="alert border-0 mt-3 p-3 rounded"
+                                             style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);">
+                                            <p class="mb-0 fw-semibold" style="color: #f7971e;">
+                                                <i class="fa fa-exclamation-circle me-2"></i>
+                                                Payment Required: Please pay the invoice from <strong>My Account → Invoices</strong>
+                                            </p>
+                                        </div>
+                                    </t>
+                                </div>
 
-    </data>
+                                <!-- Confirmation Message -->
+                                <p class="text-muted mb-4">
+                                    <i class="fa fa-envelope me-2"></i>
+                                    A confirmation email has been sent to your registered email address.
+                                </p>
+
+                                <!-- Action Buttons -->
+                                <div class="d-grid gap-3">
+                                    <t t-if="booking.amenity_id.amenity_type == 'paid'">
+                                        <a href="/my/invoices"
+                                           class="btn py-3 fw-bold text-white shadow"
+                                           style="background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%); border-radius: 10px;">
+                                            <i class="fa fa-file-invoice me-2"></i>
+                                            Go to Invoices &amp; Pay
+                                        </a>
+                                    </t>
+                                    <a href="/my/amenities"
+                                       class="btn py-3 fw-bold shadow"
+                                       style="background: transparent; border: 2px solid #667eea; color: #667eea; border-radius: 10px;">
+                                        <i class="fa fa-building me-2"></i>
+                                        Browse More Amenities
+                                    </a>
+                                    <a href="/my/amenities/bookings"
+                                       class="btn py-3 fw-bold text-white shadow"
+                                       style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 10px;">
+                                        <i class="fa fa-list-alt me-2"></i>
+                                        View My Bookings
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- My Bookings Page -->
+    <template id="portal_my_bookings" name="My Bookings">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="fw-bold" style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            My Bookings
+                        </h3>
+                        <p class="text-muted">Track all your amenity bookings and payments</p>
+                    </div>
+                    <a href="/my/amenities" class="btn text-white fw-semibold px-4 py-3 shadow"
+                       style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%); border-radius: 10px;">
+                        <i class="fa fa-plus me-2"></i>New Booking
+                    </a>
+                </div>
+
+                <t t-if="bookings">
+                    <div class="table-responsive shadow-sm rounded" style="border-radius: 12px; overflow: hidden;">
+                        <table class="table table-hover mb-0">
+                            <thead style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); color: white;">
+                                <tr>
+                                    <th class="border-0 py-3 fw-semibold">Amenity</th>
+                                    <th class="border-0 py-3 fw-semibold">Type</th>
+                                    <th class="border-0 py-3 fw-semibold">Date</th>
+                                    <th class="border-0 py-3 fw-semibold">Amount</th>
+                                    <th class="border-0 py-3 fw-semibold">Payment</th>
+                                    <th class="border-0 py-3 fw-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="bookings" t-as="b">
+                                    <tr class="align-middle" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                        <td class="py-3 fw-medium" t-esc="b.amenity_id.name"/>
+                                        <td class="py-3">
+                                            <t t-if="b.amenity_id.amenity_type == 'free'">
+                                                <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                                      style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);">
+                                                    Free
+                                                </span>
+                                            </t>
+                                            <t t-elif="b.amenity_id.amenity_type == 'paid'">
+                                                <span class="badge rounded-pill px-3 py-2 fw-semibold text-white"
+                                                      style="background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%);">
+                                                    Paid
+                                                </span>
+                                            </t>
+                                        </td>
+                                        <td class="py-3 fw-medium" t-esc="b.booking_date.strftime('%d %b %Y')"/>
+                                        <td class="py-3 fw-medium">
+                                            <t t-if="b.amenity_id.amenity_type == 'paid'">
+                                                <span style="color: #f7971e;">
+                                                    <i class="fa fa-indian-rupee-sign me-1"></i>
+                                                    <t t-esc="'{:,.2f}'.format(b.amount)"/>
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">-</span>
+                                            </t>
+                                        </td>
+                                        <td class="py-3">
+                                            <t t-if="b.amenity_id.amenity_type == 'paid'">
+                                                <t t-if="b.payment_status == 'paid'">
+                                                    <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                                          style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);">
+                                                        <i class="fa fa-check me-1"></i>Paid
+                                                    </span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="badge rounded-pill px-3 py-2 fw-semibold text-white"
+                                                          style="background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);">
+                                                        Unpaid
+                                                    </span>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                                      style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); color: #667eea;">
+                                                    N/A
+                                                </span>
+                                            </t>
+                                        </td>
+                                        <td class="py-3">
+                                            <t t-if="b.state == 'pending'">
+                                                <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                                      style="background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%); color: #000;">
+                                                    Pending
+                                                </span>
+                                            </t>
+                                            <t t-elif="b.state == 'approved'">
+                                                <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                                      style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);">
+                                                    Approved
+                                                </span>
+                                            </t>
+                                            <t t-elif="b.state == 'cancelled'">
+                                                <span class="badge rounded-pill px-3 py-2 fw-semibold text-white"
+                                                      style="background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);">
+                                                    Cancelled
+                                                </span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                                 style="width: 100px; height: 100px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                                <i class="fa fa-calendar-plus fa-2x" style="color: #667eea;"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-muted fw-semibold mb-3">No bookings yet</h4>
+                        <p class="text-muted mb-4">You haven't made any bookings yet</p>
+                        <a href="/my/amenities" class="btn text-white fw-semibold px-4 py-3 shadow"
+                           style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 10px;">
+                            <i class="fa fa-building me-2"></i>
+                            Browse Amenities
+                        </a>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
 </odoo>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
+<!--    &lt;!&ndash; Portal Amenities List &ndash;&gt;-->
+<!--    <template id="portal_amenities" name="Amenities List">-->
+<!--        <t t-call="portal.portal_layout">-->
+<!--            <div class="container mt-4">-->
+<!--                <div class="row mb-4">-->
+<!--                    <div class="col-md-6">-->
+<!--                        <h3>Select Amenity</h3>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-6">-->
+<!--                        <form method="get" action="/my/amenities" class="d-flex">-->
+<!--                            <input type="text" name="search" class="form-control" placeholder="Search Amenities"-->
+<!--                                   t-att-value="search"/>-->
+<!--                            <button type="submit" class="btn btn-primary ms-2">-->
+<!--                                <i class="fa fa-search"></i>-->
+<!--                                Search-->
+<!--                            </button>-->
+<!--                            <a href="/my/amenities" class="btn btn-secondary ms-2">Clear</a>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <t t-if="amenities">-->
+<!--                    <div class="list-group">-->
+<!--                        <t t-foreach="amenities" t-as="a">-->
+<!--                            <a t-att-href="'/my/amenities/book/%s' % a.id"-->
+<!--                               class="list-group-item list-group-item-action">-->
+<!--                                <div class="d-flex w-100 justify-content-between align-items-center">-->
+<!--                                    <div>-->
+<!--                                        <h5 class="mb-0" t-esc="a.name"/>-->
+<!--                                        <t t-if="a.amenity_type == 'paid'">-->
+<!--                                            <small class="text-muted">₹-->
+<!--                                                <t t-esc="'{:,.2f}'.format(a.amount)"/>-->
+<!--                                            </small>-->
+<!--                                        </t>-->
+<!--                                    </div>-->
+<!--                                    <div>-->
+<!--                                        <t t-if="a.amenity_type == 'free'">-->
+<!--                                            <span class="badge bg-success">Free</span>-->
+<!--                                        </t>-->
+<!--                                        <t t-elif="a.amenity_type == 'paid'">-->
+<!--                                            <span class="badge bg-warning">Paid</span>-->
+<!--                                        </t>-->
+<!--                                        <span class="ms-2">-->
+<!--                                            <i class="fa fa-chevron-right"></i>-->
+<!--                                        </span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </t>-->
+<!--                    </div>-->
+<!--                </t>-->
+<!--                <t t-else="">-->
+<!--                    <div class="alert alert-info">No amenities found.</div>-->
+<!--                </t>-->
+<!--            </div>-->
+<!--        </t>-->
+<!--    </template>-->
+
+<!--    &lt;!&ndash; Book Amenity Page &ndash;&gt;-->
+<!--    <template id="portal_amenity_book" name="Book Amenity">-->
+<!--        <t t-call="portal.portal_layout">-->
+<!--            <div class="container mt-4">-->
+<!--                <div class="row">-->
+<!--                    <div class="col-md-8 offset-md-2">-->
+<!--                        <div class="d-flex justify-content-between align-items-center mb-4">-->
+<!--                            <div>-->
+<!--                                <a href="/my/amenities" class="btn btn-link">-->
+<!--                                    <i class="fa fa-arrow-left"></i>-->
+<!--                                    Back-->
+<!--                                </a>-->
+<!--                                <h3 class="d-inline ms-2" t-esc="amenity.name"/>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <t t-if="amenity.amenity_type == 'free'">-->
+<!--                                    <span class="badge bg-success p-3">Free</span>-->
+<!--                                </t>-->
+<!--                                <t t-elif="amenity.amenity_type == 'paid'">-->
+<!--                                    <span class="badge bg-warning text-dark p-3">-->
+<!--                                        Paid - ₹-->
+<!--                                        <t t-esc="'{:,.2f}'.format(amenity.amount)"/>-->
+<!--                                    </span>-->
+<!--                                </t>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="card mb-4">-->
+<!--                            <div class="card-body">-->
+<!--                                <h5>Details</h5>-->
+<!--                                <t t-if="amenity.description">-->
+<!--                                    <p t-esc="amenity.description" class="mt-3"/>-->
+<!--                                </t>-->
+<!--                                <t t-else="">-->
+<!--                                    <p class="text-muted">No description available.</p>-->
+<!--                                </t>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="card">-->
+<!--                            <div class="card-header bg-primary text-white">-->
+<!--                                <h5 class="mb-0">Book This Amenity</h5>-->
+<!--                            </div>-->
+<!--                            <div class="card-body">-->
+<!--                                <form method="post" action="/my/amenities/confirm" enctype="multipart/form-data">-->
+<!--                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>-->
+<!--                                    <input type="hidden" name="amenity_id" t-att-value="amenity.id"/>-->
+
+<!--                                    <div class="form-group mb-3">-->
+<!--                                        <label for="booking_date" class="form-label fw-bold">Select Booking Date</label>-->
+<!--                                        <input type="date"-->
+<!--                                               name="booking_date"-->
+<!--                                               id="booking_date"-->
+<!--                                               class="form-control"-->
+<!--                                               required="required"-->
+<!--                                               t-att-min="datetime.date.today().isoformat()"/>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="form-group mb-3">-->
+<!--                                        <label for="remarks" class="form-label fw-bold">Remarks (Optional)</label>-->
+<!--                                        <textarea name="remarks" id="remarks" class="form-control" rows="3"-->
+<!--                                                  placeholder="Enter your remarks..."></textarea>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="form-group mb-4">-->
+<!--                                        <label for="attachments" class="form-label fw-bold">-->
+<!--                                            <i class="fa fa-paperclip"></i>-->
+<!--                                            Upload Files (Optional)-->
+<!--                                        </label>-->
+<!--                                        <input type="file"-->
+<!--                                               name="attachments"-->
+<!--                                               id="attachments"-->
+<!--                                               class="form-control"/>-->
+<!--                                    </div>-->
+
+<!--                                    <t t-if="amenity.amenity_type == 'paid'">-->
+<!--                                        <div class="alert alert-info mb-4">-->
+<!--                                            <h6>Payment Required</h6>-->
+<!--                                            <p>An invoice of ₹-->
+<!--                                                <t t-esc="'{:,.2f}'.format(amenity.amount)"/>-->
+<!--                                                will be generated.-->
+<!--                                            </p>-->
+<!--                                            <p>You will need to pay the invoice from your Account > Invoices.</p>-->
+<!--                                        </div>-->
+<!--                                    </t>-->
+
+<!--                                    <button type="submit" class="btn btn-success btn-lg w-100">-->
+<!--                                        <t t-if="amenity.amenity_type == 'free'">Confirm Booking</t>-->
+<!--                                        <t t-elif="amenity.amenity_type == 'paid'">Proceed to Booking (Payment-->
+<!--                                            Required)-->
+<!--                                        </t>-->
+<!--                                    </button>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </t>-->
+<!--    </template>-->
+
+<!--    &lt;!&ndash; Booking Success Page &ndash;&gt;-->
+<!--    <template id="portal_booking_success" name="Booking Success">-->
+<!--        <t t-call="portal.portal_layout">-->
+<!--            <div class="container mt-5">-->
+<!--                <div class="row">-->
+<!--                    <div class="col-md-6 offset-md-3 text-center">-->
+<!--                        <div class="card border-0 shadow-lg">-->
+<!--                            <div class="card-body p-5">-->
+<!--                                <div class="mb-4">-->
+<!--                                    <i class="fa fa-check-circle" style="font-size: 80px; color: #28a745;"></i>-->
+<!--                                </div>-->
+<!--                                <h2 class="mb-3" style="color: #28a745;">Booking Successful</h2>-->
+
+<!--                                <div class="text-start bg-light p-3 rounded mb-4">-->
+<!--                                    <p class="mb-2">-->
+<!--                                        <strong>Amenity:</strong>-->
+<!--                                        <span t-esc="booking.amenity_id.name" class="float-end"/>-->
+<!--                                    </p>-->
+<!--                                    <p class="mb-2">-->
+<!--                                        <strong>Booking Date:</strong>-->
+<!--                                        <span t-esc="booking.booking_date.strftime('%d %B %Y')" class="float-end"/>-->
+<!--                                    </p>-->
+<!--                                    <t t-if="booking.amenity_id.amenity_type == 'paid'">-->
+<!--                                        <p class="mb-2">-->
+<!--                                            <strong>Amount Due:</strong>-->
+<!--                                            <span class="float-end fw-bold">₹-->
+<!--                                                <t t-esc="'{:,.2f}'.format(booking.amount)"/>-->
+<!--                                            </span>-->
+<!--                                        </p>-->
+<!--                                        <p class="alert alert-warning mb-0">-->
+<!--                                            <strong>Payment Required:</strong>-->
+<!--                                            Please pay the invoice from My Account &gt; Invoices-->
+<!--                                        </p>-->
+<!--                                    </t>-->
+<!--                                </div>-->
+
+<!--                                <p class="text-muted mb-4">A confirmation email has been sent to you.</p>-->
+
+<!--                                <div class="d-grid gap-2">-->
+<!--                                    <t t-if="booking.amenity_id.amenity_type == 'paid'">-->
+<!--                                        <a href="/my/invoices" class="btn btn-warning btn-lg">-->
+<!--                                            <i class="fa fa-file-invoice"></i>-->
+<!--                                            Go to Invoices &amp; Pay-->
+<!--                                        </a>-->
+<!--                                    </t>-->
+<!--                                    <a href="/my/amenities" class="btn btn-outline-primary btn-lg">-->
+<!--                                        Browse More Amenities-->
+<!--                                    </a>-->
+<!--                                    <a href="/my/amenities/bookings" class="btn btn-outline-secondary btn-lg">-->
+<!--                                        View My Bookings-->
+<!--                                    </a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </t>-->
+<!--    </template>-->
+
+<!--    &lt;!&ndash; My Bookings Page &ndash;&gt;-->
+<!--    <template id="portal_my_bookings" name="My Bookings">-->
+<!--        <t t-call="portal.portal_layout">-->
+<!--            <div class="container mt-4">-->
+<!--                <h3 class="mb-4">My Bookings</h3>-->
+<!--                <t t-if="bookings">-->
+<!--                    <div class="table-responsive">-->
+<!--                        <table class="table table-hover">-->
+<!--                            <thead class="table-primary">-->
+<!--                                <tr>-->
+<!--                                    <th>Amenity</th>-->
+<!--                                    <th>Type</th>-->
+<!--                                    <th>Date</th>-->
+<!--                                    <th>Amount</th>-->
+<!--                                    <th>Payment</th>-->
+<!--                                    <th>Status</th>-->
+<!--                                </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody>-->
+<!--                                <t t-foreach="bookings" t-as="b">-->
+<!--                                    <tr>-->
+<!--                                        <td t-esc="b.amenity_id.name"/>-->
+<!--                                        <td>-->
+<!--                                            <t t-if="b.amenity_id.amenity_type == 'free'">-->
+<!--                                                <span class="badge bg-success">Free</span>-->
+<!--                                            </t>-->
+<!--                                            <t t-elif="b.amenity_id.amenity_type == 'paid'">-->
+<!--                                                <span class="badge bg-warning">Paid</span>-->
+<!--                                            </t>-->
+<!--                                        </td>-->
+<!--                                        <td t-esc="b.booking_date.strftime('%d %b %Y')"/>-->
+<!--                                        <td>-->
+<!--                                            <t t-if="b.amenity_id.amenity_type == 'paid'">-->
+<!--                                                ₹-->
+<!--                                                <t t-esc="'{:,.2f}'.format(b.amount)"/>-->
+<!--                                            </t>-->
+<!--                                            <t t-else="">-</t>-->
+<!--                                        </td>-->
+<!--                                        <td>-->
+<!--                                            <t t-if="b.amenity_id.amenity_type == 'paid'">-->
+<!--                                                <t t-if="b.payment_status == 'paid'">-->
+<!--                                                    <span class="badge bg-success">Paid ✓</span>-->
+<!--                                                </t>-->
+<!--                                                <t t-else="">-->
+<!--                                                    <span class="badge bg-danger">Unpaid</span>-->
+<!--                                                </t>-->
+<!--                                            </t>-->
+<!--                                            <t t-else="">-->
+<!--                                                <span class="badge bg-secondary">N/A</span>-->
+<!--                                            </t>-->
+<!--                                        </td>-->
+<!--                                        <td>-->
+<!--                                            <t t-if="b.state == 'pending'">-->
+<!--                                                <span class="badge bg-warning">Pending</span>-->
+<!--                                            </t>-->
+<!--                                            <t t-elif="b.state == 'approved'">-->
+<!--                                                <span class="badge bg-success">Approved</span>-->
+<!--                                            </t>-->
+<!--                                            <t t-elif="b.state == 'cancelled'">-->
+<!--                                                <span class="badge bg-danger">Cancelled</span>-->
+<!--                                            </t>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                </t>-->
+<!--                            </tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                </t>-->
+<!--                <t t-else="">-->
+<!--                    <div class="alert alert-info">-->
+<!--                        <p>No bookings yet. <a href="/my/amenities">Browse amenities</a> to make your first booking!-->
+<!--                        </p>-->
+<!--                    </div>-->
+<!--                </t>-->
+<!--            </div>-->
+<!--        </t>-->
+<!--    </template>-->
+<!--</odoo>-->

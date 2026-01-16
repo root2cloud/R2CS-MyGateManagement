@@ -1,0 +1,242 @@
+<odoo>
+
+    <!-- Root Menus (visible to all internal groups) -->
+    <menuitem id="menu_community_management_root"
+              name="Community Management"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
+    />
+
+    <menuitem id="menu_community_dashboard_root"
+              name="Community Dashboard"
+              sequence="1"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
+
+    <!--    &lt;!&ndash; Master Data Section &ndash;&gt;-->
+    <menuitem id="menu_master_data_root"
+              name="Master Data"
+              parent="menu_community_management_root"
+              sequence="20"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_community_management"
+              name="Communities"
+              parent="menu_master_data_root"
+              action="action_community_management"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_flat_type"
+              name="Flat Types"
+              parent="menu_master_data_root"
+              action="flat_type_action"
+              sequence="1"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_floor_management"
+              name="Floors"
+              parent="menu_master_data_root"
+              action="action_floor_management"
+              sequence="3"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_flat_management"
+              name="Flats"
+              parent="menu_master_data_root"
+              action="action_flat_management"
+              sequence="4"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_res_partner_category"
+              name="Categories"
+              parent="menu_master_data_root"
+              action="action_res_partner_category"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_security_guard"/>
+
+    <!--    &lt;!&ndash; Tenant / Resident Details &ndash;&gt;-->
+    <menuitem id="tenant_details_menu"
+              name="Tenant Details"
+              parent="menu_community_management_root"
+              sequence="6"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_family_member"
+              name="Family Members"
+              parent="tenant_details_menu"
+              action="action_family_member"
+              sequence="6"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_pet_management"
+              name="Pets"
+              parent="tenant_details_menu"
+              action="action_pet_management"
+              sequence="7"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_vehicle_management"
+              name="Vehicles"
+              parent="tenant_details_menu"
+              action="action_vehicle_management"
+              sequence="8"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_contact_management"
+              name="Contacts"
+              parent="tenant_details_menu"
+              action="action_res_partner_contacts"
+              sequence="30"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
+
+    <!--    &lt;!&ndash; Lease / Transactions &ndash;&gt;-->
+    <menuitem id="menu_flat_transaction_menu"
+              name="Lease Transactions"
+              parent="menu_community_management_root"
+              sequence="5"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_flat_transaction"
+              name="Lease Transactions"
+              parent="menu_flat_transaction_menu"
+              action="action_flat_transaction"
+              sequence="5"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer"/>
+
+    <menuitem id="menu_flat_maintenance"
+              name="Maintenance"
+              parent="menu_flat_transaction_menu"
+              action="action_flat_maintenance"
+              sequence="6"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer"/>
+
+    <!-- Operational / Security Menus -->
+    <menuitem id="menu_guest_invite_root"
+              name="Guest Invites"
+              parent="menu_flat_transaction_menu"
+              action="action_guest_invite"
+              sequence="50"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_party_group_invite_root"
+              name="Party / Group Invites"
+              parent="menu_flat_transaction_menu"
+              action="action_party_group_invite"
+              sequence="50"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_cab_preapproval_root"
+              name="Cab Pre-Approvals"
+              parent="menu_flat_transaction_menu"
+              action="action_cab_preapproval"
+              sequence="20"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_delivery_pass"
+              name="Delivery Passes"
+              parent="menu_flat_transaction_menu"
+              action="action_delivery_pass"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_resident_access_request"
+              name="Access Requests"
+              parent="menu_master_data_root"
+              action="action_resident_access_request"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+    <!-- Visiting Help -->
+    <menuitem id="menu_visiting_help_category"
+              name="Categories"
+              parent="menu_flat_transaction_menu"
+              action="action_visiting_help_categories"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_visiting_help_entries"
+              name="Entries"
+              parent="menu_flat_transaction_menu"
+              action="action_visiting_help_entries"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+    <!--    &lt;!&ndash; Amenities & Community Features &ndash;&gt;-->
+    <menuitem id="menu_community_amenity"
+              name="Amenities"
+              parent="menu_community_management_root"
+              action="action_community_amenity"
+              sequence="30"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <menuitem id="menu_parking_root"
+              name="Parking"
+              sequence="30"
+              parent="menu_master_data_root"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <menuitem id="menu_parking_slots"
+              name="Parking Slots"
+              parent="menu_parking_root"
+              action="action_parking_slot"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <!-- Communication & Events -->
+    <menuitem id="menu_community_dashboard"
+              name="Overview Dashboard"
+              parent="menu_community_dashboard_root"
+              action="action_community_dashboard"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <menuitem id="menu_customer_inquiry"
+              name="Customer Inquiries"
+              parent="menu_community_management_root"
+              action="action_customer_inquiry"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <menuitem id="menu_notice_board"
+              name="Notice Board"
+              parent="menu_community_management_root"
+              action="action_notice_board"
+              sequence="40"/>
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+    <menuitem id="menu_community_posts"
+              name="Community Posts"
+              parent="menu_community_management_root"
+              action="action_community_post"
+              sequence="20"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <menuitem id="menu_community_lead"
+              name="Demo Requests"
+              parent="menu_community_management_root"
+              action="action_community_lead"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <menuitem id="menu_community_festival_list"
+              name="Festivals Expenses"
+              parent="menu_flat_transaction_menu"
+              action="action_community_festival"
+              sequence="10"
+              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
+    <menuitem
+            id="menu_building_management"
+            name="Buildings"
+            parent="menu_master_data_root"
+            action="action_building_management"
+            sequence="15"
+            groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member"/>
+
+
+</odoo>

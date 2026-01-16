@@ -113,16 +113,9 @@
     </record>
 
     <!-- Menu Item -->
-    <menuitem id="menu_parking_root"
-              name="Parking"
-              sequence="30"
-              parent="menu_master_data_root"/>  <!-- Replace with actual parent menu ID -->
+      <!-- Replace with actual parent menu ID -->
 
-    <menuitem id="menu_parking_slots"
-              name="Parking Slots"
-              parent="menu_parking_root"
-              action="action_parking_slot"
-              sequence="10"/>
+
               <!-- groups="your_module.group_parking_manager" -->  <!-- Uncomment and use if restricting access -->
 
 </odoo>

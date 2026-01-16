@@ -121,10 +121,6 @@
     <!-- ========================= -->
 
 
-    <menuitem id="menu_resident_access_request"
-              name="Access Requests"
-              parent="menu_master_data_root"
-              action="action_resident_access_request"
-              sequence="10"/>
+
 
 </odoo>

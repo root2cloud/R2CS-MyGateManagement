@@ -175,10 +175,43 @@ class Community(models.Model):
         for record in self:
             record.festivalcount = len(record.festivalids)
 
+    post_count = fields.Integer(
+        string="Post Count",
+        compute="_compute_post_count",
+        store=True
+    )
+
+    def _compute_post_count(self):
+        for community in self:
+            community.post_count = self.env['community.post'].search_count([
+                ('community_id', '=', community.id),
+                ('active', '=', True)
+            ])
 
 
 class ResPartner(models.Model):
     _inherit = "res.partner"
+
+    flat_id = fields.Many2one(
+        'flat.management',
+        string="Resident Flat",
+        help="The flat where this person lives (for residents/tenants/owners)"
+    )
+
+    community_id = fields.Many2one(
+        'community.management',
+        string="Community",
+        compute='_compute_community_id',
+        store=True
+    )
+
+    @api.depends('flat_id')
+    def _compute_community_id(self):
+        for partner in self:
+            if partner.flat_id:
+                partner.community_id = partner.flat_id.building_id.community_id
+            else:
+                partner.community_id = False
 
     aadhar_number = fields.Char(string="Aadhar Number")
     last_notice_viewed = fields.Datetime(

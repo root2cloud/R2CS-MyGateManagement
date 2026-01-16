@@ -285,11 +285,7 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_flat_management"
-              name="Flats"
-              parent="menu_master_data_root"
-              action="action_flat_management"
-              sequence="4"/>
+
 
 
     <record id="view_flat_type_list" model="ir.ui.view">
@@ -309,6 +305,5 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_flat_type" name="Flat Types" parent="menu_master_data_root" action="flat_type_action"
-              sequence="1"/>
+
 </odoo>

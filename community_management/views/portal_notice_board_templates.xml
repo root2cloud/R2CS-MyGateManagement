@@ -1,228 +1,729 @@
-<!--<DOCUMENT filename="portal_notice_board_templates.xml">-->
-
-<!--<DOCUMENT filename="portal_notice_board_templates.xml">-->
-<!--<DOCUMEN/T filename="portal_notice_board_templates.xml">-->
 <odoo>
-    <template id="portal_notice_board" name="Community Dashboard - Black &amp; White Elegance">
+    <template id="portal_notice_boards" name="Community Dashboard - Elegant Gradient Design">
         <t t-call="website.layout">
             <style>
                 :root {
-                    --primary: #000000;
-                    --primary-light: #ffffff;
-                    --text: #1a1a1a;
-                    --text-light: #333333;
-                    --text-muted: #666666;
-                    --bg-card: rgba(255, 255, 255, 0.94);
-                    --border-card: rgba(0, 0, 0, 0.12);
-                    --shadow-sm: 0 8px 28px rgba(0, 0, 0, 0.08);
-                    --shadow-md: 0 16px 45px rgba(0, 0, 0, 0.12);
-                    --shadow-hover: 0 25px 80px rgba(0, 0, 0, 0.18);
-                    --glow: rgba(0, 0, 0, 0.15);
+                    --primary: #667eea;
+                    --primary-light: #764ba2;
+                    --secondary: #f093fb;
+                    --secondary-light: #f5576c;
+                    --accent: #4facfe;
+                    --accent-light: #00f2fe;
+                    --success: #11998e;
+                    --success-light: #38ef7d;
+                    --warning: #f6d365;
+                    --warning-light: #fda085;
+                    --text: #2d3748;
+                    --text-light: #4a5568;
+                    --text-muted: #718096;
+                    --bg-card: rgba(255, 255, 255, 0.95);
+                    --border-card: rgba(255, 255, 255, 0.2);
+                    --shadow-sm: 0 10px 30px rgba(0, 0, 0, 0.08);
+                    --shadow-md: 0 20px 50px rgba(0, 0, 0, 0.12);
+                    --shadow-hover: 0 30px 90px rgba(0, 0, 0, 0.2);
                     --radius-lg: 24px;
                     --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
-                /* Sophisticated Black &amp; White Gradient Background */
+                /* Gradient Dashboard Background */
                 .dashboard-page {
                     min-height: 100vh;
                     background: linear-gradient(135deg,
-                        #ffffff 0%,
-                        #f5f5f5 20%,
-                        #e0e0e0 40%,
-                        #cccccc 60%,
-                        #999999 80%,
-                        #111111 100%);
-                    padding: 4rem 1rem 6rem;
+                        #667eea 0%,
+                        #764ba2 25%,
+                        #f093fb 50%,
+                        #f5576c 75%,
+                        #4facfe 100%
+                    );
+                    padding: 4rem 1.5rem 6rem;
                     position: relative;
-                    overflow: hidden;
+                    overflow-x: hidden;
                 }
 
                 .dashboard-page::before {
                     content: '';
                     position: absolute;
-                    inset: 0;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
                     background:
-                        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.5) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(0, 0, 0, 0.2) 0%, transparent 50%);
+                        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
                     pointer-events: none;
+                    z-index: 1;
                 }
 
-                .dashboard-container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+                .dashboard-container {
+                    max-width: 1600px;
+                    margin: 0 auto;
+                    position: relative;
+                    z-index: 2;
+                }
 
-                .dashboard-header { text-align: center; margin-bottom: 4rem; }
+                /* Header - Gradient Elegance */
+                .dashboard-header {
+                    text-align: center;
+                    margin-bottom: 5rem;
+                    padding: 0 1rem;
+                }
+
                 .dashboard-header h1 {
-                    font-size: 3.8rem; font-weight: 800; margin: 0 0 1rem;
-                    background: linear-gradient(90deg, #000000, #444444, #666666);
-                    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+                    font-size: 3.8rem;
+                    font-weight: 700;
+                    margin: 0 0 1.5rem;
+                    background: linear-gradient(135deg,
+                        var(--primary) 0%,
+                        var(--primary-light) 25%,
+                        var(--secondary) 50%,
+                        var(--secondary-light) 75%,
+                        var(--accent) 100%
+                    );
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                    letter-spacing: -1px;
+                    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                 }
-                .dashboard-header p { font-size: 1.35rem; color: var(--text-muted); max-width: 720px; margin: 0 auto; line-height: 1.6; }
 
-                .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; margin-bottom: 4.5rem; }
+                .dashboard-header p {
+                    font-size: 1.3rem;
+                    color: rgba(255, 255, 255, 0.9);
+                    max-width: 700px;
+                    margin: 0 auto;
+                    line-height: 1.7;
+                    font-weight: 300;
+                    letter-spacing: 0.3px;
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                    padding: 1.5rem 2rem;
+                    border-radius: 20px;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                }
+
+                /* Stats Cards - Gradient Icons */
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                    gap: 2.5rem;
+                    margin-bottom: 5rem;
+                }
+
                 .stat-card {
-                    background: var(--bg-card); backdrop-filter: blur(12px); border-radius: var(--radius-lg);
-                    padding: 2rem; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--border-card);
+                    background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.95) 0%,
+                        rgba(255, 255, 255, 0.9) 100%
+                    );
+                    backdrop-filter: blur(15px);
+                    border-radius: var(--radius-lg);
+                    padding: 2.5rem 2rem;
+                    text-align: center;
+                    box-shadow: var(--shadow-sm);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
                     transition: var(--transition);
+                    position: relative;
+                    overflow: hidden;
                 }
-                .stat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
-                .stat-icon { font-size: 2.5rem; color: #000000; margin-bottom: 1rem; }
-                .stat-number { font-size: 2.7rem; font-weight: 800; color: var(--text); }
-                .stat-label { color: var(--text-muted); font-size: 1.1rem; font-weight: 600; }
 
+                .stat-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 6px;
+                    background: linear-gradient(90deg,
+                        var(--primary),
+                        var(--primary-light),
+                        var(--secondary)
+                    );
+                    opacity: 0.8;
+                }
+
+                .stat-card:hover {
+                    transform: translateY(-10px) scale(1.02);
+                    box-shadow: var(--shadow-md);
+                    border-color: rgba(255, 255, 255, 0.5);
+                }
+
+                .stat-icon {
+                    font-size: 3.2rem;
+                    margin-bottom: 1.5rem;
+                    display: inline-block;
+                    background: linear-gradient(135deg,
+                        var(--primary) 0%,
+                        var(--primary-light) 100%
+                    );
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                    text-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+                }
+
+                .stat-number {
+                    font-size: 3.2rem;
+                    font-weight: 700;
+                    margin-bottom: 0.5rem;
+                    background: linear-gradient(135deg,
+                        var(--text) 0%,
+                        var(--text-light) 100%
+                    );
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                    font-feature-settings: "tnum";
+                    letter-spacing: -1px;
+                }
+
+                .stat-label {
+                    color: var(--text-muted);
+                    font-size: 1rem;
+                    font-weight: 600;
+                    letter-spacing: 1.5px;
+                    text-transform: uppercase;
+                    background: linear-gradient(135deg,
+                        var(--primary) 0%,
+                        var(--primary-light) 100%
+                    );
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                }
+
+                /* Notice Cards - Gradient Elegance */
                 .notices-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                    gap: 2.4rem;
+                    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+                    gap: 3rem;
                 }
 
                 .notice-card {
-                    background: var(--bg-card);
-                    backdrop-filter: blur(16px);
+                    background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.95) 0%,
+                        rgba(255, 255, 255, 0.9) 100%
+                    );
+                    backdrop-filter: blur(20px);
                     border-radius: var(--radius-lg);
                     overflow: hidden;
                     box-shadow: var(--shadow-sm);
-                    border: 1px solid var(--border-card);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
                     transition: var(--transition);
                     display: flex;
                     flex-direction: column;
                     height: 100%;
                     position: relative;
                 }
+
+                .notice-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 5px;
+                    background: linear-gradient(90deg,
+                        var(--primary),
+                        var(--primary-light),
+                        var(--secondary)
+                    );
+                    opacity: 0.8;
+                }
+
                 .notice-card:hover {
-                    transform: translateY(-10px);
-                    box-shadow: var(--shadow-hover), 0 0 50px var(--glow);
-                    border-color: rgba(0, 0, 0, 0.3);
+                    transform: translateY(-15px) scale(1.02);
+                    box-shadow: var(--shadow-hover);
+                    border-color: rgba(255, 255, 255, 0.6);
                 }
 
+                /* NEW Badge - Gradient Animation */
                 .badge-new {
-                    position: absolute; top: 18px; right: -8px;
-                    background: linear-gradient(135deg, #000000, #333333);
-                    color: white; padding: 0.5rem 1.4rem; font-size: 0.85rem; font-weight: 800;
-                    border-radius: 50px; box-shadow: 0 6px 18px rgba(0,0,0,0.5); z-index: 10;
-                    transform: rotate(12deg);
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg,
+                        var(--success) 0%,
+                        var(--success-light) 100%
+                    );
+                    color: white;
+                    padding: 0.5rem 1.8rem;
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    border-radius: 50px;
+                    box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+                    z-index: 10;
+                    letter-spacing: 1.5px;
+                    text-transform: uppercase;
+                    animation: pulse 2s infinite;
                 }
 
-                .notice-header { padding: 2rem 2rem 1.4rem; }
-                .notice-type {
-                    display: inline-block; background: linear-gradient(90deg, #333333, #000000);
-                    color: white; padding: 0.6rem 1.4rem; border-radius: 50px; font-size: 0.95rem; font-weight: 700;
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
                 }
-                .notice-title { font-size: 1.75rem; font-weight: 800; color: var(--text); margin: 1.2rem 0 0.8rem; line-height: 1.3; }
+
+                /* Card Header */
+                .notice-header {
+                    padding: 2.5rem 2.5rem 1.5rem;
+                }
+
+                .notice-type {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.8rem;
+                    background: linear-gradient(135deg,
+                        var(--primary) 0%,
+                        var(--primary-light) 100%
+                    );
+                    color: white;
+                    padding: 0.8rem 1.8rem;
+                    border-radius: 50px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    letter-spacing: 0.8px;
+                    text-transform: uppercase;
+                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                }
+
+                .notice-type i {
+                    font-size: 1.1rem;
+                }
+
+                .notice-title {
+                    font-size: 1.9rem;
+                    font-weight: 700;
+                    color: var(--text);
+                    margin: 1.5rem 0 1.2rem;
+                    line-height: 1.4;
+                    letter-spacing: -0.2px;
+                    background: linear-gradient(135deg,
+                        var(--text) 0%,
+                        var(--text-light) 100%
+                    );
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                }
 
                 .notice-dates {
-                    color: var(--text-light); font-size: 1rem; font-weight: 600;
-                    background: rgba(0,0,0,0.08); padding: 0.6rem 1.2rem; border-radius: 14px;
-                    display: inline-block; border: 1px solid rgba(0,0,0,0.15);
+                    color: var(--text-light);
+                    font-size: 1rem;
+                    font-weight: 500;
+                    background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.95) 0%,
+                        rgba(255, 255, 255, 0.9) 100%
+                    );
+                    padding: 0.9rem 1.5rem;
+                    border-radius: 15px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.8rem;
+                    border: 1px solid rgba(255, 255, 255, 0.4);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
                 }
 
+                .notice-dates i {
+                    color: var(--primary);
+                    font-size: 1.1rem;
+                }
+
+                /* Card Content */
                 .notice-preview {
-                    padding: 0 2rem 1.2rem;
+                    padding: 0 2.5rem 1.5rem;
                     flex-grow: 1;
                     display: flex;
                     flex-direction: column;
                 }
 
-                /* Image appears first when card opens */
                 .notice-image-preview {
-                    height: 240px;
+                    height: 280px;
                     overflow: hidden;
-                    margin: 1.2rem -2rem 1.5rem;
-                    order: -1; /* Forces image to top */
+                    margin: 0 -2.5rem 2rem;
+                    position: relative;
+                    border-radius: 0;
                 }
+
+                .notice-image-preview::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 50%;
+                    background: linear-gradient(to top,
+                        rgba(255, 255, 255, 0.9) 0%,
+                        transparent 100%
+                    );
+                    pointer-events: none;
+                }
+
                 .notice-image-preview img {
-                    width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                .notice-card:hover .notice-image-preview img { transform: scale(1.1); }
+
+                .notice-card:hover .notice-image-preview img {
+                    transform: scale(1.1);
+                }
 
                 .notice-short-desc {
                     color: var(--text-muted);
-                    line-height: 1.7;
-                    font-size: 1.02rem;
+                    line-height: 1.8;
+                    font-size: 1.05rem;
+                    font-weight: 400;
                     display: -webkit-box;
-                    -webkit-line-clamp: 6;
+                    -webkit-line-clamp: 5;
                     -webkit-box-orient: vertical;
                     overflow: hidden;
                     margin-top: 0;
+                    letter-spacing: 0.2px;
                 }
 
-                .notice-footer { padding: 0 2rem 2rem; text-align: right; }
+                /* Card Footer */
+                .notice-footer {
+                    padding: 0 2.5rem 2.5rem;
+                    text-align: right;
+                }
+
                 .btn-view-details {
-                    display: inline-block;
-                    background: linear-gradient(90deg, #000000, #333333);
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 1rem;
+                    background: linear-gradient(135deg,
+                        var(--primary) 0%,
+                        var(--primary-light) 50%,
+                        var(--secondary) 100%
+                    );
                     color: white;
-                    padding: 0.8rem 1.8rem;
+                    padding: 1rem 2.5rem;
                     border-radius: 50px;
-                    font-weight: 700;
+                    font-weight: 600;
                     font-size: 1rem;
                     text-decoration: none;
-                    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+                    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
                     transition: var(--transition);
                     cursor: pointer;
+                    letter-spacing: 0.5px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    position: relative;
+                    overflow: hidden;
                 }
+
+                .btn-view-details::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(90deg,
+                        transparent,
+                        rgba(255, 255, 255, 0.2),
+                        transparent
+                    );
+                    transition: 0.5s;
+                }
+
                 .btn-view-details:hover {
                     transform: translateY(-3px);
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                    box-shadow: 0 10px 35px rgba(102, 126, 234, 0.6);
+                    gap: 1.5rem;
                 }
 
+                .btn-view-details:hover::before {
+                    left: 100%;
+                }
+
+                .btn-view-details i {
+                    font-size: 1.1rem;
+                    transition: transform 0.3s ease;
+                }
+
+                .btn-view-details:hover i {
+                    transform: translateX(5px);
+                }
+
+                /* Empty State */
+                .empty-state {
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    padding: 8rem 4rem;
+                    background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.95) 0%,
+                        rgba(255, 255, 255, 0.9) 100%
+                    );
+                    border-radius: var(--radius-lg);
+                    box-shadow: var(--shadow-sm);
+                    border: 2px dashed rgba(255, 255, 255, 0.5);
+                    backdrop-filter: blur(15px);
+                }
+
+                .empty-state i {
+                    font-size: 5rem;
+                    background: linear-gradient(135deg,
+                        var(--primary) 0%,
+                        var(--primary-light) 100%
+                    );
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                    margin-bottom: 2rem;
+                    text-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+                }
+
+                .empty-state h3 {
+                    font-size: 2.2rem;
+                    font-weight: 700;
+                    color: var(--text);
+                    margin-bottom: 1rem;
+                    background: linear-gradient(135deg,
+                        var(--text) 0%,
+                        var(--text-light) 100%
+                    );
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                }
+
+                .empty-state p {
+                    color: var(--text-muted);
+                    font-size: 1.2rem;
+                    font-weight: 400;
+                    max-width: 400px;
+                    margin: 0 auto;
+                    line-height: 1.6;
+                }
+
+                /* Modal Styling */
                 .notice-modal {
-                    display: none; position: fixed; z-index: 1000; inset: 0;
-                    background-color: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-                    align-items: center; justify-content: center;
+                    display: none;
+                    position: fixed;
+                    z-index: 1000;
+                    inset: 0;
+                    background: linear-gradient(135deg,
+                        rgba(102, 126, 234, 0.9) 0%,
+                        rgba(118, 75, 162, 0.9) 50%,
+                        rgba(240, 147, 251, 0.9) 100%
+                    );
+                    backdrop-filter: blur(15px);
+                    align-items: center;
+                    justify-content: center;
+                    padding: 2rem;
                 }
-                .notice-modal.active { display: flex; }
+
+                .notice-modal.active {
+                    display: flex;
+                }
+
                 .modal-content {
-                    background: white; border-radius: var(--radius-lg); max-width: 860px; width: 92%; max-height: 90vh; overflow-y: auto;
-                    box-shadow: 0 30px 90px rgba(0,0,0,0.3); position: relative; animation: modalFadeIn 0.4s ease-out;
+                    background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.98) 0%,
+                        rgba(255, 255, 255, 0.95) 100%
+                    );
+                    border-radius: var(--radius-lg);
+                    max-width: 900px;
+                    width: 100%;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+                    position: relative;
+                    animation: modalFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
-                .modal-header { padding: 2.4rem 2.8rem 1.4rem; border-bottom: 1px solid #e2e8f0; }
-                .modal-body { padding: 2rem 2.8rem 3rem; }
+
+                @keyframes modalFadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(40px) scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
+                .modal-header {
+                    padding: 3rem 3rem 2rem;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                }
+
+                .modal-body {
+                    padding: 2rem 3rem 3rem;
+                }
+
                 .modal-close {
-                    position: absolute; top: 18px; right: 28px; font-size: 2rem; color: #94a3b8;
-                    cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-                    border-radius: 50%; transition: all 0.3s;
+                    position: absolute;
+                    top: 1.5rem;
+                    right: 2rem;
+                    font-size: 2.5rem;
+                    color: var(--primary);
+                    cursor: pointer;
+                    width: 50px;
+                    height: 50px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    transition: all 0.3s ease;
+                    background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.9) 0%,
+                        rgba(255, 255, 255, 0.8) 100%
+                    );
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 }
-                .modal-close:hover { background: #f1f5f9; color: #475569; }
-                .modal-image { width: 100%; max-height: 480px; object-fit: contain; border-radius: 16px; margin: 1.8rem 0; background: #f8fafc; }
 
-                .empty-state { grid-column: 1 / -1; text-align: center; padding: 8rem 4rem; background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px dashed rgba(0,0,0,0.2); }
+                .modal-close:hover {
+                    background: linear-gradient(135deg,
+                        var(--primary) 0%,
+                        var(--primary-light) 100%
+                    );
+                    color: white;
+                    transform: rotate(90deg);
+                }
 
-                @media (max-width: 992px) { .notices-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } }
-                @media (max-width: 768px) { .notices-grid { grid-template-columns: 1fr; } .dashboard-header h1 { font-size: 3rem; } }
+                .modal-image {
+                    width: 100%;
+                    max-height: 500px;
+                    object-fit: contain;
+                    border-radius: 20px;
+                    margin: 2rem 0;
+                    background: linear-gradient(135deg,
+                        #f8fafc 0%,
+                        #f1f5f9 100%
+                    );
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                }
+
+                /* Responsive Design */
+                @media (max-width: 1200px) {
+                    .notices-grid {
+                        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                    }
+                }
+
+                @media (max-width: 992px) {
+                    .dashboard-header h1 {
+                        font-size: 3.2rem;
+                    }
+
+                    .dashboard-header p {
+                        font-size: 1.1rem;
+                        padding: 1.2rem 1.5rem;
+                    }
+
+                    .stats-grid {
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 2rem;
+                    }
+
+                    .stat-number {
+                        font-size: 2.8rem;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .notices-grid {
+                        grid-template-columns: 1fr;
+                        gap: 2.5rem;
+                    }
+
+                    .dashboard-header h1 {
+                        font-size: 2.8rem;
+                    }
+
+                    .notice-header,
+                    .notice-preview,
+                    .notice-footer {
+                        padding-left: 2rem;
+                        padding-right: 2rem;
+                    }
+
+                    .notice-image-preview {
+                        margin: 0 -2rem 1.5rem;
+                    }
+
+                    .notice-title {
+                        font-size: 1.7rem;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .dashboard-page {
+                        padding: 3rem 1rem 4rem;
+                    }
+
+                    .dashboard-header h1 {
+                        font-size: 2.4rem;
+                    }
+
+                    .dashboard-header p {
+                        font-size: 1rem;
+                    }
+
+                    .stat-card {
+                        padding: 2rem 1.5rem;
+                    }
+
+                    .stat-number {
+                        font-size: 2.4rem;
+                    }
+
+                    .btn-view-details {
+                        padding: 0.9rem 2rem;
+                        font-size: 0.95rem;
+                    }
+                }
             </style>
 
+            <!-- Dashboard Content -->
             <div class="dashboard-page">
                 <div class="dashboard-container">
+                    <!-- Header -->
                     <div class="dashboard-header">
                         <h1>Community Dashboard</h1>
                         <p>Welcome back! Here are the latest updates and announcements from your community management.</p>
                     </div>
 
+                    <!-- Statistics -->
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-icon"><i class="fa fa-bullhorn"/></div>
-                            <div class="stat-number" t-esc="len(notices)"/>
+                            <div class="stat-icon">
+                                <i class="fa fa-bullhorn"></i>
+                            </div>
+                            <div class="stat-number" t-esc="len(notices)"></div>
                             <div class="stat-label">Active Notices</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon"><i class="fa fa-bell"/></div>
-                            <div class="stat-number" t-esc="sum(1 for n in notices if n.create_date > last_viewed)"/>
+                            <div class="stat-icon">
+                                <i class="fa fa-bell"></i>
+                            </div>
+                            <div class="stat-number" t-esc="sum(1 for n in notices if n.create_date > last_viewed)"></div>
                             <div class="stat-label">New Since Last Visit</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon"><i class="fa fa-clock"/></div>
+                            <div class="stat-icon">
+                                <i class="fa fa-clock"></i>
+                            </div>
                             <div class="stat-number">Today</div>
                             <div class="stat-label">Last Checked</div>
                         </div>
                     </div>
 
+                    <!-- No Notices State -->
                     <t t-if="not notices">
                         <div class="empty-state">
-                            <i class="fa fa-bell-slash" style="font-size:6rem; color:#aaaaaa;"/>
+                            <i class="fa fa-bell-slash"></i>
                             <h3>All Quiet Today</h3>
                             <p>There are currently no active notices. Enjoy the calm!</p>
                         </div>
                     </t>
+
+                    <!-- Notices Grid -->
                     <t t-else="">
                         <div class="notices-grid">
                             <t t-foreach="notices" t-as="notice">
@@ -230,35 +731,38 @@
                                     <t t-if="notice.create_date > last_viewed">
                                         <div class="badge-new">NEW</div>
                                     </t>
-
                                     <div class="notice-header">
                                         <span class="notice-type">
+                                            <i class="fa fa-bullhorn"></i>
                                             <t t-esc="dict(notice._fields['notice_type'].selection)[notice.notice_type]"/>
                                         </span>
-                                        <h3 class="notice-title" t-esc="notice.name"/>
-
+                                        <h3 class="notice-title" t-esc="notice.name"></h3>
                                         <t t-if="notice.date_start or notice.date_end">
                                             <div class="notice-dates">
-                                                <t t-if="notice.date_start">From: <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/></t>
-                                                <t t-if="notice.date_end"> → To: <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/></t>
+                                                <i class="fa fa-calendar"></i>
+                                                <t t-if="notice.date_start">
+                                                    From: <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/>
+                                                </t>
+                                                <t t-if="notice.date_end">
+                                                    → To: <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/>
+                                                </t>
                                             </div>
                                         </t>
                                     </div>
-
                                     <div class="notice-preview">
-                                        <!-- Image first (top of card) -->
                                         <t t-if="notice.image">
                                             <div class="notice-image-preview">
-                                                <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()" alt="Notice Preview"/>
+                                                <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()"
+                                                     alt="Notice Preview"/>
                                             </div>
                                         </t>
-
-                                        <!-- Description below image -->
-                                        <div class="notice-short-desc" t-field="notice.description"/>
+                                        <div class="notice-short-desc" t-field="notice.description"></div>
                                     </div>
-
                                     <div class="notice-footer">
-                                        <a class="btn-view-details" t-att-data-modal="'notice-modal-' + str(notice.id)">View Details →</a>
+                                        <a class="btn-view-details" t-att-data-modal="'notice-modal-' + str(notice.id)">
+                                            View Details
+                                            <i class="fa fa-arrow-right"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </t>
@@ -267,293 +771,309 @@
                 </div>
             </div>
 
-            <!-- Modals for full details -->
+            <!-- Modals for Full Details -->
             <t t-foreach="notices" t-as="notice">
                 <div t-att-id="'notice-modal-' + str(notice.id)" class="notice-modal">
                     <div class="modal-content">
                         <span class="modal-close">×</span>
                         <div class="modal-header">
                             <span class="notice-type">
+                                <i class="fa fa-bullhorn"></i>
                                 <t t-esc="dict(notice._fields['notice_type'].selection)[notice.notice_type]"/>
                             </span>
-                            <h2 style="font-size:2.3rem; margin:1.4rem 0; color:var(--text);" t-esc="notice.name"/>
-
+                            <h2 style="font-size:2.5rem; margin:1.5rem 0; color:var(--text);" t-esc="notice.name"></h2>
                             <t t-if="notice.date_start or notice.date_end">
                                 <div class="notice-dates" style="font-size:1.1rem;">
-                                    <t t-if="notice.date_start">From: <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/></t>
-                                    <t t-if="notice.date_end"> → To: <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/></t>
+                                    <i class="fa fa-calendar"></i>
+                                    <t t-if="notice.date_start">
+                                        From: <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/>
+                                    </t>
+                                    <t t-if="notice.date_end">
+                                        → To: <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/>
+                                    </t>
                                 </div>
                             </t>
                         </div>
                         <div class="modal-body">
                             <t t-if="notice.image">
-                                <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()" class="modal-image" alt="Full Notice Image"/>
+                                <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()"
+                                     class="modal-image"
+                                     alt="Full Notice Image"/>
                             </t>
-                            <div style="font-size:1.18rem; line-height:1.9; color:#475569;" t-field="notice.description"/>
+                            <div style="font-size:1.2rem; line-height:1.9; color:var(--text);"
+                                 t-field="notice.description"></div>
                         </div>
                     </div>
                 </div>
             </t>
 
+            <!-- JavaScript -->
             <script>
-                // Open modal
-                document.querySelectorAll('.btn-view-details').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const modalId = this.dataset.modal;
-                        const modal = document.getElementById(modalId);
-                        if (modal) modal.classList.add('active');
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Open modal
+                    document.querySelectorAll('.btn-view-details').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const modalId = this.dataset.modal;
+                            const modal = document.getElementById(modalId);
+                            if (modal) modal.classList.add('active');
+                            document.body.style.overflow = 'hidden';
+                        });
                     });
-                });
 
-                // Close modal
-                document.querySelectorAll('.modal-close').forEach(close => {
-                    close.addEventListener('click', function() {
-                        this.closest('.notice-modal').classList.remove('active');
+                    // Close modal
+                    document.querySelectorAll('.modal-close').forEach(close => {
+                        close.addEventListener('click', function() {
+                            this.closest('.notice-modal').classList.remove('active');
+                            document.body.style.overflow = '';
+                        });
                     });
-                });
 
-                // Close on background click
-                document.querySelectorAll('.notice-modal').forEach(modal => {
-                    modal.addEventListener('click', function(e) {
-                        if (e.target === modal) modal.classList.remove('active');
+                    // Close on background click
+                    document.querySelectorAll('.notice-modal').forEach(modal => {
+                        modal.addEventListener('click', function(e) {
+                            if (e.target === modal) {
+                                modal.classList.remove('active');
+                                document.body.style.overflow = '';
+                            }
+                        });
                     });
-                });
 
-                // Close on Esc key
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape') {
-                        document.querySelectorAll('.notice-modal.active').forEach(m => m.classList.remove('active'));
-                    }
+                    // Close on Esc key
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') {
+                            document.querySelectorAll('.notice-modal.active').forEach(m => {
+                                m.classList.remove('active');
+                                document.body.style.overflow = '';
+                            });
+                        }
+                    });
                 });
             </script>
         </t>
     </template>
 </odoo>
-<!--</DOCUMENT>-->
-<!--</DOCUMENT>-->
-        <!--</DOCUMENT>-->
-        <!--</DOCUMENT>-->
-        <!--</DOCUMENT>-->
-        <!--</DOCUMENT>-->
-        <!--&lt;!&ndash; File: community_management/views/templates/portal_notice_board_templates.xml &ndash;&gt;-->
-        <!--<odoo>-->
-        <!--    <template id="portal_notice_board" name="Notice Board - Light &amp; Modern">-->
-        <!--        <t t-call="website.layout">-->
-        <!--            <style>-->
-        <!--                :root {-->
-        <!--                    &#45;&#45;card-bg: rgba(255, 255, 255, 0.92);-->
-        <!--                    &#45;&#45;card-border: rgba(255, 255, 255, 0.6);-->
-        <!--                    &#45;&#45;text: #2d3748;-->
-        <!--                    &#45;&#45;text-light: #64748b;-->
-        <!--                    &#45;&#45;shadow: 0 15px 40px rgba(0, 0, 0, 0.08);-->
-        <!--                    &#45;&#45;shadow-hover: 0 25px 60px rgba(0, 0, 0, 0.15);-->
-        <!--                    &#45;&#45;glow: rgba(147, 197, 253, 0.4);-->
-        <!--                    &#45;&#45;transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);-->
-        <!--                }-->
+<!--<odoo>-->
+<!--    <template id="portal_notice_boards" name="Community Dashboard - Black &amp; White Elegance">-->
+<!--        <t t-call="website.layout">-->
+<!--            <style>:root { &#45;&#45;primary: #000000; &#45;&#45;primary-light: #ffffff; &#45;&#45;text: #1a1a1a; &#45;&#45;text-light: #333333;-->
+<!--                &#45;&#45;text-muted: #666666; &#45;&#45;bg-card: rgba(255, 255, 255, 0.94); &#45;&#45;border-card: rgba(0, 0, 0, 0.12);-->
+<!--                &#45;&#45;shadow-sm: 0 8px 28px rgba(0, 0, 0, 0.08); &#45;&#45;shadow-md: 0 16px 45px rgba(0, 0, 0, 0.12);-->
+<!--                &#45;&#45;shadow-hover: 0 25px 80px rgba(0, 0, 0, 0.18); &#45;&#45;glow: rgba(0, 0, 0, 0.15); &#45;&#45;radius-lg: 24px;-->
+<!--                &#45;&#45;transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); } /* Sophisticated Black &amp; White Gradient-->
+<!--                Background */ .dashboard-page { min-height: 100vh; background: linear-gradient(135deg, #ffffff 0%,-->
+<!--                #f5f5f5 20%, #e0e0e0 40%, #cccccc 60%, #999999 80%, #111111 100%); padding: 4rem 1rem 6rem; position:-->
+<!--                relative; overflow: hidden; } .dashboard-page::before { content: ''; position: absolute; inset: 0;-->
+<!--                background: radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.5) 0%, transparent 50%),-->
+<!--                radial-gradient(circle at 80% 20%, rgba(0, 0, 0, 0.2) 0%, transparent 50%); pointer-events: none; }-->
+<!--                .dashboard-container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }-->
+<!--                .dashboard-header { text-align: center; margin-bottom: 4rem; } .dashboard-header h1 { font-size: 3.8rem;-->
+<!--                font-weight: 800; margin: 0 0 1rem; background: linear-gradient(90deg, #000000, #444444, #666666);-->
+<!--                -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }-->
+<!--                .dashboard-header p { font-size: 1.35rem; color: var(&#45;&#45;text-muted); max-width: 720px; margin: 0 auto;-->
+<!--                line-height: 1.6; } .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,-->
+<!--                1fr)); gap: 2rem; margin-bottom: 4.5rem; } .stat-card { background: var(&#45;&#45;bg-card); backdrop-filter:-->
+<!--                blur(12px); border-radius: var(&#45;&#45;radius-lg); padding: 2rem; text-align: center; box-shadow:-->
+<!--                var(&#45;&#45;shadow-sm); border: 1px solid var(&#45;&#45;border-card); transition: var(&#45;&#45;transition); }-->
+<!--                .stat-card:hover { transform: translateY(-6px); box-shadow: var(&#45;&#45;shadow-md); } .stat-icon { font-size:-->
+<!--                2.5rem; color: #000000; margin-bottom: 1rem; } .stat-number { font-size: 2.7rem; font-weight: 800;-->
+<!--                color: var(&#45;&#45;text); } .stat-label { color: var(&#45;&#45;text-muted); font-size: 1.1rem; font-weight: 600; }-->
+<!--                .notices-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:-->
+<!--                2.4rem; } .notice-card { background: var(&#45;&#45;bg-card); backdrop-filter: blur(16px); border-radius:-->
+<!--                var(&#45;&#45;radius-lg); overflow: hidden; box-shadow: var(&#45;&#45;shadow-sm); border: 1px solid var(&#45;&#45;border-card);-->
+<!--                transition: var(&#45;&#45;transition); display: flex; flex-direction: column; height: 100%; position: relative;-->
+<!--                } .notice-card:hover { transform: translateY(-10px); box-shadow: var(&#45;&#45;shadow-hover), 0 0 50px-->
+<!--                var(&#45;&#45;glow); border-color: rgba(0, 0, 0, 0.3); } .badge-new { position: absolute; top: 18px; right:-->
+<!--                -8px; background: linear-gradient(135deg, #000000, #333333); color: white; padding: 0.5rem 1.4rem;-->
+<!--                font-size: 0.85rem; font-weight: 800; border-radius: 50px; box-shadow: 0 6px 18px rgba(0,0,0,0.5);-->
+<!--                z-index: 10; transform: rotate(12deg); } .notice-header { padding: 2rem 2rem 1.4rem; } .notice-type {-->
+<!--                display: inline-block; background: linear-gradient(90deg, #333333, #000000); color: white; padding:-->
+<!--                0.6rem 1.4rem; border-radius: 50px; font-size: 0.95rem; font-weight: 700; box-shadow: 0 5px 15px-->
+<!--                rgba(0,0,0,0.3); } .notice-title { font-size: 1.75rem; font-weight: 800; color: var(&#45;&#45;text); margin:-->
+<!--                1.2rem 0 0.8rem; line-height: 1.3; } .notice-dates { color: var(&#45;&#45;text-light); font-size: 1rem;-->
+<!--                font-weight: 600; background: rgba(0,0,0,0.08); padding: 0.6rem 1.2rem; border-radius: 14px; display:-->
+<!--                inline-block; border: 1px solid rgba(0,0,0,0.15); } .notice-preview { padding: 0 2rem 1.2rem; flex-grow:-->
+<!--                1; display: flex; flex-direction: column; } /* Image appears first when card opens */-->
+<!--                .notice-image-preview { height: 240px; overflow: hidden; margin: 1.2rem -2rem 1.5rem; order: -1; /*-->
+<!--                Forces image to top */ } .notice-image-preview img { width: 100%; height: 100%; object-fit: cover;-->
+<!--                transition: transform 0.8s ease; } .notice-card:hover .notice-image-preview img { transform: scale(1.1);-->
+<!--                } .notice-short-desc { color: var(&#45;&#45;text-muted); line-height: 1.7; font-size: 1.02rem; display:-->
+<!--                -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; margin-top: 0; }-->
+<!--                .notice-footer { padding: 0 2rem 2rem; text-align: right; } .btn-view-details { display: inline-block;-->
+<!--                background: linear-gradient(90deg, #000000, #333333); color: white; padding: 0.8rem 1.8rem;-->
+<!--                border-radius: 50px; font-weight: 700; font-size: 1rem; text-decoration: none; box-shadow: 0 6px 20px-->
+<!--                rgba(0,0,0,0.4); transition: var(&#45;&#45;transition); cursor: pointer; } .btn-view-details:hover { transform:-->
+<!--                translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); } .notice-modal { display: none; position:-->
+<!--                fixed; z-index: 1000; inset: 0; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(8px);-->
+<!--                align-items: center; justify-content: center; } .notice-modal.active { display: flex; } .modal-content {-->
+<!--                background: white; border-radius: var(&#45;&#45;radius-lg); max-width: 860px; width: 92%; max-height: 90vh;-->
+<!--                overflow-y: auto; box-shadow: 0 30px 90px rgba(0,0,0,0.3); position: relative; animation: modalFadeIn-->
+<!--                0.4s ease-out; } @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1;-->
+<!--                transform: scale(1); } } .modal-header { padding: 2.4rem 2.8rem 1.4rem; border-bottom: 1px solid-->
+<!--                #e2e8f0; } .modal-body { padding: 2rem 2.8rem 3rem; } .modal-close { position: absolute; top: 18px;-->
+<!--                right: 28px; font-size: 2rem; color: #94a3b8; cursor: pointer; width: 40px; height: 40px; display: flex;-->
+<!--                align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s; }-->
+<!--                .modal-close:hover { background: #f1f5f9; color: #475569; } .modal-image { width: 100%; max-height:-->
+<!--                480px; object-fit: contain; border-radius: 16px; margin: 1.8rem 0; background: #f8fafc; } .empty-state {-->
+<!--                grid-column: 1 / -1; text-align: center; padding: 8rem 4rem; background: var(&#45;&#45;bg-card); border-radius:-->
+<!--                var(&#45;&#45;radius-lg); box-shadow: var(&#45;&#45;shadow-sm); border: 1px dashed rgba(0,0,0,0.2); } @media (max-width:-->
+<!--                992px) { .notices-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } } @media-->
+<!--                (max-width: 768px) { .notices-grid { grid-template-columns: 1fr; } .dashboard-header h1 { font-size:-->
+<!--                3rem; } }-->
+<!--            </style>-->
+<!--            <div class="dashboard-page">-->
+<!--                <div class="dashboard-container">-->
+<!--                    <div class="dashboard-header">-->
+<!--                        <h1>Community Dashboard</h1>-->
+<!--                        <p>Welcome back! Here are the latest updates and announcements from your community management.-->
+<!--                        </p>-->
+<!--                    </div>-->
+<!--                    <div class="stats-grid">-->
+<!--                        <div class="stat-card">-->
+<!--                            <div class="stat-icon">-->
+<!--                                <i class="fa fa-bullhorn"/>-->
+<!--                            </div>-->
+<!--                            <div class="stat-number" t-esc="len(notices)"/>-->
+<!--                            <div class="stat-label">Active Notices</div>-->
+<!--                        </div>-->
+<!--                        <div class="stat-card">-->
+<!--                            <div class="stat-icon">-->
+<!--                                <i class="fa fa-bell"/>-->
+<!--                            </div>-->
+<!--                            <div class="stat-number" t-esc="sum(1 for n in notices if n.create_date > last_viewed)"/>-->
+<!--                            <div class="stat-label">New Since Last Visit</div>-->
+<!--                        </div>-->
+<!--                        <div class="stat-card">-->
+<!--                            <div class="stat-icon">-->
+<!--                                <i class="fa fa-clock"/>-->
+<!--                            </div>-->
+<!--                            <div class="stat-number">Today</div>-->
+<!--                            <div class="stat-label">Last Checked</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <t t-if="not notices">-->
+<!--                        <div class="empty-state">-->
+<!--                            <i class="fa fa-bell-slash" style="font-size:6rem; color:#aaaaaa;"/>-->
+<!--                            <h3>All Quiet Today</h3>-->
+<!--                            <p>There are currently no active notices. Enjoy the calm!</p>-->
+<!--                        </div>-->
+<!--                    </t>-->
+<!--                    <t t-else="">-->
+<!--                        <div class="notices-grid">-->
+<!--                            <t t-foreach="notices" t-as="notice">-->
+<!--                                <div class="notice-card">-->
+<!--                                    <t t-if="notice.create_date > last_viewed">-->
+<!--                                        <div class="badge-new">NEW</div>-->
+<!--                                    </t>-->
+<!--                                    <div class="notice-header">-->
+<!--                                        <span class="notice-type">-->
+<!--                                            <t t-esc="dict(notice._fields['notice_type'].selection)[notice.notice_type]"/>-->
+<!--                                        </span>-->
+<!--                                        <h3 class="notice-title" t-esc="notice.name"/>-->
+<!--                                        <t t-if="notice.date_start or notice.date_end">-->
+<!--                                            <div class="notice-dates">-->
+<!--                                                <t t-if="notice.date_start">-->
+<!--                                                    From:-->
+<!--                                                    <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/>-->
+<!--                                                </t>-->
+<!--                                                <t t-if="notice.date_end">-->
+<!--                                                    → To:-->
+<!--                                                    <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/>-->
+<!--                                                </t>-->
+<!--                                            </div>-->
+<!--                                        </t>-->
+<!--                                    </div>-->
+<!--                                    <div class="notice-preview">-->
+<!--                                        &lt;!&ndash;  Image first (top of card)  &ndash;&gt;-->
+<!--                                        <t t-if="notice.image">-->
+<!--                                            <div class="notice-image-preview">-->
+<!--                                                <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()"-->
+<!--                                                     alt="Notice Preview"/>-->
+<!--                                            </div>-->
+<!--                                        </t>-->
+<!--                                        &lt;!&ndash;  Description below image  &ndash;&gt;-->
+<!--                                        <div class="notice-short-desc" t-field="notice.description"/>-->
+<!--                                    </div>-->
+<!--                                    <div class="notice-footer">-->
+<!--                                        <a class="btn-view-details" t-att-data-modal="'notice-modal-' + str(notice.id)">-->
+<!--                                            View Details →-->
+<!--                                        </a>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </t>-->
+<!--                        </div>-->
+<!--                    </t>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash;  Modals for full details  &ndash;&gt;-->
+<!--            <t t-foreach="notices" t-as="notice">-->
+<!--                <div t-att-id="'notice-modal-' + str(notice.id)" class="notice-modal">-->
+<!--                    <div class="modal-content">-->
+<!--                        <span class="modal-close">×</span>-->
+<!--                        <div class="modal-header">-->
+<!--                            <span class="notice-type">-->
+<!--                                <t t-esc="dict(notice._fields['notice_type'].selection)[notice.notice_type]"/>-->
+<!--                            </span>-->
+<!--                            <h2 style="font-size:2.3rem; margin:1.4rem 0; color:var(&#45;&#45;text);" t-esc="notice.name"/>-->
+<!--                            <t t-if="notice.date_start or notice.date_end">-->
+<!--                                <div class="notice-dates" style="font-size:1.1rem;">-->
+<!--                                    <t t-if="notice.date_start">-->
+<!--                                        From:-->
+<!--                                        <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/>-->
+<!--                                    </t>-->
+<!--                                    <t t-if="notice.date_end">-->
+<!--                                        → To:-->
+<!--                                        <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/>-->
+<!--                                    </t>-->
+<!--                                </div>-->
+<!--                            </t>-->
+<!--                        </div>-->
+<!--                        <div class="modal-body">-->
+<!--                            <t t-if="notice.image">-->
+<!--                                <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()" class="modal-image"-->
+<!--                                     alt="Full Notice Image"/>-->
+<!--                            </t>-->
+<!--                            <div style="font-size:1.18rem; line-height:1.9; color:#475569;"-->
+<!--                                 t-field="notice.description"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </t>-->
+<!--            <script>-->
+<!--                document.addEventListener('DOMContentLoaded', function() {-->
 
-        <!--                .notice-page {-->
-        <!--                    min-height: 100vh;-->
-        <!--                    background: linear-gradient(135deg,-->
-        <!--                        #f0f9ff 0%, #e0f2fe 15%, #bae6fd 35%,-->
-        <!--                        #7dd3fc 60%, #38bdf8 85%, #0ea5e9 100%);-->
-        <!--                    padding: 4rem 1rem;-->
-        <!--                    position: relative;-->
-        <!--                    overflow: hidden;-->
-        <!--                }-->
+<!--                // Open modal-->
+<!--                document.querySelectorAll('.btn-view-details').forEach(btn => {-->
+<!--                btn.addEventListener('click', function() {-->
+<!--                const modalId = this.dataset.modal;-->
+<!--                const modal = document.getElementById(modalId);-->
+<!--                if (modal) modal.classList.add('active');-->
+<!--                });-->
+<!--                });-->
 
-        <!--                .notice-page::before {-->
-        <!--                    content: '';-->
-        <!--                    position: absolute;-->
-        <!--                    inset: 0;-->
-        <!--                    background:-->
-        <!--                        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.7) 0%, transparent 50%),-->
-        <!--                        radial-gradient(circle at 80% 20%, rgba(186, 230, 253, 0.4) 0%, transparent 50%);-->
-        <!--                    pointer-events: none;-->
-        <!--                }-->
+<!--                // Close modal-->
+<!--                document.querySelectorAll('.modal-close').forEach(close => {-->
+<!--                close.addEventListener('click', function() {-->
+<!--                this.closest('.notice-modal').classList.remove('active');-->
+<!--                });-->
+<!--                });-->
 
-        <!--                .notice-container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }-->
+<!--                // Close on background click-->
+<!--                document.querySelectorAll('.notice-modal').forEach(modal => {-->
+<!--                modal.addEventListener('click', function(e) {-->
+<!--                if (e.target === modal) modal.classList.remove('active');-->
+<!--                });-->
+<!--                });-->
 
-        <!--                .page-header { text-align: center; margin-bottom: 3rem; }-->
-        <!--                .page-header h1 {-->
-        <!--                    font-size: 3.6rem; font-weight: 800; margin: 0;-->
-        <!--                    background: linear-gradient(90deg, #0369a1, #0ea5e9, #38bdf8);-->
-        <!--                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;-->
-        <!--                    background-clip: text;-->
-        <!--                }-->
-        <!--                .page-header p { font-size: 1.35rem; color: #475569; margin-top: 1rem; font-weight: 500; }-->
+<!--                // Close on Esc key-->
+<!--                document.addEventListener('keydown', function(e) {-->
+<!--                if (e.key === 'Escape') {-->
+<!--                document.querySelectorAll('.notice-modal.active')-->
+<!--                .forEach(m => m.classList.remove('active'));-->
+<!--                }-->
+<!--                });-->
 
-        <!--                /* Top Banner */-->
-        <!--                .new-notice-banner {-->
-        <!--                    background: rgba(59, 130, 246, 0.15);-->
-        <!--                    backdrop-filter: blur(12px);-->
-        <!--                    border: 2px solid #3b82f6;-->
-        <!--                    border-radius: 20px;-->
-        <!--                    padding: 1.5rem 2rem;-->
-        <!--                    margin: 0 auto 3rem;-->
-        <!--                    max-width: 800px;-->
-        <!--                    text-align: center;-->
-        <!--                    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);-->
-        <!--                    animation: bounceIn 1s ease-out;-->
-        <!--                }-->
-        <!--                .new-notice-banner i { font-size: 2.2rem; color: #3b82f6; margin-right: 12px; animation: ring 2s infinite; }-->
-
-        <!--                @keyframes bounceIn { 0% { opacity:0; transform:scale(0.8); } 60% { transform:scale(1.05); } 100% { transform:scale(1); } }-->
-        <!--                @keyframes ring { 0%,100% { transform:rotate(0); } 10%,30%,50%,70%,90% { transform:rotate(-10deg); } 20%,40%,60%,80% { transform:rotate(10deg); } }-->
-
-        <!--                /* NEW Badge */-->
-        <!--                .badge-new {-->
-        <!--                    position: absolute;-->
-        <!--                    top: 16px;-->
-        <!--                    right: -10px;-->
-        <!--                    background: linear-gradient(45deg, #ef4444, #dc2626);-->
-        <!--                    color: white;-->
-        <!--                    padding: 0.5rem 1.4rem;-->
-        <!--                    font-size: 0.85rem;-->
-        <!--                    font-weight: 800;-->
-        <!--                    border-radius: 50px;-->
-        <!--                    box-shadow: 0 6px 20px rgba(239,68,68,0.5);-->
-        <!--                    z-index: 20;-->
-        <!--                    transform: rotate(12deg);-->
-        <!--                    animation: pulse 2s infinite;-->
-        <!--                }-->
-        <!--                .badge-new::after {-->
-        <!--                    content: ''; position: absolute; bottom: -8px; left: 50%;-->
-        <!--                    transform: translateX(-50%) rotate(45deg);-->
-        <!--                    width: 16px; height: 16px; background: #991b1b;-->
-        <!--                }-->
-        <!--                @keyframes pulse { 0%,100% { transform: rotate(12deg) scale(1); } 50% { transform: rotate(12deg) scale(1.15); } }-->
-
-        <!--                .notices-grid {-->
-        <!--                    display: grid;-->
-        <!--                    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));-->
-        <!--                    gap: 2.2rem;-->
-        <!--                    animation: fadeInUp 0.9s ease-out;-->
-        <!--                }-->
-        <!--                @keyframes fadeInUp { from { opacity:0; transform:translateY(50px); } to { opacity:1; transform:translateY(0); } }-->
-
-        <!--                .notice-card {-->
-        <!--                    background: var(&#45;&#45;card-bg);-->
-        <!--                    backdrop-filter: blur(20px);-->
-        <!--                    -webkit-backdrop-filter: blur(20px);-->
-        <!--                    border-radius: 26px;-->
-        <!--                    border: 1.5px solid var(&#45;&#45;card-border);-->
-        <!--                    overflow: hidden;-->
-        <!--                    box-shadow: var(&#45;&#45;shadow);-->
-        <!--                    transition: var(&#45;&#45;transition);-->
-        <!--                    position: relative;-->
-        <!--                    height: 100%;-->
-        <!--                    display: flex;-->
-        <!--                    flex-direction: column;-->
-        <!--                }-->
-        <!--                .notice-card:hover {-->
-        <!--                    transform: translateY(-18px) scale(1.025);-->
-        <!--                    box-shadow: var(&#45;&#45;shadow-hover), 0 0 50px var(&#45;&#45;glow);-->
-        <!--                    border-color: rgba(147, 197, 253, 0.6);-->
-        <!--                }-->
-
-        <!--                .notice-header { padding: 2rem 2rem 1.2rem; border-bottom: 1px solid rgba(148,163,184,0.2); }-->
-        <!--                .notice-type {-->
-        <!--                    display: inline-block;-->
-        <!--                    background: linear-gradient(90deg, #22d3ee, #06b6d4);-->
-        <!--                    color: white;-->
-        <!--                    padding: 0.6rem 1.3rem;-->
-        <!--                    border-radius: 50px;-->
-        <!--                    font-size: 0.95rem;-->
-        <!--                    font-weight: 700;-->
-        <!--                    letter-spacing: 0.8px;-->
-        <!--                    box-shadow: 0 6px 20px rgba(6,182,212,0.35);-->
-        <!--                }-->
-        <!--                .notice-title { font-size: 1.75rem; font-weight: 700; color: #1e293b; margin: 1.2rem 0 0.6rem; line-height: 1.3; }-->
-        <!--                .notice-dates {-->
-        <!--                    color: #475569; font-size: 1rem; font-weight: 600;-->
-        <!--                    background: rgba(148,163,184,0.15); padding: 0.6rem 1.2rem;-->
-        <!--                    border-radius: 14px; display: inline-block; margin-top: 0.6rem;-->
-        <!--                    backdrop-filter: blur(8px); border: 1px solid rgba(148,163,184,0.2);-->
-        <!--                }-->
-        <!--                .notice-body { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }-->
-        <!--                .notice-content { color: #475569; line-height: 1.8; font-size: 1.1rem; flex-grow: 1; margin-bottom: 1.2rem; }-->
-        <!--                .notice-image-wrapper { margin: 1.2rem -2rem 0; overflow: hidden; border-radius: 0 0 22px 22px; }-->
-        <!--                .notice-image { width: 100%; height: 280px; object-fit: cover; transition: transform 0.7s ease; }-->
-        <!--                .notice-card:hover .notice-image { transform: scale(1.1); }-->
-
-        <!--                .empty-notice {-->
-        <!--                    grid-column: 1/-1; text-align: center; padding: 6rem 2rem;-->
-        <!--                    background: rgba(255,255,255,0.7); border-radius: 24px; backdrop-filter: blur(10px);-->
-        <!--                }-->
-        <!--                .empty-notice i { font-size: 6rem; color: #94a3b8; margin-bottom: 1.5rem; }-->
-
-        <!--                @media (max-width: 768px) {-->
-        <!--                    .notices-grid { grid-template-columns: 1fr; }-->
-        <!--                    .page-header h1 { font-size: 2.9rem; }-->
-        <!--                }-->
-        <!--            </style>-->
-
-        <!--            <div class="notice-page">-->
-        <!--                <div class="notice-container">-->
-        <!--                    <div class="page-header">-->
-        <!--                        <h1>Notice Board</h1>-->
-        <!--                        <p>Important updates and announcements from your community</p>-->
-        <!--                    </div>-->
-
-        <!--                    &lt;!&ndash; Top Banner: New Notices &ndash;&gt;-->
-        <!--                    <t t-if="has_new">-->
-        <!--                        <div class="new-notice-banner">-->
-        <!--                            <i class="fa fa-bell"></i>-->
-        <!--                            <strong>New Notice!</strong> You have fresh announcements. Scroll down to see what's new!-->
-        <!--                        </div>-->
-        <!--                    </t>-->
-
-        <!--                    &lt;!&ndash; Empty State &ndash;&gt;-->
-        <!--                    <t t-if="not notices">-->
-        <!--                        <div class="empty-notice">-->
-        <!--                            <i class="fa fa-bell-slash"></i>-->
-        <!--                            <h3 style="color:#475569; margin:1rem 0;">No Active Notices</h3>-->
-        <!--                            <p style="color:#64748b;">Check back later for updates from your management</p>-->
-        <!--                        </div>-->
-        <!--                    </t>-->
-
-        <!--                    &lt;!&ndash; Notices Grid &ndash;&gt;-->
-        <!--                    <div class="notices-grid">-->
-        <!--                        <t t-foreach="notices" t-as="notice">-->
-        <!--                            <div class="notice-card">-->
-        <!--                                &lt;!&ndash; NEW Badge – uses last_viewed passed from controller &ndash;&gt;-->
-        <!--                                <t t-if="notice.create_date > last_viewed">-->
-        <!--                                    <div class="badge-new">NEW</div>-->
-        <!--                                </t>-->
-
-        <!--                                <div class="notice-header">-->
-        <!--                                    <span class="notice-type">-->
-        <!--                                        <t t-esc="dict(notice._fields['notice_type'].selection)[notice.notice_type]"/>-->
-        <!--                                    </span>-->
-        <!--                                    <div class="notice-title" t-esc="notice.name"/>-->
-
-        <!--                                    <t t-if="notice.date_start or notice.date_end">-->
-        <!--                                        <div class="notice-dates">-->
-        <!--                                            <t t-if="notice.date_start">-->
-        <!--                                                From: <strong t-esc="notice.date_start.strftime('%b %d, %Y')"/>-->
-        <!--                                            </t>-->
-        <!--                                            <t t-if="notice.date_end">-->
-        <!--                                                → To: <strong t-esc="notice.date_end.strftime('%b %d, %Y')"/>-->
-        <!--                                            </t>-->
-        <!--                                        </div>-->
-        <!--                                    </t>-->
-        <!--                                </div>-->
-
-        <!--                                <div class="notice-body">-->
-        <!--                                    <div class="notice-content" t-field="notice.description"/>-->
-
-        <!--                                    <t t-if="notice.image">-->
-        <!--                                        <div class="notice-image-wrapper">-->
-        <!--                                            <img t-att-src="'data:image/png;base64,%s' % notice.image.decode()"-->
-        <!--                                                 class="notice-image" alt="Notice Image"/>-->
-        <!--                                        </div>-->
-        <!--                                    </t>-->
-        <!--                                </div>-->
-        <!--                            </div>-->
-        <!--                        </t>-->
-        <!--                    </div>-->
-        <!--                </div>-->
-        <!--            </div>-->
-        <!--        </t>-->
-        <!--    </template>-->
-        <!--</odoo>-->
+<!--                });-->
+<!--            </script>-->
+<!--        </t>-->
+<!--    </template>-->
+<!--</odoo>-->

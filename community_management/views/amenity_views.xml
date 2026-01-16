@@ -1,24 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Amenity List View -->
+    <record id="view_amenity_list" model="ir.ui.view">
+        <field name="name">community.amenity.list</field>
+        <field name="model">community.amenity</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="amenity_type"/>
+                <field name="amount" />
+                <field name="max_booking_per_day"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
     <!-- Amenity Form View -->
     <record id="view_amenity_form" model="ir.ui.view">
-        <field name="name">amenity.amenity.form</field>
-        <field name="model">amenity.amenity</field>
+        <field name="name">community.amenity.form</field>
+        <field name="model">community.amenity</field>
         <field name="arch" type="xml">
-            <form string="Amenity">
+            <form>
                 <sheet>
                     <group>
                         <field name="name"/>
-                        <field name="active"/>
                         <field name="description"/>
-                        <field name="image" widget="image"/>
+                        <field name="amenity_type"/>
+                        <field name="amount" />
+                        <field name="max_booking_per_day"/>
+                        <field name="active"/>
                     </group>
                     <notebook>
-                        <page string="Time Slots">
-                            <field name="slot_ids">
-                                <list editable="bottom">
-                                    <field name="start_time" widget="float_time"/>
-                                    <field name="end_time" widget="float_time"/>
-                                    <field name="display_name" readonly="1"/>
+                        <page string="Bookings">
+                            <field name="booking_ids">
+                                <list>
+                                    <field name="partner_id"/>
+                                    <field name="booking_date"/>
+                                    <field name="state"/>
+                                    <field name="payment_status"/>
+                                    <field name="amount"/>
                                 </list>
                             </field>
                         </page>
@@ -28,47 +48,18 @@
         </field>
     </record>
 
-    <!-- Amenity list View -->
-    <record id="view_amenity_list" model="ir.ui.view">
-        <field name="name">amenity.amenity.list</field>
-        <field name="model">amenity.amenity</field>
-        <field name="arch" type="xml">
-            <list string="Amenities">
-                <field name="name"/>
-                <field name="active"/>
-            </list>
-        </field>
-    </record>
-
-    <!-- Amenity Booking list View -->
-    <record id="view_amenity_booking_list" model="ir.ui.view">
-        <field name="name">amenity.booking.list</field>
-        <field name="model">amenity.booking</field>
-        <field name="arch" type="xml">
-            <list string="Bookings">
-                <field name="amenity_id"/>
-                <field name="tenant_id"/>
-                <field name="booking_date"/>
-                <field name="time_slot_id"/>
-                <field name="state"/>
-            </list>
-        </field>
-    </record>
-
-    <!-- Actions and Menus -->
-    <record id="action_amenity" model="ir.actions.act_window">
+    <!-- Amenity Action -->
+    <record id="action_community_amenity" model="ir.actions.act_window">
         <field name="name">Amenities</field>
-        <field name="res_model">amenity.amenity</field>
+        <field name="res_model">community.amenity</field>
         <field name="view_mode">list,form</field>
-    </record>
-    <record id="action_amenity_booking" model="ir.actions.act_window">
-        <field name="name">Amenity Bookings</field>
-        <field name="res_model">amenity.booking</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_amenity_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create amenities such as Club House, Gym, Swimming Pool.
+            </p>
+        </field>
     </record>
 
-<!--    <menuitem id="main_menu_amenities" name="Amenities" parent="menu_community_management_root" sequence="10"/>-->
 
-<!--    <menuitem id="menu_amenities" name="Amenities" parent="main_menu_amenities" action="action_amenity" sequence="10"/>-->
-<!--    <menuitem id="menu_amenity_bookings" name="Bookings" parent="main_menu_amenities" action="action_amenity_booking" sequence="20"/>-->
 </odoo>

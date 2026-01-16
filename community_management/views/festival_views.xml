@@ -125,9 +125,5 @@
     </record>
 
     <!-- Menu Item -->
-    <menuitem id="menu_community_festival_list"
-              name="Festivals Expenses"
-              parent="menu_flat_transaction_menu"
-              action="action_community_festival"
-              sequence="10"/>
+
 </odoo>

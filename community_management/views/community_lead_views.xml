@@ -8,10 +8,7 @@
 
     <!-- Menu Items -->
 
-    <menuitem id="menu_community_lead"
-              name="Demo Requests"
-              parent="menu_flat_transaction_menu"
-              action="action_community_lead"/>
+
 
     <!-- list View -->
     <record id="view_community_lead_list" model="ir.ui.view">

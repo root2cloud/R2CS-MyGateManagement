@@ -142,10 +142,7 @@
     <!-- Menu -->
 
 
-    <menuitem id="tenant_details_menu" name="Tenant details" parent="menu_community_management_root"
-               sequence="6"/>
-    <menuitem id="menu_family_member" name="Family Members" parent="tenant_details_menu"
-              action="action_family_member" sequence="6"/>
+
 
 
 </odoo>

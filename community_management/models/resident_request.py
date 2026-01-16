@@ -180,5 +180,10 @@ class ResidentAccessRequest(models.Model):
             if rec.state == 'pending' and rec.flat_id and rec.flat_id.status == 'occupied':
                 raise ValidationError(f"Flat {rec.flat_id.name} is already occupied.")
 
+    # def _group_states(self, states, domain, order):
+    #     return self.env['resident.access.request'].fields_get(['state'])['state']['selection']
+
     def _group_states(self, states, domain, order):
-        return self.env['resident.access.request'].fields_get(['state'])['state']['selection']
+        """Fix for group expansion - Odoo 18.0 requires this signature"""
+        # Return all possible states
+        return [key for key, value in self._fields['state'].selection]

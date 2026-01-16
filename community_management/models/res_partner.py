@@ -36,3 +36,16 @@ class ResPartner(models.Model):
         ('committee_member', 'Committee Member'),
         ('resident_representative', 'Resident Representative'),
     ], string='Community Role', default=False)
+    # ---
+
+    last_notice_viewed = fields.Datetime(string="Last Notice Viewed", default=fields.Datetime.now)
+
+    def get_unread_notice_count(self):
+        """Get count of unread notices for this partner"""
+        notice_model = self.env['property.notice.board']
+
+        all_notices = notice_model.get_user_notices(self.env.user)
+        last_viewed = self.last_notice_viewed or fields.Datetime.from_string('1900-01-01')
+
+        unread_count = sum(1 for notice in all_notices if notice.create_date > last_viewed)
+        return unread_count

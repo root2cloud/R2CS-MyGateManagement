@@ -8,14 +8,21 @@
     'depends': ['base', 'web', 'website', 'portal', 'account', 'mail', 'contacts'],
     # Added website dependency for portal features
     'data': [
+        'security/security_groups.xml',
         'security/ir.model.access.csv',
+        'security/security.xml',
+
         'security/family_member_security.xml',
         'security/vehicle_security.xml',
-        'security/amenity_security.xml',
-        'security/security.xml',
-        'security/security_groups.xml',
+        'security/visiting_help_rules.xml',
+        'security/community_post_rules.xml',
+        # 'security/amenity_security.xml',
+
+        'views/menu_views.xml',
+
         'data/pet_cron.xml',
         'security/pet_security.xml',
+
         'views/community_views.xml',
         'views/building_views.xml',
         'views/flat_views.xml',
@@ -40,7 +47,7 @@
         'views/portal_profile_overview.xml',
 
         # not completed below one
-        # 'views/amenity_portal_templates.xml',
+        'views/amenity_portal_templates.xml',
         'views/demo_template.xml',
         'views/community_lead_views.xml',
         'views/community_dashboard_kanban.xml',
@@ -62,6 +69,14 @@
         'views/delivery_pass_views.xml',
         'views/portal_delivery_pass_templates.xml',
         'views/portal_security_guard_templates.xml',
+        'views/portal_all_flats_templates.xml',
+        'views/visiting_help_views.xml',
+        'views/portal_visiting_help_create.xml',
+        'views/community_post_views.xml',
+        'views/community_post_template.xml',
+        'views/maintance_fest_dashboard_views.xml',
+        'views/custom_dashboard_views.xml',
+        'views/party_cab_del_dashboard_views.xml',
 
         # 'views/assets.xml',
 

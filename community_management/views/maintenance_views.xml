@@ -188,6 +188,5 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_flat_maintenance" name="Maintenance" parent="menu_flat_transaction_menu"
-              action="action_flat_maintenance" sequence="6"/>
+
 </odoo>

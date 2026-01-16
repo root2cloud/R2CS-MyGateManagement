@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="community_posts_template" name="Community Posts">
+        <meta t-att-content="request.csrf_token()" name="csrf-token"/>
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h1 class="display-5 mb-3">Community Posts</h1>
+                        <p class="lead text-muted">Share and discover posts from your community</p>
+
+                        <!-- Create Post Button -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <a href="/community/post/create" class="btn btn-primary btn-lg">
+                                <i class="fa fa-plus me-2"></i>Create New Post
+                            </a>
+
+                            <!-- Community Filter -->
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-filter me-2"></i>
+                                    <t t-if="current_community_id">
+                                        <t t-set="selected_community"
+                                           t-value="communities.filtered(lambda c: c.id == int(current_community_id))"/>
+                                        <span t-esc="selected_community.name if selected_community else 'All Communities'"/>
+                                    </t>
+                                    <t t-else="">All Communities</t>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="/community/posts">
+                                            All Communities
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider"/>
+                                    </li>
+                                    <t t-foreach="communities" t-as="community">
+                                        <li>
+                                            <a class="dropdown-item"
+                                               t-att-href="'/community/posts?community_id=' + str(community.id)">
+                                                <t t-esc="community.name"/>
+                                            </a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Posts Grid -->
+                <div t-if="posts" class="row">
+                    <t t-foreach="posts" t-as="post">
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 shadow-sm hover-shadow transition-all">
+                                <!-- Post Image -->
+                                <t t-if="post.image">
+                                    <img t-attf-src="data:image/png;base64,{{ post.image.decode('utf-8') if isinstance(post.image, bytes) else post.image }}"
+                                         class="card-img-top"
+                                         style="height: 200px; object-fit: cover;"
+                                         t-att-alt="post.name"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                                         style="height: 200px;">
+                                        <i class="fa fa-image fa-3x text-muted"></i>
+                                    </div>
+                                </t>
+
+                                <!-- Card Body -->
+                                <div class="card-body d-flex flex-column">
+                                    <!-- Community Badge -->
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary rounded-pill">
+                                            <t t-esc="post.community_id.name"/>
+                                        </span>
+                                    </div>
+
+                                    <!-- Title -->
+                                    <h5 class="card-title">
+                                        <a t-att-href="'/community/post/' + str(post.id)"
+                                           class="text-decoration-none text-dark">
+                                            <t t-esc="post.name"/>
+                                        </a>
+                                    </h5>
+
+                                    <!-- Truncated Content -->
+                                    <div class="card-text text-muted mb-3 flex-grow-1">
+                                        <t t-out="post.description and post.description[:100] + '...' or 'No content'"/>
+                                    </div>
+
+                                    <!-- Author and Stats -->
+                                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                <div class="avatar-title bg-light rounded-circle">
+                                                    <i class="fa fa-user text-primary"></i>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">
+                                                <t t-esc="post.author_id.name"/>
+                                            </small>
+                                        </div>
+
+                                        <!-- Stats -->
+                                        <div class="d-flex">
+                                            <span class="me-3">
+                                                <i class="fa fa-eye text-muted me-1"></i>
+                                                <small t-esc="post.view_count"/>
+                                            </span>
+                                            <span class="me-3">
+                                                <i class="fa fa-comment text-muted me-1"></i>
+                                                <small t-esc="post.comment_count"/>
+                                            </span>
+                                            <span class="like-button"
+                                                  t-att-data-post-id="post.id"
+                                                  t-att-class="'text-' + ('danger' if post.id in liked_post_ids else 'muted')">
+                                                <i class="fa fa-heart me-1"></i>
+                                                <small class="like-count" t-esc="post.like_count"/>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Date -->
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="fa fa-clock me-1"></i>
+                                            <t t-esc="post.create_date.strftime('%b %d, %Y') if post.create_date else ''"/>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- No Posts Message -->
+                <t t-if="not posts">
+                    <div class="text-center py-5">
+                        <div class="empty-state">
+                            <i class="fa fa-newspaper fa-4x text-muted mb-4"></i>
+                            <h3 class="text-muted">No Posts Yet</h3>
+                            <p class="text-muted">Be the first to share something with your community!</p>
+                            <a href="/community/post/create" class="btn btn-primary mt-3">
+                                Create First Post
+                            </a>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Pagination -->
+                <t t-if="pager and pager['page_count'] > 1">
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <li t-att-class="'page-item ' + ('disabled' if pager['page'] == 1 else '')">
+                                        <a class="page-link"
+                                           t-att-href="pager['previous']['url'] if pager['previous'] else '#'">
+                                            Previous
+                                        </a>
+                                    </li>
+                                    <t t-foreach="pager['pages']" t-as="page">
+                                        <li t-att-class="'page-item ' + ('active' if page['num'] == pager['page'] else '')">
+                                            <a class="page-link" t-att-href="page['url']">
+                                                <t t-esc="page['num']"/>
+                                            </a>
+                                        </li>
+                                    </t>
+                                    <li t-att-class="'page-item ' + ('disabled' if pager['page'] == pager['page_count'] else '')">
+                                        <a class="page-link"
+                                           t-att-href="pager['next']['url'] if pager['next'] else '#'">
+                                            Next
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- JavaScript -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                // Like button functionality
+                document.querySelectorAll('.like-button').forEach(function(button) {
+                button.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                const heartIcon = this.querySelector('i.fa-heart');
+                const countElement = this.querySelector('.like-count');
+
+                // Get CSRF token from meta tag
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ||
+                document.querySelector('input[name="csrf_token"]')?.value || '';
+
+                fetch('/community/post/like', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                params: {
+                post_id: parseInt(postId)
+                },
+                jsonrpc: '2.0',
+                method: 'call',
+                id: Math.floor(Math.random() * 1000)
+                })
+                })
+                .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+                })
+                .then(data => {
+                console.log('Like response:', data);
+                if (data.result &amp; data.result.success) {
+                const result = data.result;
+                countElement.textContent = result.like_count;
+                if (result.action === 'liked') {
+                heartIcon.classList.remove('text-muted');
+                heartIcon.classList.add('text-danger');
+                this.classList.remove('text-muted');
+                this.classList.add('text-danger');
+                } else {
+                heartIcon.classList.remove('text-danger');
+                heartIcon.classList.add('text-muted');
+                this.classList.remove('text-danger');
+                this.classList.add('text-muted');
+                }
+
+                heartIcon.style.transform = 'scale(1.5)';
+                setTimeout(() => {
+                heartIcon.style.transform = 'scale(1)';
+                }, 300);
+                } else if (data.error) {
+                console.error('Error:', data.error);
+                alert('Error: ' + (data.error.data.message || 'Something went wrong'));
+                }
+                })
+                .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Failed to like post. Please try again.');
+                });
+                });
+                });
+                });
+            </script>
+
+            <style>
+                .hover-shadow {
+                transition: all 0.3s ease;
+                }
+                .hover-shadow:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+                }
+                .transition-all {
+                transition: all 0.3s ease;
+                }
+                .like-button {
+                cursor: pointer;
+                transition: all 0.2s ease;
+                }
+                .like-button:hover {
+                transform: scale(1.1);
+                }
+                .empty-state {
+                padding: 3rem;
+                background: #f8f9fa;
+                border-radius: 10px;
+                }
+                .avatar-sm {
+                width: 32px;
+                height: 32px;
+                }
+                .avatar-title {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                }
+            </style>
+        </t>
+    </template>
+
+    <template id="community_post_detail_template" name="Community Post Detail">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <!-- Back Button -->
+                <div class="mb-4">
+                    <a href="/community/posts" class="btn btn-outline-secondary">
+                        <i class="fa fa-arrow-left me-2"></i>
+                        Back to Posts
+                    </a>
+                </div>
+
+                <!-- Main Content -->
+                <div class="row">
+                    <!-- Post Content -->
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <!-- Header -->
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <span class="badge bg-primary rounded-pill mb-2">
+                                            <t t-esc="post.community_id.name"/>
+                                        </span>
+                                        <h1 class="display-6 mb-2" t-esc="post.name"/>
+                                    </div>
+                                    <!-- Only show delete button for author's own posts -->
+                                    <t t-if="is_author">
+                                        <a class="btn btn-sm btn-outline-danger"
+                                           t-att-href="'/community/post/delete/' + str(post.id)"
+                                           onclick="return confirm('Are you sure you want to delete this post?')">
+                                            <i class="fa fa-trash me-1"></i>
+                                            Delete Post
+                                        </a>
+                                    </t>
+                                </div>
+
+                                <!-- Author Info -->
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="avatar-lg me-3">
+                                        <div class="avatar-title bg-light rounded-circle">
+                                            <i class="fa fa-user fa-lg text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0" t-esc="post.author_id.name"/>
+                                        <small class="text-muted">
+                                            <i class="fa fa-clock me-1"></i>
+                                            <t t-esc="post.create_date.strftime('%B %d, %Y at %I:%M %p') if post.create_date else ''"/>
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <!-- Post Image -->
+                                <t t-if="post.image">
+                                    <div class="mb-4">
+                                        <img t-attf-src="data:image/png;base64,{{ post.image.decode('utf-8') if isinstance(post.image, bytes) else post.image }}"
+                                             class="img-fluid rounded"
+                                             t-att-alt="post.name"
+                                             style="max-height: 500px; object-fit: contain;"/>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="mb-4">
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                             style="height: 300px;">
+                                            <i class="fa fa-image fa-5x text-muted"></i>
+                                        </div>
+                                    </div>
+                                </t>
+
+                                <!-- Content -->
+                                <div class="content mb-4">
+                                    <div t-raw="post.description"/>
+                                </div>
+
+                                <!-- Stats and Actions -->
+                                <div class="border-top pt-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex">
+                                            <!-- Like Button - Available for all users -->
+                                            <button t-att-class="'btn btn-' + ('danger' if is_liked else 'outline-danger') + ' me-3 like-button-detail'"
+                                                    t-att-data-post-id="post.id">
+                                                <i class="fa fa-heart me-2"></i>
+                                                <span class="like-count-detail" t-esc="post.like_count"/>
+                                                <span t-esc="' Unlike' if is_liked else ' Like'"/>
+                                            </button>
+
+                                            <!-- View Count -->
+                                            <span class="btn btn-outline-secondary me-3">
+                                                <i class="fa fa-eye me-2"></i>
+                                                <span class="view-count-detail" t-esc="post.view_count"/>
+                                                views
+                                            </span>
+
+                                            <!-- Comment Count -->
+                                            <span class="btn btn-outline-secondary">
+                                                <i class="fa fa-comment me-2"></i>
+                                                <span class="comment-count-detail" t-esc="post.comment_count"/>
+                                                comments
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comments Section - Available for all users -->
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="fa fa-comments me-2"></i>
+                                    Comments (<span class="comment-count-display" t-esc="post.comment_count"/>)
+                                </h5>
+
+                                <!-- Add Comment Form - Available for all users -->
+                                <div class="mb-4">
+                                    <form id="comment-form" class="comment-form">
+                                        <div class="mb-3">
+                                            <textarea class="form-control"
+                                                      id="comment-content"
+                                                      rows="3"
+                                                      placeholder="Write your comment here..."
+                                            ></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-paper-plane me-2"></i>
+                                            Add Comment
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Comments List - Show all comments to all users -->
+                                <div class="comments-list">
+                                    <t t-if="comments">
+                                        <t t-foreach="comments" t-as="comment">
+                                            <div class="comment-item mb-3 pb-3 border-bottom"
+                                                 t-att-data-comment-id="comment.id">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar-sm me-2">
+                                                            <div class="avatar-title bg-light rounded-circle">
+                                                                <i class="fa fa-user text-primary"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="mb-0" t-esc="comment.user_id.name"/>
+                                                            <small class="text-muted">
+                                                                <i class="fa fa-clock me-1"></i>
+                                                                <t t-esc="comment.create_date.strftime('%b %d, %Y %I:%M %p') if comment.create_date else ''"/>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Only show delete button for user's own comments -->
+                                                    <t t-if="comment.user_id.id == user.id">
+                                                        <button class="btn btn-sm btn-outline-danger delete-comment-btn">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </t>
+                                                </div>
+                                                <div class="comment-content ms-5">
+                                                    <p class="mb-0" t-esc="comment.content"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="text-center py-4">
+                                            <p class="text-muted">No comments yet. Be the first to comment!</p>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="col-lg-4">
+                        <!-- Author Card -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">About Author</h5>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="avatar-lg me-3">
+                                        <div class="avatar-title bg-primary rounded-circle text-white">
+                                            <i class="fa fa-user fa-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0" t-esc="post.author_id.name"/>
+                                        <small class="text-muted">Community Member</small>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <small class="text-muted">
+                                        Member since
+                                        <t t-esc="post.author_id.create_date.strftime('%B %Y') if post.author_id.create_date else ''"/>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Community Info -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Community Info</h5>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="avatar-lg me-3">
+                                        <div class="avatar-title bg-light rounded-circle">
+                                            <i class="fa fa-users fa-lg text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0" t-esc="post.community_id.name"/>
+                                        <small class="text-muted">
+                                            <i class="fa fa-users me-1"></i>
+                                            Active Community
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Posts -->
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Recent Posts</h5>
+                                <div class="list-group list-group-flush">
+                                    <t t-foreach="recent_posts" t-as="recent_post">
+                                        <a t-att-href="'/community/post/' + str(recent_post.id)"
+                                           class="list-group-item list-group-item-action border-0 py-3">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1" t-esc="recent_post.name"/>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fa fa-user me-1"></i>
+                                                <t t-esc="recent_post.author_id.name"/>
+                                            </small>
+                                        </a>
+                                    </t>
+                                    <t t-if="not recent_posts">
+                                        <div class="text-center py-3">
+                                            <small class="text-muted">No other posts in this community yet</small>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                // Like button functionality - Available for all users
+                const likeButton = document.querySelector('.like-button-detail');
+                if (likeButton) {
+                likeButton.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                const countElement = this.querySelector('.like-count-detail');
+                const heartIcon = this.querySelector('i.fa-heart');
+
+                // Get CSRF token from hidden input
+                const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
+
+                fetch('/community/post/like', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                params: {
+                post_id: parseInt(postId)
+                },
+                jsonrpc: '2.0',
+                method: 'call',
+                id: Math.floor(Math.random() * 1000)
+                })
+                })
+                .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+                })
+                .then(data => {
+                console.log('Like response:', data);
+                if (data.result &amp; data.result.success) {
+                const result = data.result;
+                countElement.textContent = result.like_count;
+                if (result.action === 'liked') {
+                this.classList.remove('btn-outline-danger');
+                this.classList.add('btn-danger');
+                this.innerHTML = `<i class="fa fa-heart me-2"></i>${result.like_count} Unlike`;
+                } else {
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-outline-danger');
+                this.innerHTML = `<i class="fa fa-heart me-2"></i>${result.like_count} Like`;
+                }
+
+                heartIcon.style.transform = 'scale(1.5)';
+                setTimeout(() => {
+                heartIcon.style.transform = 'scale(1)';
+                }, 300);
+                } else if (data.error) {
+                console.error('Error:', data.error);
+                alert('Error: ' + (data.error.data.message || 'Something went wrong'));
+                }
+                })
+                .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Failed to like post. Please try again.');
+                });
+                });
+                }
+
+                // Add comment functionality - Available for all users
+                const commentForm = document.getElementById('comment-form');
+                if (commentForm) {
+                commentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const content = document.getElementById('comment-content').value;
+                const postId =<t t-esc="post.id"/>;
+
+                if (!content.trim()) {
+                alert('Please enter a comment');
+                return;
+                }
+
+                // Get CSRF token from hidden input
+                const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
+
+                fetch('/community/comment/add', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                params: {
+                post_id: parseInt(postId),
+                content: content
+                },
+                jsonrpc: '2.0',
+                method: 'call',
+                id: Math.floor(Math.random() * 1000)
+                })
+                })
+                .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+                })
+                .then(data => {
+                console.log('Comment response:', data);
+                if (data.result &amp; data.result.success) {
+                const result = data.result;
+                // Clear form
+                document.getElementById('comment-content').value = '';
+
+                // Update comment count
+                document.querySelectorAll('.comment-count-detail, .comment-count-display').forEach(el => {
+                el.textContent = result.comment_count;
+                });
+
+                // Add new comment to list
+                const commentsList = document.querySelector('.comments-list');
+                const newComment = `
+                <div class="comment-item mb-3 pb-3 border-bottom" data-comment-id="${result.comment.id}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm me-2">
+                                <div class="avatar-title bg-light rounded-circle">
+                                    <i class="fa fa-user text-primary"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">${result.comment.user_name}</h6>
+                                <small class="text-muted">
+                                    <i class="fa fa-clock me-1"></i>
+                                    ${result.comment.create_date}
+                                </small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger delete-comment-btn">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="comment-content ms-5">
+                        <p class="mb-0">${result.comment.content}</p>
+                    </div>
+                </div>
+                `;
+
+                const emptyMessage = commentsList.querySelector('.text-center');
+                if (emptyMessage) {
+                commentsList.innerHTML = newComment;
+                } else {
+                commentsList.insertAdjacentHTML('afterbegin', newComment);
+                }
+
+                // Add delete event to new comment
+                const deleteBtn = commentsList.querySelector(`[data-comment-id="${result.comment.id}"]
+                .delete-comment-btn`);
+                if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                deleteComment(result.comment.id);
+                });
+                }
+                } else if (data.error) {
+                console.error('Error:', data.error);
+                alert('Error: ' + (data.error.data.message || 'Failed to add comment'));
+                }
+                })
+                .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Failed to add comment. Please try again.');
+                });
+                });
+                }
+
+                // Delete comment functionality
+                function deleteComment(commentId) {
+                if (!confirm('Are you sure you want to delete this comment?')) {
+                return;
+                }
+
+                // Get CSRF token from hidden input
+                const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
+
+                fetch('/community/comment/delete', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                params: {
+                comment_id: parseInt(commentId)
+                },
+                jsonrpc: '2.0',
+                method: 'call',
+                id: Math.floor(Math.random() * 1000)
+                })
+                })
+                .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+                })
+                .then(data => {
+                console.log('Delete comment response:', data);
+                if (data.result &amp; data.result.success) {
+                const result = data.result;
+                // Remove comment from DOM
+                const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+                if (commentElement) {
+                commentElement.remove();
+                }
+
+                // Update comment count
+                document.querySelectorAll('.comment-count-detail, .comment-count-display').forEach(el => {
+                el.textContent = result.comment_count;
+                });
+
+                // If no comments left, show message
+                const commentsList = document.querySelector('.comments-list');
+                if (commentsList.children.length === 0) {
+                commentsList.innerHTML = `
+                <div class="text-center py-4">
+                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                </div>
+                `;
+                }
+                } else if (data.error) {
+                console.error('Error:', data.error);
+                alert('Error: ' + (data.error.data.message || 'Failed to delete comment'));
+                }
+                })
+                .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Failed to delete comment. Please try again.');
+                });
+                }
+
+                // Add delete event to existing comments
+                document.querySelectorAll('.delete-comment-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                const commentId = this.closest('.comment-item').getAttribute('data-comment-id');
+                deleteComment(commentId);
+                });
+                });
+                });
+            </script>
+
+            <style>
+                .avatar-lg {
+                width: 60px;
+                height: 60px;
+                }
+
+                .avatar-title {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                }
+
+                .content img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                }
+
+                .list-group-item:hover {
+                background-color: #f8f9fa;
+                }
+
+                .comment-content {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                }
+
+                .avatar-sm {
+                width: 32px;
+                height: 32px;
+                }
+            </style>
+        </t>
+    </template>
+
+    <template id="create_post_template" name="Create Post">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <!-- Header -->
+                        <div class="mb-4">
+                            <a href="/community/posts" class="btn btn-outline-secondary mb-3">
+                                <i class="fa fa-arrow-left me-2"></i>Back to Posts
+                            </a>
+                            <h1 class="display-5">Create New Post</h1>
+                            <p class="text-muted">Share something interesting with your community</p>
+                        </div>
+
+                        <!-- Create Post Form -->
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <form method="post" action="/community/post/submit" enctype="multipart/form-data">
+                                    <!-- CSRF Token - IMPORTANT! -->
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                    <!-- Title -->
+                                    <div class="mb-4">
+                                        <label for="name" class="form-label fw-bold">
+                                            Title
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text"
+                                               class="form-control form-control-lg"
+                                               id="name"
+                                               name="name"
+                                               placeholder="Enter a descriptive title"
+                                        />
+                                        <div class="form-text">Make it catchy and descriptive</div>
+                                    </div>
+
+                                    <!-- Community Selection -->
+                                    <div class="mb-4">
+                                        <label for="community_id" class="form-label fw-bold">
+                                            Select Community
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="community_id" name="community_id">
+                                            <option value="">Choose a community</option>
+                                            <t t-foreach="communities" t-as="community">
+                                                <option t-att-value="community.id" t-esc="community.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <!-- Image Upload -->
+                                    <div class="mb-4">
+                                        <label for="image" class="form-label fw-bold">
+                                            Add Image (Optional)
+                                        </label>
+                                        <div class="image-upload-area border rounded p-5 text-center mb-3"
+                                             onclick="document.getElementById('image').click()"
+                                             style="cursor: pointer;">
+                                            <i class="fa fa-cloud-upload fa-3x text-muted mb-3"></i>
+                                            <h5>Click to upload image</h5>
+                                            <p class="text-muted mb-0">Drag &amp; drop or click to browse</p>
+                                            <p class="text-muted small">Supports JPG, PNG up to 5MB</p>
+                                        </div>
+                                        <input type="file"
+                                               class="form-control d-none"
+                                               id="image"
+                                               name="image"
+                                               accept="image/*"
+                                               onchange="previewImage(this)"/>
+                                        <div class="image-preview mt-3 d-none">
+                                            <img id="image-preview" class="img-fluid rounded"
+                                                 style="max-height: 300px;"/>
+                                            <button type="button" class="btn btn-sm btn-danger mt-2"
+                                                    onclick="removeImage()">
+                                                <i class="fa fa-trash me-1"></i>Remove Image
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Content Editor -->
+                                    <div class="mb-4">
+                                        <label for="description" class="form-label fw-bold">
+                                            Content
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <textarea class="form-control"
+                                                  id="description"
+                                                  name="description"
+                                                  rows="10"
+                                                  placeholder="Write your post content here..."
+                                        ></textarea>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <div class="form-text">
+                                                You can use basic HTML formatting
+                                            </div>
+                                            <div class="form-text">
+                                                <span id="char-count">0</span>
+                                                characters
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Form Actions -->
+                                    <div class="d-flex justify-content-between pt-3 border-top">
+                                        <a href="/community/posts" class="btn btn-outline-secondary">
+                                            Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                                            <i class="fa fa-paper-plane me-2"></i>Publish Post
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                // Character count for description
+                const descriptionField = document.getElementById('description');
+                const charCount = document.getElementById('char-count');
+
+                descriptionField.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+                });
+                });
+
+                function previewImage(input) {
+                if (input.files &amp; input.files[0]) {
+                const reader = new FileReader();
+                const preview = document.getElementById('image-preview');
+                const previewContainer = document.querySelector('.image-preview');
+
+                reader.onload = function(e) {
+                preview.src = e.target.result;
+                previewContainer.classList.remove('d-none');
+                }
+
+                reader.readAsDataURL(input.files[0]);
+                }
+                }
+
+                function removeImage() {
+                document.getElementById('image').value = '';
+                document.querySelector('.image-preview').classList.add('d-none');
+                }
+
+                // Drag and drop functionality
+                const uploadArea = document.querySelector('.image-upload-area');
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+                });
+
+                function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                }
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+                });
+
+                function highlight() {
+                uploadArea.classList.add('bg-light');
+                }
+
+                function unhighlight() {
+                uploadArea.classList.remove('bg-light');
+                }
+
+                uploadArea.addEventListener('drop', handleDrop, false);
+
+                function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                const input = document.getElementById('image');
+
+                input.files = files;
+                previewImage(input);
+                }
+            </script>
+
+            <style>
+                .image-upload-area {
+                border: 2px dashed #dee2e6;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                }
+                .image-upload-area:hover {
+                border-color: #007bff;
+                background-color: #f8f9fa;
+                }
+                #description {
+                resize: vertical;
+                min-height: 200px;
+                }
+            </style>
+        </t>
+    </template>
+
+</odoo>

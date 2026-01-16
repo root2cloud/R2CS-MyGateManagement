@@ -5,6 +5,17 @@ import urllib.parse
 
 
 class PortalPartyGroupInvite(http.Controller):
+    @http.route('/my/party/group/invite/delete/<int:invite_id>',
+                type='http', auth='user', website=True, csrf=True)
+    def delete_invitation(self, invite_id):
+        invitation = request.env['party.group.invite'].sudo().browse(invite_id)
+
+        if invitation.exists():
+            invitation.unlink()
+
+        return request.redirect('/my/party/group/invite')
+
+
 
     @http.route(
         ['/my/party/group/invite', '/my/party/group/invite/<int:invite_id>'],
@@ -16,48 +27,50 @@ class PortalPartyGroupInvite(http.Controller):
 
         invite = Invite.browse(invite_id) if invite_id else False
 
-        # STEP 1: basic screen → save note and create draft
-        if post.get('step') == 'basic':
+        # Single submit handling (create or update with all data)
+        if post.get('step') == 'submit':
+            start_time = 0.0
+            if post.get('start_time'):
+                try:
+                    hh, mm = post.get('start_time').split(':')
+                    start_time = int(hh) + int(mm) / 60.0
+                except:
+                    start_time = 0.0
+
             vals = {
                 'host_id': partner.id,
                 'note': post.get('note') or False,
+                'description': post.get('description') or False,  # Added if your model has it
+                'event_date': post.get('event_date') or False,
+                'start_time': start_time,
+                'valid_hours': float(post.get('valid_hours') or 8.0),
+                'location': post.get('location') or False,
+                'max_guests': int(post.get('max_guests') or 5),
             }
-            if invite:
+
+            if invite and invite.exists():
                 invite.write(vals)
+                if invite.state != 'active':
+                    invite.action_activate()
             else:
                 invite = Invite.create(vals)
-            # after Next, show configuration section
-            return request.redirect(f"/my/party/group/invite/{invite.id}?show_config=1")
+                invite.action_activate()
 
-        # STEP 3: configuration form → save date/time/location/guests, activate
-        if post.get('step') == 'config' and invite:
-            event_date = post.get('event_date') or False
+            return request.redirect('/my/party/group/invite')  # Back to list after create/update
 
-            start_time = 0.0
-            if post.get('start_time'):
-                hh, mm = post.get('start_time').split(':')
-                start_time = int(hh) + int(mm) / 60.0
+        # DELETE invitation
+        if post.get('action') == 'delete':
+            delete_invite_id = int(post.get('invite_id')) if post.get('invite_id') else None
+            if delete_invite_id:
+                invite_to_delete = Invite.browse(delete_invite_id)
+                if invite_to_delete.exists() and invite_to_delete.host_id == partner:
+                    invite_to_delete.unlink()  # Delete the record
+            return request.redirect('/my/party/group/invite')
 
-            valid_hours = float(post.get('valid_hours') or 8.0)
-            max_guests = int(post.get('max_guests') or 5)
-
-            invite.write({
-                'event_date': event_date,
-                'start_time': start_time,
-                'valid_hours': valid_hours,
-                'location': post.get('location'),
-                'max_guests': max_guests,
-            })
-            invite.action_activate()
-
-            return request.redirect(f"/my/party/group/invite/{invite.id}")
-
-        # LIST + DETAIL
+        # Normal page load (list + detail view)
         invites = Invite.search([('host_id', '=', partner.id)], order='id desc')
-        if not invite_id or (not invite.exists()):
+        if invite_id and not invite.exists():
             invite = False
-        # if not invite and invites:
-        #     invite = invites[0]
 
         values = {
             'invite': invite,

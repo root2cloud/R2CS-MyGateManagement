@@ -79,10 +79,6 @@
     </record>
 
     <!-- Menu (replace parent id with your real parent menu) -->
-    <menuitem id="menu_party_group_invite_root"
-              name="Party / Group Invites"
-              parent="menu_flat_transaction_menu"
-              action="action_party_group_invite"
-              sequence="50"/>
+
 
 </odoo>

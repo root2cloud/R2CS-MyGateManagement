@@ -129,9 +129,5 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_vehicle_management"
-              name="Vehicles"
-              parent="tenant_details_menu"
-              action="action_vehicle_management"
-              sequence="8"/>
+
 </odoo>
