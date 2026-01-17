@@ -5,7 +5,7 @@
               name="Community Management"
               sequence="10"
               groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_committee_member,community_management.group_community_resident_representative,community_management.group_community_security_guard"/>
-    />
+
 
     <menuitem id="menu_community_dashboard_root"
               name="Community Dashboard"
@@ -204,7 +204,7 @@
               name="Notice Board"
               parent="menu_community_management_root"
               action="action_notice_board"
-              sequence="40"/>
+              sequence="40"
               groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
 
     <menuitem id="menu_community_posts"

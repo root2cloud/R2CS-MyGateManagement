@@ -17,6 +17,7 @@
         'security/visiting_help_rules.xml',
         'security/community_post_rules.xml',
         # 'security/amenity_security.xml',
+        'views/visiting_help_views.xml',
 
         'views/menu_views.xml',
 
@@ -70,7 +71,6 @@
         'views/portal_delivery_pass_templates.xml',
         'views/portal_security_guard_templates.xml',
         'views/portal_all_flats_templates.xml',
-        'views/visiting_help_views.xml',
         'views/portal_visiting_help_create.xml',
         'views/community_post_views.xml',
         'views/community_post_template.xml',
