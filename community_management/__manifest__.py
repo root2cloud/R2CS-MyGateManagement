@@ -19,8 +19,6 @@
         # 'security/amenity_security.xml',
         'views/visiting_help_views.xml',
 
-        'views/menu_views.xml',
-
         'data/pet_cron.xml',
         'security/pet_security.xml',
 
@@ -77,6 +75,8 @@
         'views/maintance_fest_dashboard_views.xml',
         'views/custom_dashboard_views.xml',
         'views/party_cab_del_dashboard_views.xml',
+
+        'views/menu_views.xml',
 
         # 'views/assets.xml',
 
