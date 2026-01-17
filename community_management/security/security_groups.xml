@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data noupdate="1">
+        <!-- FIRST: Define the category (must be before any ref to it) -->
+        <record id="category_community_management" model="ir.module.category">
+            <field name="name">Community Management</field>
+            <field name="sequence">30</field>
+        </record>
 
-    <!-- FIRST: Define the category (must be before any ref to it) -->
-    <record id="category_community_management" model="ir.module.category">
-        <field name="name">Community Management</field>
-        <field name="sequence">30</field>
-    </record>
+        <record id="group_community_president" model="res.groups">
+            <field name="name">President</field>
+            <field name="category_id" ref="category_community_management"/>
+            <field name="comment">Full administration rights</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
-    <record id="group_community_president" model="res.groups">
-        <field name="name">President</field>
-        <field name="category_id" ref="category_community_management"/>
-        <field name="comment">Full administration rights</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-    </record>
+        <record id="group_community_secretary" model="res.groups">
+            <field name="name">Secretary</field>
+            <field name="category_id" ref="category_community_management"/>
+            <field name="comment">Can manage most records, create notices, events, guests, etc.</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
-    <record id="group_community_secretary" model="res.groups">
-        <field name="name">Secretary</field>
-        <field name="category_id" ref="category_community_management"/>
-        <field name="comment">Can manage most records, create notices, events, guests, etc.</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-    </record>
+        <record id="group_community_treasurer" model="res.groups">
+            <field name="name">Treasurer</field>
+            <field name="category_id" ref="category_community_management"/>
+            <field name="comment">Financial &amp; maintenance related full access</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
-    <record id="group_community_treasurer" model="res.groups">
-        <field name="name">Treasurer</field>
-        <field name="category_id" ref="category_community_management"/>
-        <field name="comment">Financial &amp; maintenance related full access</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-    </record>
+        <record id="group_community_committee_member" model="res.groups">
+            <field name="name">Committee Member</field>
+            <field name="category_id" ref="category_community_management"/>
+            <field name="comment">Can view and edit most things, but cannot delete records</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
-    <record id="group_community_committee_member" model="res.groups">
-        <field name="name">Committee Member</field>
-        <field name="category_id" ref="category_community_management"/>
-        <field name="comment">Can view and edit most things, but cannot delete records</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-    </record>
+        <record id="group_community_resident_representative" model="res.groups">
+            <field name="name">Resident Representative</field>
+            <field name="category_id" ref="category_community_management"/>
+            <field name="comment">Limited edit rights, mostly view + some create</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
-    <record id="group_community_resident_representative" model="res.groups">
-        <field name="name">Resident Representative</field>
-        <field name="category_id" ref="category_community_management"/>
-        <field name="comment">Limited edit rights, mostly view + some create</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-    </record>
-
-    <record id="group_community_security_guard" model="res.groups">
-        <field name="name">Security Guard</field>
-        <field name="category_id" ref="category_community_management"/>
-        <field name="comment">Read-only access + special permissions for guest/delivery/cab entries</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-    </record>
-
+        <record id="group_community_security_guard" model="res.groups">
+            <field name="name">Security Guard</field>
+            <field name="category_id" ref="category_community_management"/>
+            <field name="comment">Read-only access + special permissions for guest/delivery/cab entries</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
 </odoo>
