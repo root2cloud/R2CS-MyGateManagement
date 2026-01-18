@@ -3,7 +3,8 @@
         <t t-call="portal.portal_layout">
             <!-- Add FontAwesome CSS -->
             <t t-set="head">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
             </t>
 
             <t t-set="breadcrumbs">
@@ -1269,6 +1270,17 @@
 
                         <t t-foreach="family_members" t-as="member">
                             <div class="profile-card">
+                                <!-- Resident ID Badge -->
+                                <div class="status-badge"
+                                     style="background: linear-gradient(135deg, var(--accent), var(--primary)); top: 1rem; left: 1rem; right: auto;">
+                                    <t t-if="member.resident_id">
+                                        <t t-esc="member.resident_id"/>
+                                    </t>
+                                    <t t-else="">
+                                        ID: Pending
+                                    </t>
+                                </div>
+
                                 <div class="card-image">
                                     <t t-if="member.photo">
                                         <img t-att-src="image_data_uri(member.photo)"/>
@@ -1276,11 +1288,41 @@
                                     <t t-else="">
                                         <i class="fa fa-user placeholder-icon"></i>
                                     </t>
+
+                                    <!-- QR Code Overlay -->
+                                    <div style="position: absolute; bottom: 1rem; right: 1rem; background: white; padding: 0.5rem; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);">
+                                        <t t-if="member.qr_code_image">
+                                            <img t-att-src="image_data_uri(member.qr_code_image)"
+                                                 style="width: 80px; height: 80px; object-fit: contain;"
+                                                 title="Scan QR for Resident ID"/>
+                                            <div style="font-size: 0.7rem; text-align: center; margin-top: 0.25rem; color: var(--dark);">
+                                                Resident QR
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: var(--radius-sm);">
+                                                <i class="fa fa-qrcode" style="font-size: 2rem; color: #ccc;"></i>
+                                            </div>
+                                        </t>
+                                    </div>
                                 </div>
+
                                 <div class="card-content">
                                     <h4 class="card-title">
                                         <t t-esc="member.name"/>
                                     </h4>
+
+                                    <!-- Resident ID Info -->
+                                    <t t-if="member.resident_id">
+                                        <div class="info-item"
+                                             style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));">
+                                            <i class="fa fa-id-card"></i>
+                                            <span style="font-weight: 700; color: var(--primary);">
+                                                <t t-esc="member.resident_id"/>
+                                            </span>
+                                        </div>
+                                    </t>
+
                                     <div class="info-grid">
                                         <t t-if="member.relationship">
                                             <div class="info-item">
@@ -1299,9 +1341,23 @@
                                             </div>
                                         </t>
                                     </div>
+
                                     <span class="badge badge-primary">
                                         <t t-esc="member.member_type.title()"/>
                                     </span>
+
+                                    <!-- Download QR Code Button -->
+                                    <div style="margin: 1rem 0;">
+                                        <t t-if="member.qr_code_image">
+                                            <a t-att-href="'/my/family/%s/download_qr' % member.id"
+                                               class="btn-action"
+                                               style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                                                <i class="fa fa-download"></i>
+                                                Download QR Code
+                                            </a>
+                                        </t>
+                                    </div>
+
                                     <div class="card-actions">
                                         <a t-att-href="'/my/family/%s/edit' % member.id" class="btn-action btn-edit">
                                             <i class="fa fa-edit"></i>

@@ -5,7 +5,29 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 import base64
 
 
+
+
 class CombinedPortal(CustomerPortal):
+
+    @http.route('/my/family/<int:member_id>/download_qr', type='http', auth='user', website=True)
+    def download_qr_code(self, member_id, **kwargs):
+        """Download QR code for a family member"""
+        member = request.env['family.member'].browse(member_id)
+
+        if not member.exists() or not member.qr_code_image:
+            return request.not_found()
+
+        # Ensure user has access to this member
+        if member.tenant_id != request.env.user.partner_id:
+            return request.not_found()
+
+        return request.make_response(
+            base64.b64decode(member.qr_code_image),
+            [
+                ('Content-Type', 'image/png'),
+                ('Content-Disposition', f'attachment; filename="Resident-ID-{member.resident_id}.png"')
+            ]
+        )
 
     @http.route(['/my/profile'], type='http', auth='user', website=True)
     def portal_my_profile_combined(self, **kw):

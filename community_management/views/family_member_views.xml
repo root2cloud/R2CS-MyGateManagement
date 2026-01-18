@@ -5,8 +5,18 @@
         <field name="model">family.member</field>
         <field name="arch" type="xml">
             <form string="Family Member">
+                <header>
+                    <button name="action_generate_missing_ids"
+                        type="object"
+                        string="Generate Missing IDs"
+                        class="oe_highlight"
+                        icon="fa fa-id-card"
+                        confirm="This will generate Resident IDs for all family members without one. Continue?"/>
+                </header>
                 <sheet>
                     <field name="photo" widget="image" class="oe_avatar"/>
+                    <field name="resident_id" readonly="1"/>
+                    <field name="qr_code_image" widget="image" readonly="1"/>
                     <group>
                         <group>
                             <field name="name"/>
@@ -90,17 +100,45 @@
                                         <i class="fa fa-user-circle" style="font-size: 100px; color: #ccc;"/>
                                     </t>
                                 </div>
-                                <strong><field name="name"/></strong><br/>
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                                <br/>
                                 <span t-attf-class="badge badge-pill badge-#{record.member_type.raw_value == 'adult' ? 'info' : 'warning'}">
                                     <field name="member_type"/>
-                                </span><br/>
-                                <span t-if="record.relationship.raw_value"><i class="fa fa-heart"/> <field name="relationship"/></span><br/>
-                                <span t-if="record.age.raw_value"><i class="fa fa-birthday-cake"/> <field name="age"/> years</span><br/>
-                                <span t-if="record.email.raw_value"><i class="fa fa-envelope"/> <field name="email"/></span><br/>
-                                <span t-if="record.phone.raw_value"><i class="fa fa-phone"/> <field name="phone"/></span><br/>
+                                </span>
+                                <br/>
+                                <span t-if="record.relationship.raw_value">
+                                    <i class="fa fa-heart"/>
+                                    <field name="relationship"/>
+                                </span>
+                                <br/>
+                                <span t-if="record.age.raw_value">
+                                    <i class="fa fa-birthday-cake"/>
+                                    <field name="age"/>
+                                    years
+                                </span>
+                                <br/>
+                                <span t-if="record.email.raw_value">
+                                    <i class="fa fa-envelope"/>
+                                    <field name="email"/>
+                                </span>
+                                <br/>
+                                <span t-if="record.phone.raw_value">
+                                    <i class="fa fa-phone"/>
+                                    <field name="phone"/>
+                                </span>
+                                <br/>
                                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-                                    <span><i class="fa fa-user"/> <field name="tenant_id"/></span><br/>
-                                    <span t-if="record.flat_id.raw_value"><i class="fa fa-home"/> <field name="flat_id"/></span>
+                                    <span>
+                                        <i class="fa fa-user"/>
+                                        <field name="tenant_id"/>
+                                    </span>
+                                    <br/>
+                                    <span t-if="record.flat_id.raw_value">
+                                        <i class="fa fa-home"/>
+                                        <field name="flat_id"/>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -139,10 +177,17 @@
         <field name="view_mode">kanban,list,form</field>
     </record>
 
+    <!-- Add to form view header or create a new action -->
+    <record id="action_generate_missing_ids" model="ir.actions.server">
+    <field name="name">Generate Missing Resident IDs</field>
+    <field name="model_id" ref="model_family_member"/>
+    <field name="state">code</field>
+    <field name="code">
+        model.generate_missing_resident_ids()
+    </field>
+</record>
+
     <!-- Menu -->
-
-
-
 
 
 </odoo>

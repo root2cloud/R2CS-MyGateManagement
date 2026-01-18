@@ -1,6 +1,11 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 import re
+import qrcode
+import base64
+from io import BytesIO
+import secrets
+import string
 
 class FamilyMember(models.Model):
     _name = 'family.member'
@@ -106,3 +111,122 @@ class FamilyMember(models.Model):
         if self.env.user.has_group('base.group_portal'):
             res['tenant_id'] = self.env.user.partner_id.id
         return res
+# ----
+    resident_id = fields.Char(
+        string='Resident ID',
+        readonly=True,
+        unique=True,
+        copy=False,
+        tracking=True
+    )
+
+    qr_code = fields.Binary(
+        string='QR Code',
+        compute='_generate_qr_code',
+        store=True,
+        readonly=True
+    )
+
+    qr_code_image = fields.Binary(
+        string='QR Code Image',
+        attachment=True
+    )
+
+    # Existing fields...
+
+    @api.model
+    def create(self, vals):
+        """Generate unique Resident ID on create"""
+        record = super(FamilyMember, self).create(vals)
+
+        # Generate unique Resident ID if not provided
+        if not record.resident_id:
+            record.generate_resident_id()
+
+        # Generate QR Code
+        record.generate_qr_code_image()
+
+        return record
+
+    def generate_resident_id(self):
+        """Generate unique Resident ID"""
+        for record in self:
+            # Format: SOC-{SequentialID}-{Random6Digits}
+            # Get the sequence for this tenant
+            tenant_code = ''
+            if record.tenant_id:
+                # Use tenant's initials
+                tenant_name = record.tenant_id.name or ''
+                initials = ''.join([word[0].upper() for word in tenant_name.split() if word])
+                if initials:
+                    tenant_code = initials[:3]
+                else:
+                    tenant_code = 'TNT'
+            else:
+                tenant_code = 'TNT'
+
+            # Get sequential number for this tenant's family members
+            if record.tenant_id:
+                sequence = self.env['family.member'].search_count([
+                    ('tenant_id', '=', record.tenant_id.id),
+                    ('id', '<', record.id or 0)  # For new records
+                ]) + 1
+            else:
+                sequence = 1
+
+            # Generate 6 random digits
+            random_digits = ''.join(secrets.choice(string.digits) for _ in range(6))
+
+            # Create the resident ID
+            record.resident_id = f"SOC-{tenant_code}-{sequence:03d}-{random_digits}"
+
+    def generate_qr_code_image(self):
+        """Generate QR code image from resident ID"""
+        for record in self:
+            if record.resident_id:
+                qr = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_L,
+                    box_size=10,
+                    border=4,
+                )
+                qr.add_data(record.resident_id)
+                qr.make(fit=True)
+
+                img = qr.make_image(fill_color="black", back_color="white")
+
+                # Convert to base64
+                buffered = BytesIO()
+                img.save(buffered, format="PNG")
+                record.qr_code_image = base64.b64encode(buffered.getvalue())
+
+    @api.depends('resident_id')
+    def _generate_qr_code(self):
+        """Generate QR code for display"""
+        for record in self:
+            if record.resident_id and not record.qr_code_image:
+                record.generate_qr_code_image()
+
+    # Add to your constraints to ensure uniqueness
+    _sql_constraints = [
+        ('resident_id_unique', 'UNIQUE(resident_id)', 'Resident ID must be unique!'),
+    ]
+
+    def action_generate_missing_ids(self):
+        """Generate resident IDs for all family members that don't have one"""
+        members_without_id = self.search([('resident_id', '=', False)])
+
+        for member in members_without_id:
+            member.generate_resident_id()
+            member.generate_qr_code_image()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Resident IDs Generated',
+                'message': f'Generated resident IDs for {len(members_without_id)} family members',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
