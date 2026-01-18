@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Define the action FIRST -->
+        <record id="action_mygate_visitors" model="ir.actions.act_window">
+            <field name="name">Visitor Requests</field>
+            <field name="res_model">mygate.visitor</field>
+            <field name="view_mode">list,form,calendar,kanban</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No visitor requests found.
+                </p>
+                <p>
+                    Create new visitor requests for gate entry approval.
+                </p>
+            </field>
+        </record>
+
+        <!-- list View -->
+        <record id="view_mygate_visitor_list" model="ir.ui.view">
+            <field name="name">mygate.visitor.list</field>
+            <field name="model">mygate.visitor</field>
+            <field name="arch" type="xml">
+                <list string="Visitor Requests">
+                    <field name="name"/>
+                    <field name="mobile"/>
+                    <field name="company"/>
+                    <field name="flat_id" widget="many2one_clickable"/>
+                    <field name="tenant_id" widget="many2one_clickable"/>
+                    <field name="state" widget="badge" decoration-success="state=='approved'"
+                           decoration-danger="state=='rejected'" decoration-warning="state=='pending'"/>
+                    <field name="visitor_type"/>
+                    <field name="expected_arrival"/>
+                    <field name="actual_arrival"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_mygate_visitor_search" model="ir.ui.view">
+            <field name="name">mygate.visitor.search</field>
+            <field name="model">mygate.visitor</field>
+            <field name="arch" type="xml">
+                <search string="Search Visitor Requests">
+                    <field name="name"/>
+                    <field name="mobile"/>
+                    <field name="flat_id"/>
+                    <field name="tenant_id"/>
+                    <field name="state"/>
+                    <field name="visitor_type"/>
+                    <field name="expected_arrival"/>
+
+                    <!-- Simple filters -->
+                    <filter string="Pending Approval" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <filter string="Approved" name="approved" domain="[('state', '=', 'approved')]"/>
+                    <filter string="Rejected" name="rejected" domain="[('state', '=', 'rejected')]"/>
+                    <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+
+                    <filter string="My Visitors" name="my_visitors" domain="[('tenant_id.user_ids', 'in', [uid])]"/>
+
+                    <!-- Today's visits -->
+                    <filter string="Today" name="today"
+                            domain="[('expected_arrival', '&gt;=', context_today()), ('expected_arrival', '&lt;=', context_today())]"/>
+
+                    <!-- This week -->
+                    <filter string="This Week" name="this_week"
+                            domain="[('expected_arrival', '&gt;=', context_today()), ('expected_arrival', '&lt;=', (context_today() + relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                        <filter name="group_by_flat" string="Flat" context="{'group_by': 'flat_id'}"/>
+                        <filter name="group_by_type" string="Visitor Type" context="{'group_by': 'visitor_type'}"/>
+                        <filter name="group_by_date" string="Expected Date"
+                                context="{'group_by': 'expected_arrival:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Form View - ODOO 18 COMPATIBLE -->
+        <record id="view_mygate_visitor_form" model="ir.ui.view">
+            <field name="name">mygate.visitor.form</field>
+            <field name="model">mygate.visitor</field>
+            <field name="arch" type="xml">
+                <form string="Visitor Request">
+                    <header>
+                        <!-- For Odoo 18, use attrs with states inside -->
+                        <button name="action_confirm_request" string="Confirm Request" type="object" class="btn-primary"
+                        />
+
+                        <button name="action_approve" string="Approve" type="object" class="btn-success"/>
+                        <button name="action_reject" string="Reject" type="object" class="btn-danger"
+                                groups="base.group_portal"/>
+
+                        <button name="action_mark_arrived" string="Mark Arrived" type="object" class="btn-info"
+                        />
+
+                        <button name="action_cancel" string="Cancel" type="object" class="btn-secondary"
+                        />
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="pending,approved,rejected,cancelled,completed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!-- Simplified without references -->
+                            <div class="oe_stat_button" icon="fa-building-o">
+                                <field name="flat_id" widget="statinfo" string="Flat"/>
+                            </div>
+                            <div class="oe_stat_button" icon="fa-user">
+                                <field name="tenant_id" widget="statinfo" string="Tenant"/>
+                            </div>
+                            <div class="oe_stat_button" icon="fa-qrcode">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">QR Code</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Visitor Name"/>
+                            </h1>
+                            <div class="o_priority">
+                                <field name="state" widget="priority"/>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="mobile"/>
+                                <field name="company"/>
+                                <field name="visitor_type"/>
+                                <field name="visitor_count"/>
+                                <field name="vehicle_number"/>
+                            </group>
+                            <group>
+                                <field name="flat_id" options="{'no_create': True}"/>
+                                <field name="tenant_id" options="{'no_create': True}" readonly="1"/>
+                                <field name="building_id" options="{'no_create': True}" readonly="1"/>
+                                <field name="community_id" options="{'no_create': True}" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Visit Details">
+                                <group>
+                                    <group>
+                                        <field name="purpose" widget="textarea" nolabel="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="requested_date"/>
+                                        <field name="expected_arrival"/>
+                                        <field name="expected_duration"/>
+                                        <field name="validity_duration"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Approval Information">
+                                <group>
+                                    <group>
+                                        <field name="state" readonly="1"/>
+                                        <field name="approval_date" readonly="1"/>
+                                        <field name="approved_by_id" readonly="1"/>
+                                        <field name="rejection_date" readonly="1"/>
+                                        <field name="rejected_by_id" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="access_code" readonly="1"/>
+                                        <field name="valid_until" readonly="1"/>
+                                        <field name="gate_number"/>
+                                        <field name="security_guard_id"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <label for="qr_code_image"/>
+                                    <div class="o_form_image_controls">
+                                        <field name="qr_code_image" widget="image_url"/>
+                                    </div>
+                                </group>
+                            </page>
+<!--                            <page string="Timeline">-->
+<!--                                <field name="message_ids" widget="mail_thread"/>-->
+<!--                            </page>-->
+<!--                            <page string="Security">-->
+<!--                                <field name="security_notes" widget="textarea" nolabel="1"/>-->
+<!--                                <field name="approval_history" widget="textarea" nolabel="1"/>-->
+<!--                            </page>-->
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Calendar View -->
+        <record id="view_mygate_visitor_calendar" model="ir.ui.view">
+            <field name="name">mygate.visitor.calendar</field>
+            <field name="model">mygate.visitor</field>
+            <field name="arch" type="xml">
+                <calendar string="Visitor Calendar" date_start="expected_arrival" date_stop="valid_until" color="state">
+                    <field name="name"/>
+                    <field name="flat_id"/>
+                    <field name="tenant_id"/>
+                    <field name="state"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <!-- Kanban View -->
+        <record id="view_mygate_visitor_kanban" model="ir.ui.view">
+            <field name="name">mygate.visitor.kanban</field>
+            <field name="model">mygate.visitor</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <!-- Declare fields -->
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="flat_id"/>
+                    <field name="tenant_id"/>
+                    <field name="mobile"/>
+                    <field name="company"/>
+                    <field name="expected_arrival"/>
+
+                    <templates>
+                        <t t-name="card">
+                            <div class="o_kanban_card oe_kanban_global_click">
+
+                                <!-- Header -->
+                                <div class="o_kanban_record_header">
+                                    <div class="o_kanban_record_title fw-bold">
+                                        <field name="name"/>
+                                    </div>
+                                    <div class="o_kanban_record_subtitle text-muted">
+                                        <field name="flat_id"/>
+                                    </div>
+                                </div>
+
+                                <!-- Body -->
+                                <div class="o_kanban_record_body small">
+                                    <div>
+                                        <i class="fa fa-phone me-1" title="Phone"/>
+                                        <field name="mobile"/>
+                                    </div>
+
+                                    <div>
+                                        <i class="fa fa-building me-1" title="Company"/>
+                                        <field name="company"/>
+                                    </div>
+
+                                    <div>
+                                        <i class="fa fa-clock-o me-1" title="Expected Arrival"/>
+                                        <field name="expected_arrival"/>
+                                    </div>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="o_kanban_record_footer mt-1">
+                                    <field name="state"
+                                           widget="badge"
+                                           decoration-success="state == 'approved'"
+                                           decoration-danger="state == 'rejected'"
+                                           decoration-warning="state == 'pending'"/>
+                                </div>
+
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <menuitem id="menu_mygate_visitors"
+                  name="Visitor Requests"
+                  parent="menu_flat_transaction_menu"
+                  action="action_mygate_visitors"
+                  sequence="10"/>
+
+
+        groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer"/>
+
+
+    </data>
+</odoo>

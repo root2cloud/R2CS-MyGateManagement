@@ -12,6 +12,11 @@ class CombinedPortal(CustomerPortal):
         """Single page showing Family Members + Pets + Vehicles"""
         partner = request.env.user.partner_id
 
+        pending_request_count = request.env['mygate.visitor'].search_count([
+            ('portal_user_id', '=', request.env.user.id),
+            ('state', '=', 'pending'),
+        ])
+
         # Fetch all records belonging to the current tenant
         family_members = request.env['family.member'].search([('tenant_id', '=', partner.id)])
         pets           = request.env['pet.management'].search([('tenant_id', '=', partner.id)])
@@ -34,6 +39,10 @@ class CombinedPortal(CustomerPortal):
             'current_flat': current_flat,
             'partner': partner,
             'page_name': 'profile',
+            'pending_request_count': pending_request_count,
+
+
+
         }
 
         return request.render('community_management.portal_my_profile_combined', values)

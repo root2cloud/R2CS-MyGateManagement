@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Portal: My Visitors Page -->
+        <template id="portal_my_visitors" name="My Visitors">
+            <t t-call="portal.portal_layout">
+                <t t-set="title" t-value="'My Visitors'"/>
+                <t t-set="active_page" t-value="'visitors'"/>
+
+                <div class="container mt-4">
+                    <!-- Header -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h1 class="h2 mb-0">
+                                    <i class="fa fa-users me-2"></i>My Visitors
+                                </h1>
+                                <div class="btn-group" role="group">
+                                    <a href="/my/visitors?state=pending"
+                                       t-att-class="active_filter == 'pending' and 'btn btn-primary position-relative' or 'btn btn-outline-primary position-relative'">
+                                        Pending
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                              t-attf-title="Pending requests">
+                                            <t t-esc="pending_visitors_count"/>
+                                        </span>
+                                    </a>
+                                    <a href="/my/visitors?state=approved"
+                                       t-att-class="active_filter == 'approved' and 'btn btn-success' or 'btn btn-outline-success'">
+                                        Approved
+                                    </a>
+                                    <a href="/my/visitors?state=completed"
+                                       t-att-class="active_filter == 'completed' and 'btn btn-info' or 'btn btn-outline-info'">
+                                        History
+                                    </a>
+                                    <a href="/my/visitors"
+                                       t-att-class="not active_filter and 'btn btn-secondary' or 'btn btn-outline-secondary'">
+                                        All Visitors
+                                    </a>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-0">Manage your visitor requests and approvals</p>
+                        </div>
+                    </div>
+
+                    <!-- Pending Visitors Section -->
+                    <div class="card shadow-sm mb-4" t-if="pending_visitors">
+                        <div class="card-header bg-warning bg-opacity-10 border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fa fa-clock-o me-2"></i>Pending Approval
+                                <span class="badge bg-warning text-dark ms-2">
+                                    <t t-esc="len(pending_visitors)"/>
+                                </span>
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <t t-foreach="pending_visitors" t-as="visitor">
+                                    <div class="list-group-item list-group-item-action">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    <i class="fa fa-user me-2"></i>
+                                                    <t t-esc="visitor.name"/>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <i class="fa fa-building me-1"></i>
+                                                    <t t-esc="visitor.flat_id.name"/>
+                                                    •
+                                                    <i class="fa fa-clock-o me-1"></i>
+                                                    <span t-attf-title="#{visitor.expected_arrival}">
+                                                        <t t-esc="visitor.expected_arrival and visitor.expected_arrival.strftime('%b %d, %H:%M') or ''"/>
+                                                    </span>
+                                                </small>
+                                            </div>
+                                            <div class="btn-group btn-group-sm">
+                                                <a t-attf-href="/my/visitors/#{visitor.id}/approve"
+                                                   class="btn btn-success btn-sm">
+                                                    <i class="fa fa-check me-1"></i>Approve
+                                                </a>
+                                                <a t-attf-href="/my/visitors/#{visitor.id}/reject"
+                                                   class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-times me-1"></i>Reject
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small>
+                                                <span class="badge bg-secondary me-2">
+                                                    <i class="fa fa-phone me-1"></i>
+                                                    <t t-esc="visitor.mobile"/>
+                                                </span>
+                                                <span class="badge bg-info me-2">
+                                                    <i class="fa fa-tag me-1"></i>
+                                                    <t t-esc="visitor.visitor_type"/>
+                                                </span>
+                                                <span t-if="visitor.vehicle_number" class="badge bg-dark">
+                                                    <i class="fa fa-car me-1"></i>
+                                                    <t t-esc="visitor.vehicle_number"/>
+                                                </span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Approved Visitors Section -->
+                    <div class="card shadow-sm mb-4" t-if="approved_visitors">
+                        <div class="card-header bg-success bg-opacity-10 border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fa fa-check-circle me-2"></i>Approved Visitors
+                                <span class="badge bg-success ms-2">
+                                    <t t-esc="len(approved_visitors)"/>
+                                </span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <t t-foreach="approved_visitors" t-as="visitor">
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div class="card h-100 border-success border-opacity-25">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h6 class="card-title mb-0">
+                                                        <t t-esc="visitor.name"/>
+                                                    </h6>
+                                                    <span class="badge bg-success">Approved</span>
+                                                </div>
+                                                <p class="card-text text-muted small mb-2">
+                                                    <i class="fa fa-building me-1"></i>
+                                                    <t t-esc="visitor.flat_id.name"/>
+                                                </p>
+                                                <div class="mb-3">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="fa fa-key me-2 text-primary"></i>
+                                                        <strong>Access Code:</strong>
+                                                        <code class="ms-2 fs-5 text-primary">
+                                                            <t t-esc="visitor.access_code"/>
+                                                        </code>
+                                                    </div>
+                                                    <small class="text-muted d-block">
+                                                        Valid until:
+                                                        <t t-esc="visitor.valid_until and visitor.valid_until.strftime('%b %d, %H:%M') or ''"/>
+                                                    </small>
+                                                </div>
+                                                <div class="d-grid gap-2">
+                                                    <a t-attf-href="/my/visitors/#{visitor.id}"
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="fa fa-eye me-1"></i>View Details
+                                                    </a>
+                                                    <a t-attf-href="/mygate/qr/#{visitor.access_code}"
+                                                       target="_blank"
+                                                       class="btn btn-outline-info btn-sm">
+                                                        <i class="fa fa-qrcode me-1"></i>View QR Code
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History Section -->
+                    <div class="card shadow-sm" t-if="history_visitors">
+                        <div class="card-header bg-secondary bg-opacity-10 border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fa fa-history me-2"></i>Visitor History
+                                <span class="badge bg-secondary ms-2">
+                                    <t t-esc="len(history_visitors)"/>
+                                </span>
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Visitor</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Flat</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="history_visitors" t-as="visitor">
+                                            <tr>
+                                                <td>
+                                                    <strong>
+                                                        <t t-esc="visitor.name"/>
+                                                    </strong>
+                                                    <br/>
+                                                    <small class="text-muted">
+                                                        <t t-esc="visitor.visitor_type"/>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="visitor.expected_arrival and visitor.expected_arrival.strftime('%b %d') or ''"/>
+                                                    <br/>
+                                                    <small class="text-muted">
+                                                        <t t-esc="visitor.expected_arrival and visitor.expected_arrival.strftime('%H:%M') or ''"/>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <!-- FIXED: Proper badge class logic -->
+                                                    <t t-if="visitor.state == 'completed'">
+                                                        <span class="badge bg-info">
+                                                            Completed
+                                                        </span>
+                                                    </t>
+                                                    <t t-elif="visitor.state == 'rejected'">
+                                                        <span class="badge bg-danger">
+                                                            Rejected
+                                                        </span>
+                                                    </t>
+                                                    <t t-elif="visitor.state == 'cancelled'">
+                                                        <span class="badge bg-secondary">
+                                                            Cancelled
+                                                        </span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="badge bg-secondary">
+                                                            <t t-esc="visitor.state.title()"/>
+                                                        </span>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="visitor.flat_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <a t-attf-href="/my/visitors/#{visitor.id}"
+                                                       class="btn btn-sm btn-outline-secondary">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div t-if="not visitors" class="text-center py-5">
+                        <div class="display-1 text-muted mb-4">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <h3 class="text-muted">No Visitor Requests</h3>
+                        <p class="text-muted mb-4">You don't have any visitor requests yet.</p>
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle me-2"></i>
+                            Visitors can be created by security at the gate or through the main office.
+                        </div>
+                    </div>
+
+                    <!-- Pager -->
+                    <div class="mt-4" t-if="pager['page_count'] > 1">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" t-attf-class="#{pager['page'] == 1 and 'disabled' or ''}">
+                                    <a class="page-link" t-attf-href="#{pager['previous']['url']}">Previous</a>
+                                </li>
+                                <t t-foreach="range(1, pager['page_count'] + 1)" t-as="page_num">
+                                    <li class="page-item"
+                                        t-attf-class="#{page_num == pager['page'] and 'active' or ''}">
+                                        <a class="page-link" t-attf-href="#{pager['url']}page/#{page_num}">
+                                            <t t-esc="page_num"/>
+                                        </a>
+                                    </li>
+                                </t>
+                                <li class="page-item"
+                                    t-attf-class="#{pager['page'] == pager['page_count'] and 'disabled' or ''}">
+                                    <a class="page-link" t-attf-href="#{pager['next']['url']}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                </div>
+            </t>
+        </template>
+
+
+        <!-- Portal: Visitor Detail Page -->
+        <template id="portal_visitor_detail" name="Visitor Details">
+            <t t-call="portal.portal_layout">
+                <t t-set="title" t-value="'Visitor Details'"/>
+                <t t-set="active_page" t-value="'visitors'"/>
+
+                <div class="container mt-4">
+                    <!-- Back Button -->
+                    <div class="mb-4">
+                        <a href="/my/visitors" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left me-2"></i>Back to Visitors
+                        </a>
+                    </div>
+
+                    <!-- Visitor Card -->
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow-sm">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fa fa-user me-2"></i>
+                                        Visitor Details
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small mb-1">Visitor Name</label>
+                                                <h5 class="mb-0">
+                                                    <t t-esc="visitor.name"/>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small mb-1">Mobile Number</label>
+                                                <h5 class="mb-0">
+                                                    <i class="fa fa-phone me-2"></i>
+                                                    <t t-esc="visitor.mobile"/>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small mb-1">Flat Number</label>
+                                                <h5 class="mb-0">
+                                                    <i class="fa fa-building me-2"></i>
+                                                    <t t-esc="visitor.flat_id.name"/>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small mb-1">Visitor Type</label>
+                                                <span class="badge bg-primary">
+                                                    <t t-esc="visitor.visitor_type.title()"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small mb-1">Purpose of Visit</label>
+                                                <div class="border rounded p-3 bg-light">
+                                                    <t t-esc="visitor.purpose or 'No purpose specified'"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small mb-1">Expected Arrival</label>
+                                                <h5 class="mb-0">
+                                                    <i class="fa fa-clock-o me-2"></i>
+                                                    <t t-esc="visitor.expected_arrival and visitor.expected_arrival.strftime('%b %d, %Y %H:%M') or ''"/>
+
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small mb-1">Number of Visitors
+                                                </label>
+                                                <h5 class="mb-0">
+                                                    <i class="fa fa-users me-2"></i>
+                                                    <t t-esc="visitor.visitor_count"/>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <t t-if="visitor.vehicle_number">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label text-muted small mb-1">Vehicle Number
+                                                    </label>
+                                                    <div class="border rounded p-3 bg-light">
+                                                        <i class="fa fa-car me-2"></i>
+                                                        <strong>
+                                                            <t t-esc="visitor.vehicle_number"/>
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <!-- Status Card -->
+                                    <div class="card mt-4">
+                                        <!-- FIXED: Dynamic border color -->
+                                        <t t-if="visitor.state == 'approved'">
+                                            <div class="card border-success"/>
+                                        </t>
+                                        <t t-elif="visitor.state == 'pending'">
+                                            <div class="card border-warning"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="card border-danger"/>
+                                        </t>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h5 class="mb-1">
+                                                        Status:
+                                                        <t t-if="visitor.state == 'approved'">
+                                                            <span class="text-success">
+                                                                <t t-esc="visitor.state.title()"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-elif="visitor.state == 'pending'">
+                                                            <span class="text-warning">
+                                                                <t t-esc="visitor.state.title()"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="text-danger">
+                                                                <t t-esc="visitor.state.title()"/>
+                                                            </span>
+                                                        </t>
+                                                    </h5>
+                                                    <small class="text-muted">
+                                                        <t t-if="visitor.state == 'approved'">
+                                                            Approved on:
+                                                            <t t-esc="visitor.approval_date and visitor.approval_date.strftime('%b %d, %H:%M') or ''"/>
+
+                                                        </t>
+                                                        <t t-elif="visitor.state == 'rejected'">
+                                                            Rejected on:
+                                                            <t t-esc="visitor.rejection_date and visitor.rejection_date.strftime('%b %d, %H:%M') or ''"/>
+
+                                                        </t>
+                                                    </small>
+                                                </div>
+                                                <div class="btn-group" t-if="visitor.state == 'pending'">
+                                                    <a t-attf-href="/my/visitors/#{visitor.id}/approve"
+                                                       class="btn btn-success">
+                                                        <i class="fa fa-check me-2"></i>Approve
+                                                    </a>
+                                                    <a t-attf-href="/my/visitors/#{visitor.id}/reject"
+                                                       class="btn btn-danger">
+                                                        <i class="fa fa-times me-2"></i>Reject
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> <!-- Close card div -->
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code Sidebar -->
+                        <div class="col-lg-4">
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">
+                                        <i class="fa fa-qrcode me-2"></i>
+                                        Access Code
+                                    </h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <t t-if="visitor.state == 'approved'">
+                                        <!-- Access Code -->
+                                        <div class="mb-4">
+                                            <label class="form-label text-muted">Access Code</label>
+                                            <div class="display-4 fw-bold text-primary mb-2">
+                                                <t t-esc="visitor.access_code"/>
+                                            </div>
+                                            <small class="text-muted">
+                                                Show this code at the gate
+                                            </small>
+                                        </div>
+
+                                        <!-- QR Code -->
+                                        <div class="mb-4">
+                                            <div class="border rounded p-3 bg-white">
+                                                <img t-att-src="visitor.qr_code_image"
+                                                     alt="QR Code"
+                                                     class="img-fluid"
+                                                     style="max-width: 200px;"/>
+                                            </div>
+                                            <small class="text-muted d-block mt-2">
+                                                Scan QR code for quick entry
+                                            </small>
+                                        </div>
+
+                                        <!-- Validity -->
+                                        <div class="alert alert-info">
+                                            <i class="fa fa-clock-o me-2"></i>
+                                            <strong>Valid until:</strong>
+                                            <br/>
+                                            <t t-esc="visitor.valid_until and visitor.valid_until.strftime('%b %d, %Y %H:%M') or ''"/>
+
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="text-center py-4">
+                                            <div class="display-1 text-muted mb-3">
+                                                <i class="fa fa-lock"></i>
+                                            </div>
+                                            <p class="text-muted">
+                                                Access code will be generated
+                                                <br/>
+                                                once the visitor is approved.
+                                            </p>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="card shadow-sm">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fa fa-bolt me-2"></i>
+                                        Quick Actions
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <!--                                        <t t-if="visitor.state == 'approved' and visitor.access_code">-->
+                                        <!--                                            <a t-attf-href="sms:#{visitor.mobile}?body=Your visitor access code is: #{visitor.access_code}"-->
+                                        <!--                                               class="btn btn-outline-primary">-->
+                                        <!--                                                <i class="fa fa-comment me-2"></i>SMS Access Code-->
+                                        <!--                                            </a>-->
+                                        <!--                                        </t>-->
+                                        <button onclick="window.print()" class="btn btn-outline-secondary">
+                                            <i class="fa fa-print me-2"></i>Print Details
+                                        </button>
+                                        <a href="/my/visitors" class="btn btn-outline-info">
+                                            <i class="fa fa-list me-2"></i>All Visitors
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
