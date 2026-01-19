@@ -15,50 +15,61 @@ class CommunityAccessDashboard(models.TransientModel):
     # =====================
 
     # Visitor Request Stats (Added before Cab Approvals)
-    total_visitor_requests = fields.Integer(string="Total Visitor Requests", compute="_compute_dashboard_data")
-    pending_visitor_requests = fields.Integer(string="Pending Visitor Requests", compute="_compute_dashboard_data")
-    approved_visitor_requests = fields.Integer(string="Approved Visitors", compute="_compute_dashboard_data")
-    completed_visitor_requests = fields.Integer(string="Completed Visits", compute="_compute_dashboard_data")
-    today_visitor_requests = fields.Integer(string="Today's Visitors", compute="_compute_dashboard_data")
+    total_visitor_requests = fields.Integer(string=" Total Visitor Requests", compute="_compute_dashboard_data")
+    pending_visitor_requests = fields.Integer(string=" Pending Visitor Requests", compute="_compute_dashboard_data")
+    approved_visitor_requests = fields.Integer(string=" Approved Visitors", compute="_compute_dashboard_data")
+    completed_visitor_requests = fields.Integer(string=" Completed Visits", compute="_compute_dashboard_data")
+    today_visitor_requests = fields.Integer(string=" Today's Visitors", compute="_compute_dashboard_data")
 
     # Cab Pre-Approval Stats
-    total_cab_approvals = fields.Integer(string="Total Cab Approvals", compute="_compute_dashboard_data")
-    active_cab_approvals = fields.Integer(string="Active Cab Approvals", compute="_compute_dashboard_data")
-    once_cab_approvals = fields.Integer(string="One-Time Cabs", compute="_compute_dashboard_data")
-    frequent_cab_approvals = fields.Integer(string="Frequent Cabs", compute="_compute_dashboard_data")
+    total_cab_approvals = fields.Integer(string=" Total Cab Approvals", compute="_compute_dashboard_data")
+    active_cab_approvals = fields.Integer(string=" Active Cab Approvals", compute="_compute_dashboard_data")
+    once_cab_approvals = fields.Integer(string=" One-Time Cabs", compute="_compute_dashboard_data")
+    frequent_cab_approvals = fields.Integer(string=" Frequent Cabs", compute="_compute_dashboard_data")
 
     # Delivery Pass Stats
-    total_delivery_passes = fields.Integer(string="Total Delivery Passes", compute="_compute_dashboard_data")
-    active_delivery_passes = fields.Integer(string="Active Delivery Passes", compute="_compute_dashboard_data")
-    surprise_deliveries = fields.Integer(string="Surprise Deliveries", compute="_compute_dashboard_data")
-    gate_leave_deliveries = fields.Integer(string="Leave at Gate", compute="_compute_dashboard_data")
+    total_delivery_passes = fields.Integer(string=" Total Delivery Passes", compute="_compute_dashboard_data")
+    active_delivery_passes = fields.Integer(string=" Active Delivery Passes", compute="_compute_dashboard_data")
+    surprise_deliveries = fields.Integer(string=" Surprise Deliveries", compute="_compute_dashboard_data")
+    gate_leave_deliveries = fields.Integer(string=" Leave at Gate", compute="_compute_dashboard_data")
 
     # Guest Invite Stats
-    total_guest_invites = fields.Integer(string="Total Guest Invites", compute="_compute_dashboard_data")
-    active_guest_invites = fields.Integer(string="Active Guest Invites", compute="_compute_dashboard_data")
-    once_guest_invites = fields.Integer(string="One-Time Guests", compute="_compute_dashboard_data")
-    frequent_guest_invites = fields.Integer(string="Frequent Guests", compute="_compute_dashboard_data")
-    total_guests = fields.Integer(string="Total Guests Count", compute="_compute_dashboard_data")
+    total_guest_invites = fields.Integer(string=" Total Guest Invites", compute="_compute_dashboard_data")
+    active_guest_invites = fields.Integer(string=" Active Guest Invites", compute="_compute_dashboard_data")
+    once_guest_invites = fields.Integer(string=" One-Time Guests", compute="_compute_dashboard_data")
+    frequent_guest_invites = fields.Integer(string=" Frequent Guests", compute="_compute_dashboard_data")
+    total_guests = fields.Integer(string=" Total Guests Count", compute="_compute_dashboard_data")
 
     # Party/Group Invite Stats
-    total_party_invites = fields.Integer(string="Party Invites", compute="_compute_dashboard_data")
-    active_party_invites = fields.Integer(string="Active Parties", compute="_compute_dashboard_data")
-    upcoming_parties = fields.Integer(string="Upcoming Parties", compute="_compute_dashboard_data")
+    total_party_invites = fields.Integer(string=" Party Invites", compute="_compute_dashboard_data")
+    active_party_invites = fields.Integer(string=" Active Parties", compute="_compute_dashboard_data")
+    upcoming_parties = fields.Integer(string=" Upcoming Parties", compute="_compute_dashboard_data")
+
+    # Child
+    # Exit
+    # Permission
+    # Stats
+    total_child_exit_permissions = fields.Integer(string=" Total Exit Permissions", compute="_compute_dashboard_data")
+    active_child_exit_permissions = fields.Integer(string=" Active Permissions", compute="_compute_dashboard_data")
+    expired_child_exit_permissions = fields.Integer(string=" Expired Permissions", compute="_compute_dashboard_data")
+    today_exit_permissions = fields.Integer(string=" Today's Permissions", compute="_compute_dashboard_data")
 
     # Visiting Help Stats
-    total_visiting_help = fields.Integer(string="Visiting Help", compute="_compute_dashboard_data")
-    active_visiting_help = fields.Integer(string="Active Help", compute="_compute_dashboard_data")
-    once_visiting_help = fields.Integer(string="One-Time Help", compute="_compute_dashboard_data")
-    frequent_visiting_help = fields.Integer(string="Frequent Help", compute="_compute_dashboard_data")
+    total_visiting_help = fields.Integer(string=" Visiting Help", compute="_compute_dashboard_data")
+    active_visiting_help = fields.Integer(string=" Active Help", compute="_compute_dashboard_data")
+    once_visiting_help = fields.Integer(string=" One-Time Help", compute="_compute_dashboard_data")
+    frequent_visiting_help = fields.Integer(string=" Frequent Help", compute="_compute_dashboard_data")
 
     # =====================
     # RECENT ACTIVITY FIELDS
     # =====================
+
     recent_visitor_requests = fields.Html(string="Recent Visitor Requests", compute="_compute_recent_data")
     recent_cab_approvals = fields.Html(string="Recent Cab Approvals", compute="_compute_recent_data")
     recent_delivery_passes = fields.Html(string="Recent Delivery Passes", compute="_compute_recent_data")
     recent_guest_invites = fields.Html(string="Recent Guest Invites", compute="_compute_recent_data")
     recent_party_invites = fields.Html(string="Recent Party Invites", compute="_compute_recent_data")
+    recent_child_exit_permissions = fields.Html(string="Recent Exit Permissions", compute="_compute_recent_data")
     recent_visiting_help = fields.Html(string="Recent Visiting Help", compute="_compute_recent_data")
 
     # =====================
@@ -128,6 +139,22 @@ class CommunityAccessDashboard(models.TransientModel):
                 ])
                 dashboard.upcoming_parties = upcoming
 
+                # CHILD EXIT PERMISSION STATS
+                # =====================
+                child_exit_obj = self.env['child.exit.permission']
+                dashboard.total_child_exit_permissions = child_exit_obj.search_count([])
+                dashboard.active_child_exit_permissions = child_exit_obj.search_count([('state', '=', 'active')])
+                dashboard.expired_child_exit_permissions = child_exit_obj.search_count([('state', '=', 'expired')])
+
+                # Today's permissions (created today)
+                today_start = fields.Datetime.to_string(today)
+                today_end = fields.Datetime.to_string(today + timedelta(days=1))
+                today_exits = child_exit_obj.search_count([
+                    ('create_date', '>=', today_start),
+                    ('create_date', '<', today_end)
+                ])
+                dashboard.today_exit_permissions = today_exits
+
                 # Visiting Help Stats
                 help_obj = self.env['community.visiting.help.entry']
                 dashboard.total_visiting_help = help_obj.search_count([])
@@ -163,6 +190,10 @@ class CommunityAccessDashboard(models.TransientModel):
                 dashboard.active_visiting_help = 0
                 dashboard.once_visiting_help = 0
                 dashboard.frequent_visiting_help = 0
+                dashboard.total_child_exit_permissions = 0
+                dashboard.active_child_exit_permissions = 0
+                dashboard.expired_child_exit_permissions = 0
+                dashboard.today_exit_permissions = 0
 
     @api.depends()
     def _compute_recent_data(self):
@@ -261,6 +292,32 @@ class CommunityAccessDashboard(models.TransientModel):
                     )
                 dashboard.recent_party_invites = "<br/>".join(party_list) if party_list else "No recent party invites"
 
+                # RECENT CHILD EXIT PERMISSIONS
+                # =====================
+                recent_exits = self.env['child.exit.permission'].search(
+                    [], limit=limit, order='create_date desc'
+                )
+                exit_list = []
+                for exit_perm in recent_exits:
+                    state_color = {
+                        'draft': 'text-secondary',
+                        'active': 'text-success',
+                        'expired': 'text-muted',
+                        'used': 'text-info',
+                        'cancelled': 'text-danger'
+                    }.get(exit_perm.state, 'text-muted')
+
+                    time_icon = "⏰" if exit_perm.is_active_now else "✅" if exit_perm.state == 'expired' else "📋"
+                    child_icon = "👶" if exit_perm.child_age and exit_perm.child_age < 12 else "🧒"
+
+                    exit_list.append(
+                        f"• {child_icon} {exit_perm.child_id.name or 'N/A'} - "
+                        f"{exit_perm.tenant_id.name or 'N/A'} - "
+                        f"<span class='{state_color}'>{time_icon} ({exit_perm.state})</span>"
+                    )
+                dashboard.recent_child_exit_permissions = "<br/>".join(
+                    exit_list) if exit_list else "No recent exit permissions"
+
                 # Recent Visiting Help
                 recent_help = self.env['community.visiting.help.entry'].search(
                     [], limit=limit, order='create_date desc'
@@ -280,6 +337,7 @@ class CommunityAccessDashboard(models.TransientModel):
                 dashboard.recent_delivery_passes = "Error loading data"
                 dashboard.recent_guest_invites = "Error loading data"
                 dashboard.recent_party_invites = "Error loading data"
+                dashboard.recent_child_exit_permissions = "Error loading data"
                 dashboard.recent_visiting_help = "Error loading data"
 
     # =====================
@@ -346,6 +404,18 @@ class CommunityAccessDashboard(models.TransientModel):
             'name': 'Party Invites',
             'type': 'ir.actions.act_window',
             'res_model': 'party.group.invite',
+            'view_mode': 'list,form',
+            'target': 'current',
+            'domain': [],
+        }
+
+    # Add this action method after action_open_party_invites
+    def action_open_child_exit_permissions(self):
+        """Open Child Exit Permissions"""
+        return {
+            'name': 'Child Exit Permissions',
+            'type': 'ir.actions.act_window',
+            'res_model': 'child.exit.permission',
             'view_mode': 'list,form',
             'target': 'current',
             'domain': [],
