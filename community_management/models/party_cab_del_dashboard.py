@@ -14,6 +14,13 @@ class CommunityAccessDashboard(models.TransientModel):
     # STATISTICS FIELDS
     # =====================
 
+    # Visitor Request Stats (Added before Cab Approvals)
+    total_visitor_requests = fields.Integer(string="Total Visitor Requests", compute="_compute_dashboard_data")
+    pending_visitor_requests = fields.Integer(string="Pending Visitor Requests", compute="_compute_dashboard_data")
+    approved_visitor_requests = fields.Integer(string="Approved Visitors", compute="_compute_dashboard_data")
+    completed_visitor_requests = fields.Integer(string="Completed Visits", compute="_compute_dashboard_data")
+    today_visitor_requests = fields.Integer(string="Today's Visitors", compute="_compute_dashboard_data")
+
     # Cab Pre-Approval Stats
     total_cab_approvals = fields.Integer(string="Total Cab Approvals", compute="_compute_dashboard_data")
     active_cab_approvals = fields.Integer(string="Active Cab Approvals", compute="_compute_dashboard_data")
@@ -47,6 +54,7 @@ class CommunityAccessDashboard(models.TransientModel):
     # =====================
     # RECENT ACTIVITY FIELDS
     # =====================
+    recent_visitor_requests = fields.Html(string="Recent Visitor Requests", compute="_compute_recent_data")
     recent_cab_approvals = fields.Html(string="Recent Cab Approvals", compute="_compute_recent_data")
     recent_delivery_passes = fields.Html(string="Recent Delivery Passes", compute="_compute_recent_data")
     recent_guest_invites = fields.Html(string="Recent Guest Invites", compute="_compute_recent_data")
@@ -62,6 +70,24 @@ class CommunityAccessDashboard(models.TransientModel):
         """Compute all dashboard statistics"""
         for dashboard in self:
             try:
+
+                # Visitor Request Stats (Added before Cab Approvals)
+                visitor_obj = self.env['mygate.visitor']
+                dashboard.total_visitor_requests = visitor_obj.search_count([])
+                dashboard.pending_visitor_requests = visitor_obj.search_count([('state', '=', 'pending')])
+                dashboard.approved_visitor_requests = visitor_obj.search_count([('state', '=', 'approved')])
+                dashboard.completed_visitor_requests = visitor_obj.search_count([('state', '=', 'completed')])
+
+                # Today's visitors (expected arrival is today)
+                today = fields.Date.today()
+                tomorrow = today + timedelta(days=1)
+                today_visitors = visitor_obj.search_count([
+                    ('expected_arrival', '>=', fields.Datetime.to_string(today)),
+                    ('expected_arrival', '<', fields.Datetime.to_string(tomorrow)),
+                    ('state', 'in', ['pending', 'approved'])
+                ])
+                dashboard.today_visitor_requests = today_visitors
+
                 # Cab Pre-Approval Stats
                 cab_obj = self.env['cab.preapproval']
                 dashboard.total_cab_approvals = cab_obj.search_count([])
@@ -112,6 +138,11 @@ class CommunityAccessDashboard(models.TransientModel):
             except Exception as e:
                 _logger.error(f"Error computing dashboard data: {e}")
                 # Set default values
+                dashboard.total_visitor_requests = 0
+                dashboard.pending_visitor_requests = 0
+                dashboard.approved_visitor_requests = 0
+                dashboard.completed_visitor_requests = 0
+                dashboard.today_visitor_requests = 0
                 dashboard.total_cab_approvals = 0
                 dashboard.active_cab_approvals = 0
                 dashboard.once_cab_approvals = 0
@@ -139,6 +170,36 @@ class CommunityAccessDashboard(models.TransientModel):
         for dashboard in self:
             try:
                 limit = 5
+                # Recent Visitor Requests (Added before Cab Approvals)
+                recent_visitors = self.env['mygate.visitor'].search(
+                    [], limit=limit, order='create_date desc'
+                )
+                visitor_list = []
+                for visitor in recent_visitors:
+                    state_color = {
+                        'pending': 'text-warning',
+                        'approved': 'text-success',
+                        'rejected': 'text-danger',
+                        'cancelled': 'text-muted',
+                        'completed': 'text-info'
+                    }.get(visitor.state, 'text-muted')
+
+                    # Format visitor type with icon
+                    visitor_type_icon = {
+                        'guest': '👤',
+                        'delivery': '🚚',
+                        'service': '🔧',
+                        'cab': '🚕',
+                        'other': '📋'
+                    }.get(visitor.visitor_type, '📋')
+
+                    visitor_list.append(
+                        f"• {visitor_type_icon} {visitor.name} - "
+                        f"{visitor.flat_id.name if visitor.flat_id else 'N/A'} - "
+                        f"<span class='{state_color}'>({visitor.state})</span>"
+                    )
+                dashboard.recent_visitor_requests = "<br/>".join(
+                    visitor_list) if visitor_list else "No recent visitor requests"
 
                 # Recent Cab Approvals
                 recent_cabs = self.env['cab.preapproval'].search(
@@ -214,6 +275,7 @@ class CommunityAccessDashboard(models.TransientModel):
 
             except Exception as e:
                 _logger.error(f"Error computing recent data: {e}")
+                dashboard.recent_visitor_requests = "Error loading data"
                 dashboard.recent_cab_approvals = "Error loading data"
                 dashboard.recent_delivery_passes = "Error loading data"
                 dashboard.recent_guest_invites = "Error loading data"
@@ -232,6 +294,17 @@ class CommunityAccessDashboard(models.TransientModel):
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',
+        }
+
+    def action_open_visitor_requests(self):
+        """Open Visitor Requests"""
+        return {
+            'name': 'Visitor Requests',
+            'type': 'ir.actions.act_window',
+            'res_model': 'mygate.visitor',
+            'view_mode': 'list,form',
+            'target': 'current',
+            'domain': [],
         }
 
     def action_open_cab_approvals(self):

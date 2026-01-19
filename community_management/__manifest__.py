@@ -79,6 +79,8 @@
         'views/menu_views.xml',
         'views/mygate_visitor_views.xml',
         'views/mygate_approval_portal_templates.xml',
+        'views/child_exit_permission_views.xml',
+        'views/child_exit_permission_templates.xml',
 
         # 'views/assets.xml',
 

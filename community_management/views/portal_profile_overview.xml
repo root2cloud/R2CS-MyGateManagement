@@ -40,7 +40,7 @@
                 }
 
                 .profile-container {
-                max-width: 1400px;
+                max-width: 1500px;
                 margin: 0 auto;
                 padding: 3rem 1.5rem;
                 animation: fadeIn 0.8s ease-out;
@@ -931,6 +931,16 @@
                             <div>
                                 <div class="nav-label">Helpdesk</div>
                                 <div class="nav-subtitle">Support Tickets</div>
+                            </div>
+                        </a>
+
+                        <a href="/my/child-exit-permissions" class="nav-card" title="Child Exit Permissions">
+                            <div class="nav-icon">
+                                <i class="fa fa-child"></i>
+                            </div>
+                            <div>
+                                <div class="nav-label">Child Exit</div>
+                                <div class="nav-subtitle">Exit Permissions</div>
                             </div>
                         </a>
 

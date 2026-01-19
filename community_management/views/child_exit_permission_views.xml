@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- list View -->
+    <record id="view_child_exit_permission_list" model="ir.ui.view">
+        <field name="name">child.exit.permission.list</field>
+        <field name="model">child.exit.permission</field>
+        <field name="arch" type="xml">
+            <list string="Child Exit Permissions" decoration-success="is_active_now">
+                <field name="name"/>
+                <field name="child_id" widget="many2one"/>
+                <field name="tenant_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state=='active'"
+                       decoration-warning="state=='draft'"
+                       decoration-danger="state in ['expired', 'cancelled']"
+                       decoration-success="state=='used'"/>
+                <field name="allowed_exit_time"/>
+                <field name="access_code"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_child_exit_permission_form" model="ir.ui.view">
+        <field name="name">child.exit.permission.form</field>
+        <field name="model">child.exit.permission</field>
+        <field name="arch" type="xml">
+            <form string="Child Exit Permission">
+                <header>
+                    <button name="action_activate" type="object" string="Activate" class="btn-primary" />
+                    <button name="action_mark_exited" type="object" string="Mark Exited" class="btn-success" />
+                    <button name="action_mark_returned" type="object" string="Mark Returned" class="btn-info"/>
+                    <button name="action_cancel" type="object" string="Cancel" class="btn-danger"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,used,expired,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+
+                    <!-- Child Information Section -->
+                    <group string="Child Information">
+                        <group>
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <field name="child_photo" widget="image" class="oe_avatar" style="max-width: 100px; max-height: 100px;"/>
+                                <div>
+                                    <h2><field name="child_id"/></h2>
+                                    <div style="color: #666; font-size: 14px;">
+                                        Age: <field name="child_age"/> years
+                                    </div>
+                                </div>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="tenant_id" widget="many2one"/>
+                            <field name="flat_id" widget="many2one" readonly="1"/>
+                            <field name="access_code" readonly="1" style="font-size: 24px; font-weight: bold; color: #3498db;"/>
+                        </group>
+                    </group>
+
+                    <!-- Permission Details -->
+                    <group string="Permission Details">
+                        <group>
+                            <field name="allowed_exit_time" widget="datetime"/>
+                            <field name="duration_hours" widget="radio"/>
+                            <field name="custom_duration_hours"
+                                   />
+                            <field name="valid_until" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="purpose" widget="textarea"
+                                   placeholder="Enter the purpose/reason for exit..."
+                                   style="height: 100px;"/>
+                        </group>
+                    </group>
+
+                    <!-- Tracking Information -->
+                    <group string="Tracking">
+                        <group>
+                            <field name="exit_time" readonly="1"/>
+                            <field name="return_time" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="security_guard_id" widget="many2one"/>
+                            <field name="time_remaining" readonly="1" style="font-size: 18px; color: #2ecc71;"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_child_exit_permission_search" model="ir.ui.view">
+        <field name="name">child.exit.permission.search</field>
+        <field name="model">child.exit.permission</field>
+        <field name="arch" type="xml">
+            <search string="Search Child Exit Permissions">
+                <field name="child_id"/>
+                <field name="tenant_id"/>
+                <field name="state"/>
+                <filter string="Active Now" name="active_now" domain="[('is_active_now', '=', True)]"/>
+                <filter string="Today" name="today" domain="[('allowed_exit_time', '>=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <filter string="Pending" name="pending" domain="[('state', '=', 'draft')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="By Child" name="group_by_child" context="{'group_by': 'child_id'}"/>
+                    <filter string="By Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="By Date" name="group_by_date" context="{'group_by': 'allowed_exit_time:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_child_exit_permission_calendar" model="ir.ui.view">
+        <field name="name">child.exit.permission.calendar</field>
+        <field name="model">child.exit.permission</field>
+        <field name="arch" type="xml">
+            <calendar string="Exit Permissions Calendar"
+                      date_start="allowed_exit_time"
+                      date_stop="valid_until"
+                      color="child_id">
+                <field name="name"/>
+                <field name="child_id"/>
+                <field name="state"/>
+                <field name="access_code"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_child_exit_permission" model="ir.actions.act_window">
+        <field name="name">Child Exit Permissions</field>
+        <field name="res_model">child.exit.permission</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="search_view_id" ref="view_child_exit_permission_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No child exit permissions found.
+            </p>
+            <p>
+                Create exit permissions for children to leave the premises with time limits.
+                Security can verify permissions using the access code.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+
+    <menuitem id="menu_child_exit_permission"
+              name="All Permissions"
+              parent="menu_flat_transaction_menu"
+              action="action_child_exit_permission"
+              sequence="10"/>
+</odoo>

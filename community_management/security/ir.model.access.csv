@@ -300,3 +300,12 @@ access_mygate_visitor_resident_rep,access.mygate.visitor.resident.rep,model_myga
 access_mygate_visitor_security,access.mygate.visitor.security,model_mygate_visitor,community_management.group_community_security_guard,1,1,1,0
 access_mygate_visitor_user,access.mygate.visitor.user,model_mygate_visitor,base.group_user,1,1,1,1
 access_mygate_visitor_portal,access.mygate.visitor.portal,model_mygate_visitor,base.group_portal,1,1,0,0
+
+access_child_exit_permission_president,access.child.exit.permission.president,model_child_exit_permission,community_management.group_community_president,1,1,1,1
+access_child_exit_permission_secretary,access.child.exit.permission.secretary,model_child_exit_permission,community_management.group_community_secretary,1,1,1,1
+access_child_exit_permission_treasurer,access.child.exit.permission.treasurer,model_child_exit_permission,community_management.group_community_treasurer,1,1,1,1
+access_child_exit_permission_committee,access.child.exit.permission.committee,model_child_exit_permission,community_management.group_community_committee_member,1,1,1,0
+access_child_exit_permission_resident_rep,access.child.exit.permission.resident.rep,model_child_exit_permission,community_management.group_community_resident_representative,1,1,0,0
+access_child_exit_permission_security,access.child.exit.permission.security,model_child_exit_permission,community_management.group_community_security_guard,1,1,1,0
+access_child_exit_permission_user,access.child.exit.permission.user,model_child_exit_permission,base.group_user,1,1,1,1
+access_child_exit_permission_portal,access.child.exit.permission.portal,model_child_exit_permission,base.group_portal,1,1,1,0

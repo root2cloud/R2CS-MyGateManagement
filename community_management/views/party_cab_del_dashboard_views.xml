@@ -35,12 +35,36 @@
                         <div style="padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
                             <!-- Top Stats Cards Row - Gradient Colors -->
                             <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
+                                <!-- Card 1: Visitor Requests (Added before Cab Approvals) -->
+                                <div style="flex: 1; min-width: 250px;">
+                                    <div style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(26, 188, 156, 0.2); transition: transform 0.3s ease;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
+                                                    Visitor Requests
+                                                </h6>
+                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
+                                                    <field name="total_visitor_requests" widget="statinfo"/>
+                                                </h2>
+                                            </div>
+                                            <div>
+                                                <i class="fa fa-users fa-3x" style="opacity: 0.5;" title="Visitors"/>
+                                            </div>
+                                        </div>
+                                        <p style="margin-top: 15px; font-size: 0.9rem;">
+                                            Today:
+                                            <field name="today_visitor_requests" widget="statinfo"/>
+                                        </p>
+                                    </div>
+                                </div>
                                 <!-- Card 1: Cab Approvals -->
                                 <div style="flex: 1; min-width: 250px;">
                                     <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(52, 152, 219, 0.2); transition: transform 0.3s ease;">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">Cab Approvals</h6>
+                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
+                                                    Cab Approvals
+                                                </h6>
                                                 <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
                                                     <field name="total_cab_approvals" widget="statinfo"/>
                                                 </h2>
@@ -50,7 +74,8 @@
                                             </div>
                                         </div>
                                         <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Active: <field name="active_cab_approvals" widget="statinfo"/>
+                                            Active:
+                                            <field name="active_cab_approvals" widget="statinfo"/>
                                         </p>
                                     </div>
                                 </div>
@@ -60,7 +85,9 @@
                                     <div style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(46, 204, 113, 0.2); transition: transform 0.3s ease;">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">Delivery Passes</h6>
+                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
+                                                    Delivery Passes
+                                                </h6>
                                                 <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
                                                     <field name="total_delivery_passes" widget="statinfo"/>
                                                 </h2>
@@ -70,7 +97,8 @@
                                             </div>
                                         </div>
                                         <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Active: <field name="active_delivery_passes" widget="statinfo"/>
+                                            Active:
+                                            <field name="active_delivery_passes" widget="statinfo"/>
                                         </p>
                                     </div>
                                 </div>
@@ -80,17 +108,21 @@
                                     <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(155, 89, 182, 0.2); transition: transform 0.3s ease;">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">Guest Invites</h6>
+                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
+                                                    Guest Invites
+                                                </h6>
                                                 <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
                                                     <field name="total_guest_invites" widget="statinfo"/>
                                                 </h2>
                                             </div>
                                             <div>
-                                                <i class="fa fa-user-friends fa-3x" style="opacity: 0.5;" title="Guests"/>
+                                                <i class="fa fa-user-friends fa-3x" style="opacity: 0.5;"
+                                                   title="Guests"/>
                                             </div>
                                         </div>
                                         <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Total Guests: <field name="total_guests" widget="statinfo"/>
+                                            Total Guests:
+                                            <field name="total_guests" widget="statinfo"/>
                                         </p>
                                     </div>
                                 </div>
@@ -100,17 +132,21 @@
                                     <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(231, 76, 60, 0.2); transition: transform 0.3s ease;">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">Party Invites</h6>
+                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
+                                                    Party Invites
+                                                </h6>
                                                 <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
                                                     <field name="total_party_invites" widget="statinfo"/>
                                                 </h2>
                                             </div>
                                             <div>
-                                                <i class="fa fa-glass-cheers fa-3x" style="opacity: 0.5;" title="Parties"/>
+                                                <i class="fa fa-glass-cheers fa-3x" style="opacity: 0.5;"
+                                                   title="Parties"/>
                                             </div>
                                         </div>
                                         <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Upcoming: <field name="upcoming_parties" widget="statinfo"/>
+                                            Upcoming:
+                                            <field name="upcoming_parties" widget="statinfo"/>
                                         </p>
                                     </div>
                                 </div>
@@ -120,17 +156,21 @@
                                     <div style="background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(243, 156, 18, 0.2); transition: transform 0.3s ease;">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">Visiting Help</h6>
+                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
+                                                    Visiting Help
+                                                </h6>
                                                 <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
                                                     <field name="total_visiting_help" widget="statinfo"/>
                                                 </h2>
                                             </div>
                                             <div>
-                                                <i class="fa fa-hands-helping fa-3x" style="opacity: 0.5;" title="Help"/>
+                                                <i class="fa fa-hands-helping fa-3x" style="opacity: 0.5;"
+                                                   title="Help"/>
                                             </div>
                                         </div>
                                         <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Active: <field name="active_visiting_help" widget="statinfo"/>
+                                            Active:
+                                            <field name="active_visiting_help" widget="statinfo"/>
                                         </p>
                                     </div>
                                 </div>
@@ -138,6 +178,51 @@
 
                             <!-- First Row: Cab Approvals & Delivery Passes -->
                             <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
+                                <!-- Visitor Requests Section (Added before Cab Approvals) -->
+                                <div style="flex: 1; min-width: 400px;">
+                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
+                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
+                                                <i class="fa fa-users" style="color: #1abc9c;"
+                                                   title="Visitor Requests"/>
+                                                Visitor Requests
+                                            </h5>
+                                            <button name="action_open_visitor_requests" type="object"
+                                                    style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
+                                                View All
+                                            </button>
+                                        </div>
+                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">
+                                                    <field name="pending_visitor_requests" widget="statinfo"/>
+                                                </h3>
+                                                <small style="color: #64748b; font-weight: 500;">Pending</small>
+                                            </div>
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">
+                                                    <field name="approved_visitor_requests" widget="statinfo"/>
+                                                </h3>
+                                                <small style="color: #64748b; font-weight: 500;">Approved</small>
+                                            </div>
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">
+                                                    <field name="completed_visitor_requests" widget="statinfo"/>
+                                                </h3>
+                                                <small style="color: #64748b; font-weight: 500;">Completed</small>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                                <i class="fa fa-history" style="color: #1abc9c;"></i>
+                                                Recent Requests:
+                                            </h6>
+                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
+                                                <field name="recent_visitor_requests" widget="html"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- Cab Approvals Section -->
                                 <div style="flex: 1; min-width: 400px;">
                                     <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
@@ -146,7 +231,8 @@
                                                 <i class="fa fa-taxi" style="color: #3498db;" title="Cab Approvals"/>
                                                 Cab Pre-Approvals
                                             </h5>
-                                            <button name="action_open_cab_approvals" type="object" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
+                                            <button name="action_open_cab_approvals" type="object"
+                                                    style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
                                                 View All
                                             </button>
                                         </div>
@@ -190,7 +276,8 @@
                                                 <i class="fa fa-truck" style="color: #2ecc71;" title="Delivery"/>
                                                 Delivery Passes
                                             </h5>
-                                            <button name="action_open_delivery_passes" type="object" style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
+                                            <button name="action_open_delivery_passes" type="object"
+                                                    style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
                                                 View All
                                             </button>
                                         </div>
@@ -237,7 +324,8 @@
                                                 <i class="fa fa-user-friends" style="color: #9b59b6;" title="Guests"/>
                                                 Guest Invites
                                             </h5>
-                                            <button name="action_open_guest_invites" type="object" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
+                                            <button name="action_open_guest_invites" type="object"
+                                                    style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
                                                 View All
                                             </button>
                                         </div>
@@ -281,7 +369,8 @@
                                                 <i class="fa fa-glass-cheers" style="color: #e74c3c;" title="Parties"/>
                                                 Party &amp; Group Invites
                                             </h5>
-                                            <button name="action_open_party_invites" type="object" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
+                                            <button name="action_open_party_invites" type="object"
+                                                    style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
                                                 View All
                                             </button>
                                         </div>
@@ -319,10 +408,12 @@
                                     <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
                                         <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
                                             <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-hands-helping" style="color: #f39c12;" title="Visiting Help"/>
+                                                <i class="fa fa-hands-helping" style="color: #f39c12;"
+                                                   title="Visiting Help"/>
                                                 Visiting Help Management
                                             </h5>
-                                            <button name="action_open_visiting_help" type="object" style="background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
+                                            <button name="action_open_visiting_help" type="object"
+                                                    style="background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
                                                 View All
                                             </button>
                                         </div>
@@ -369,39 +460,56 @@
                                         </h5>
                                     </div>
                                     <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                                        <a href="/web#model=mygate.visitor&amp;view_type=form"
+                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #1abc9c15 0%, #1abc9c05 100%);"
+                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(26, 188, 156, 0.2)';"
+                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                            <i class="fa fa-user-plus fa-2x" style="color: #1abc9c; margin-bottom: 10px; display: block;" title="New Visitor Request"/>
+                                            <small>New Visitor Request</small>
+                                        </a>
                                         <a href="/web#model=cab.preapproval&amp;view_type=form"
                                            style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #3498db15 0%, #3498db05 100%);"
                                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.2)';"
                                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-taxi fa-2x" style="color: #3498db; margin-bottom: 10px; display: block;" title="New Cab Approval"/>
+                                            <i class="fa fa-taxi fa-2x"
+                                               style="color: #3498db; margin-bottom: 10px; display: block;"
+                                               title="New Cab Approval"/>
                                             <small>New Cab Approval</small>
                                         </a>
                                         <a href="/web#model=community.delivery.pass&amp;view_type=form"
                                            style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #2ecc7115 0%, #2ecc7105 100%);"
                                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(46, 204, 113, 0.2)';"
                                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-truck fa-2x" style="color: #2ecc71; margin-bottom: 10px; display: block;" title="New Delivery Pass"/>
+                                            <i class="fa fa-truck fa-2x"
+                                               style="color: #2ecc71; margin-bottom: 10px; display: block;"
+                                               title="New Delivery Pass"/>
                                             <small>New Delivery Pass</small>
                                         </a>
                                         <a href="/web#model=guest.invite&amp;view_type=form"
                                            style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #9b59b615 0%, #9b59b605 100%);"
                                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(155, 89, 182, 0.2)';"
                                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-user-plus fa-2x" style="color: #9b59b6; margin-bottom: 10px; display: block;" title="New Guest Invite"/>
+                                            <i class="fa fa-user-plus fa-2x"
+                                               style="color: #9b59b6; margin-bottom: 10px; display: block;"
+                                               title="New Guest Invite"/>
                                             <small>New Guest Invite</small>
                                         </a>
                                         <a href="/web#model=party.group.invite&amp;view_type=form"
                                            style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #e74c3c15 0%, #e74c3c05 100%);"
                                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.2)';"
                                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-glass-cheers fa-2x" style="color: #e74c3c; margin-bottom: 10px; display: block;" title="New Party Invite"/>
+                                            <i class="fa fa-glass-cheers fa-2x"
+                                               style="color: #e74c3c; margin-bottom: 10px; display: block;"
+                                               title="New Party Invite"/>
                                             <small>New Party Invite</small>
                                         </a>
                                         <a href="/web#model=community.visiting.help.entry&amp;view_type=form"
                                            style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #f39c1215 0%, #f39c1205 100%);"
                                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(243, 156, 18, 0.2)';"
                                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-hands-helping fa-2x" style="color: #f39c12; margin-bottom: 10px; display: block;" title="New Visiting Help"/>
+                                            <i class="fa fa-hands-helping fa-2x"
+                                               style="color: #f39c12; margin-bottom: 10px; display: block;"
+                                               title="New Visiting Help"/>
                                             <small>New Visiting Help</small>
                                         </a>
                                     </div>

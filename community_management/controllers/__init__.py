@@ -20,3 +20,4 @@ from . import community_all_flats_portal
 from . import portal_visiting_help
 from . import community_post_controller
 from . import mygate_approval_portal
+from . import child_exit_permission_controllers

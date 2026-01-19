@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ==================== -->
+    <!-- PORTAL TEMPLATES -->
+    <!-- ==================== -->
+
+    <!-- Portal: My Child Exit Permissions -->
+    <template id="portal_my_child_exit_permissions" name="My Child Exit Permissions">
+        <t t-call="website.layout">
+            <div class="oe_structure">
+                <div class="container mt-4">
+                    <!-- Success/Error Messages -->
+                    <t t-if="request.params.get('success')">
+                        <div class="alert alert-success alert-dismissible fade show shadow-lg border-0" role="alert" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-left: 5px solid #1e7e34;">
+                            <i class="fa fa-check-circle mr-2"></i>
+                            <span t-esc="request.params.get('success')"/>
+                            <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    </t>
+                    <t t-if="request.params.get('error')">
+                        <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0" role="alert" style="background: linear-gradient(135deg, #dc3545, #e83e8c); color: white; border-left: 5px solid #c82333;">
+                            <i class="fa fa-exclamation-circle mr-2"></i>
+                            <span t-esc="request.params.get('error')"/>
+                            <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    </t>
+
+                    <!-- Header -->
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-5">
+                        <div class="mb-3 mb-md-0">
+                            <h1 class="h2 font-weight-bold mb-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                <i class="fa fa-child mr-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                                Child Exit Permissions
+                            </h1>
+                            <p class="text-muted mb-0" style="font-size: 1.1rem;">Manage exit permissions for your children</p>
+                        </div>
+                        <a href="/my/child-exit-permissions/create" class="btn btn-lg shadow-lg px-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 50px; transition: all 0.3s;">
+                            <i class="fa fa-plus mr-2"></i>Create New Permission
+                        </a>
+                    </div>
+
+                    <!-- Active Permissions -->
+                    <div class="card shadow-lg border-0 mb-5" style="border-radius: 20px; overflow: hidden;">
+                        <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <h5 class="card-title mb-0 font-weight-bold text-white">
+                                <i class="fa fa-clock-o mr-2"></i>Active Permissions
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <t t-if="permissions.filtered(lambda p: p.is_active_now)">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="border-top-0" style="border-top-left-radius: 20px;">Child</th>
+                                                <th class="border-top-0">Exit Time</th>
+                                                <th class="border-top-0">Valid Until</th>
+                                                <th class="border-top-0">Access Code</th>
+                                                <th class="border-top-0">Status</th>
+                                                <th class="border-top-0 text-center" style="border-top-right-radius: 20px;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="permissions.filtered(lambda p: p.is_active_now)" t-as="permission">
+                                                <tr class="border-bottom hover-shadow" style="transition: all 0.3s;">
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="mr-3">
+                                                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                                                    <i class="fa fa-child text-white"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <strong class="d-block" t-esc="permission.child_id.name"/>
+                                                                <small class="text-muted">Age: <span t-esc="permission.child_age"/> years</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="font-weight-medium" t-esc="permission.allowed_exit_time.strftime('%d-%m-%Y %I:%M %p')"/>
+                                                    </td>
+                                                    <td>
+                                                        <span class="font-weight-medium" t-esc="permission.valid_until.strftime('%d-%m-%Y %I:%M %p')"/>
+                                                    </td>
+                                                    <td>
+                                                        <code class="h5 font-weight-bold bg-light rounded px-2 py-1" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #155724;">
+                                                            <t t-esc="permission.access_code"/>
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-pill py-2 px-3" style="background: linear-gradient(135deg, {{ '#43e97b' if permission.state == 'active' else '#ffd452' }} 0%, {{ '#38f9d7' if permission.state == 'active' else '#f9a852' }} 100%); color: {{ '#155724' if permission.state == 'active' else '#856404' }};">
+                                                            <t t-esc="permission.state"/>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a t-att-href="'/my/child-exit-permissions/' + str(permission.id)"
+                                                           class="btn btn-sm rounded-pill px-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none;">
+                                                            <i class="fa fa-eye mr-1"></i> View
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="text-center py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                    <div class="display-1 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                        <i class="fa fa-child"></i>
+                                    </div>
+                                    <h4 class="font-weight-normal mb-3" style="color: #6c757d;">No active permissions</h4>
+                                    <p class="mb-4" style="color: #6c757d;">Create a permission to allow your child to exit</p>
+                                    <a href="/my/child-exit-permissions/create" class="btn px-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 50px;">
+                                        <i class="fa fa-plus mr-2"></i>Create Permission
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- All Permissions -->
+                    <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="card-title mb-0 font-weight-bold text-dark">
+                                <i class="fa fa-history mr-2"></i>All Permissions
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <t t-if="permissions">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="border-top-0" style="border-top-left-radius: 20px;">Date</th>
+                                                <th class="border-top-0">Child</th>
+                                                <th class="border-top-0">Duration</th>
+                                                <th class="border-top-0">Status</th>
+                                                <th class="border-top-0">Access Code</th>
+                                                <th class="border-top-0 text-center" style="border-top-right-radius: 20px;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="permissions" t-as="permission">
+                                                <tr class="border-bottom hover-shadow" style="transition: all 0.3s;">
+                                                    <td>
+                                                        <span class="text-muted" t-esc="permission.create_date.strftime('%d-%m-%Y')"/>
+                                                    </td>
+                                                    <td t-esc="permission.child_id.name"/>
+                                                    <td>
+                                                        <span class="badge border py-2 px-3" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-color: #dee2e6 !important;">
+                                                            <t t-esc="permission.duration_hours"/>
+                                                            <t t-if="permission.duration_hours == 'custom'">
+                                                                (<t t-esc="permission.custom_duration_hours"/> hours)
+                                                            </t>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-pill py-2 px-3" style="background: linear-gradient(135deg, {{
+                                                            '#6c757d' if permission.state == 'draft'
+                                                            else '#43e97b' if permission.state == 'active'
+                                                            else '#4facfe' if permission.state == 'used'
+                                                            else '#ffd452' if permission.state == 'expired'
+                                                            else '#f5576c' if permission.state == 'cancelled'
+                                                            else '#6c757d'
+                                                        }} 0%, {{
+                                                            '#495057' if permission.state == 'draft'
+                                                            else '#38f9d7' if permission.state == 'active'
+                                                            else '#00f2fe' if permission.state == 'used'
+                                                            else '#f9a852' if permission.state == 'expired'
+                                                            else '#f093fb' if permission.state == 'cancelled'
+                                                            else '#495057'
+                                                        }} 100%); color: {{
+                                                            'white' if permission.state == 'draft'
+                                                            else '#155724' if permission.state == 'active'
+                                                            else '#0c5460' if permission.state == 'used'
+                                                            else '#856404' if permission.state == 'expired'
+                                                            else '#721c24' if permission.state == 'cancelled'
+                                                            else 'white'
+                                                        }};">
+                                                            <t t-esc="permission.state"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <code class="text-dark bg-light rounded px-2 py-1" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                                            <t t-esc="permission.access_code"/>
+                                                        </code>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a t-att-href="'/my/child-exit-permissions/' + str(permission.id)"
+                                                           class="btn btn-sm rounded-pill px-3" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none;">
+                                                            <i class="fa fa-eye mr-1"></i> View
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="text-center py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                    <div class="display-1 mb-4" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                        <i class="fa fa-file-alt"></i>
+                                    </div>
+                                    <h4 class="font-weight-normal mb-3" style="color: #6c757d;">No permissions found</h4>
+                                    <p class="mb-4" style="color: #6c757d;">Start by creating your first exit permission</p>
+                                    <a href="/my/child-exit-permissions/create" class="btn btn-lg px-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 50px;">
+                                        <i class="fa fa-plus mr-2"></i>Create First Permission
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSS -->
+            <style>
+                .hover-shadow:hover {
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+                    transform: translateY(-2px);
+                }
+                .text-gradient {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                .card {
+                    transition: transform 0.3s ease;
+                }
+                .card:hover {
+                    transform: translateY(-5px);
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Portal: Permission Detail -->
+    <template id="portal_child_exit_permission_detail" name="Child Exit Permission Detail">
+        <t t-call="website.layout">
+            <div class="oe_structure">
+                <div class="container mt-4">
+                    <!-- Back Button -->
+                    <div class="mb-4">
+                        <a href="/my/child-exit-permissions" class="btn rounded-pill px-4" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none;">
+                            <i class="fa fa-arrow-left mr-2"></i>Back to Permissions
+                        </a>
+                    </div>
+
+                    <!-- Permission Card -->
+                    <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 25px;">
+                        <div class="card-header border-0 py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="card-title mb-0 font-weight-bold text-white">
+                                        <i class="fa fa-child mr-2"></i>
+                                        Exit Permission Details
+                                    </h4>
+                                </div>
+                                <span t-attf-class="badge badge-pill py-2 px-4 text-white" style="background: linear-gradient(135deg, {{
+                                    '#6c757d' if permission.state == 'draft'
+                                    else '#43e97b' if permission.state == 'active'
+                                    else '#4facfe' if permission.state == 'used'
+                                    else '#ffd452' if permission.state == 'expired'
+                                    else '#f5576c' if permission.state == 'cancelled'
+                                    else '#6c757d'
+                                }} 0%, {{
+                                    '#495057' if permission.state == 'draft'
+                                    else '#38f9d7' if permission.state == 'active'
+                                    else '#00f2fe' if permission.state == 'used'
+                                    else '#f9a852' if permission.state == 'expired'
+                                    else '#f093fb' if permission.state == 'cancelled'
+                                    else '#495057'
+                                }} 100%);">
+                                    <t t-esc="permission.state.upper()"/>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body p-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                            <div class="row align-items-center">
+                                <!-- Child Info -->
+                                <div class="col-md-4 text-center mb-4 mb-md-0">
+                                    <div class="position-relative d-inline-block">
+                                        <t t-if="permission.child_photo">
+                                            <img t-att-src="'data:image/png;base64,' + permission.child_photo.decode('utf-8')"
+                                                 class="img-fluid rounded-circle border border-4 border-light shadow-lg"
+                                                 style="width: 180px; height: 180px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;"
+                                                 alt="Child Photo"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+                                                 style="width: 180px; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                <i class="fa fa-child fa-4x text-white"></i>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <h3 class="mt-4 font-weight-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" t-esc="permission.child_id.name"/>
+                                    <p class="mb-0" style="color: #6c757d;">
+                                        <i class="fa fa-birthday-cake mr-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                                        Age: <span t-esc="permission.child_age"/> years
+                                    </p>
+                                </div>
+
+                                <!-- Permission Details -->
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label class="small font-weight-bold text-uppercase" style="color: #6c757d;">Parent/Guardian</label>
+                                            <p class="h5 font-weight-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" t-esc="permission.tenant_id.name"/>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <label class="small font-weight-bold text-uppercase" style="color: #6c757d;">Access Code</label>
+                                            <div class="d-flex align-items-center">
+                                                <code class="h2 font-weight-bold rounded px-3 py-2 mr-3 shadow-sm"
+                                                      style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #155724;"
+                                                      t-esc="permission.access_code"/>
+                                                <span class="badge py-2 px-3" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #155724;">
+                                                    <i class="fa fa-shield mr-2"></i>Valid
+                                                </span>
+                                            </div>
+                                            <small style="color: #6c757d;">Show this code to security for verification</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label class="small font-weight-bold text-uppercase" style="color: #6c757d;">Scheduled Exit Time</label>
+                                            <div class="d-flex align-items-center rounded p-3 shadow-sm" style="background: white;">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                    <i class="fa fa-calendar text-white"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="h5 mb-0 font-weight-bold" style="color: #495057;"
+                                                       t-esc="permission.allowed_exit_time.strftime('%d-%m-%Y %I:%M %p')"/>
+                                                    <small style="color: #6c757d;">Planned departure</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <label class="small font-weight-bold text-uppercase" style="color: #6c757d;">Valid Until</label>
+                                            <div class="d-flex align-items-center rounded p-3 shadow-sm" style="background: white;">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 50px; height: 50px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                                                    <i class="fa fa-clock-o text-white"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="h5 mb-0 font-weight-bold" style="color: #495057;"
+                                                       t-esc="permission.valid_until.strftime('%d-%m-%Y %I:%M %p')"/>
+                                                    <small style="color: #6c757d;">Permission expiry</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label class="small font-weight-bold text-uppercase" style="color: #6c757d;">Duration</label>
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge py-3 px-4 mr-3 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50px;">
+                                                    <i class="fa fa-hourglass-half mr-2"></i>
+                                                    <t t-esc="permission.duration_hours"/>
+                                                    <t t-if="permission.duration_hours == 'custom'">
+                                                        (<t t-esc="permission.custom_duration_hours"/> hours)
+                                                    </t>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mb-4">
+                                            <label class="small font-weight-bold text-uppercase" style="color: #6c757d;">Purpose/Reason</label>
+                                            <div class="rounded p-4 shadow-sm" style="background: white;">
+                                                <p class="h5 mb-0" style="color: #495057;" t-esc="permission.purpose"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline -->
+                            <div class="row mt-5 pt-4">
+                                <div class="col-12">
+                                    <h5 class="font-weight-bold mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                        <i class="fa fa-stream mr-2"></i>
+                                        Permission Timeline
+                                    </h5>
+                                    <div class="timeline">
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                                            <div class="timeline-content bg-white rounded p-4 shadow-sm">
+                                                <h6 class="font-weight-bold" style="color: #28a745;">
+                                                    <i class="fa fa-calendar-plus mr-2"></i>Created Date
+                                                </h6>
+                                                <p class="mb-0" style="color: #6c757d;"
+                                                   t-esc="permission.create_date.strftime('%d-%m-%Y')"/>
+                                            </div>
+                                        </div>
+<!--                                        <t t-if="permission.exit_time">-->
+<!--                                            <div class="timeline-item">-->
+<!--                                                <div class="timeline-marker" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>-->
+<!--                                                <div class="timeline-content bg-white rounded p-4 shadow-sm">-->
+<!--                                                    <h6 class="font-weight-bold" style="color: #17a2b8;">-->
+<!--                                                        <i class="fa fa-sign-out mr-2"></i>Exited Premises-->
+<!--                                                    </h6>-->
+<!--                                                    <p class="mb-0" style="color: #6c757d;"-->
+<!--                                                       t-esc="permission.exit_time.strftime('%d-%m-%Y %I:%M %p')"/>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </t>-->
+<!--                                        <t t-if="permission.return_time">-->
+<!--                                            <div class="timeline-item">-->
+<!--                                                <div class="timeline-marker" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>-->
+<!--                                                <div class="timeline-content bg-white rounded p-4 shadow-sm">-->
+<!--                                                    <h6 class="font-weight-bold" style="color: #6610f2;">-->
+<!--                                                        <i class="fa fa-sign-in mr-2"></i>Returned Safely-->
+<!--                                                    </h6>-->
+<!--                                                    <p class="mb-0" style="color: #6c757d;"-->
+<!--                                                       t-esc="permission.return_time.strftime('%d-%m-%Y %I:%M %p')"/>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </t>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSS for Timeline -->
+            <style>
+                .timeline {
+                    position: relative;
+                    padding-left: 50px;
+                    margin-left: 20px;
+                }
+                .timeline:before {
+                    content: '';
+                    position: absolute;
+                    left: 25px;
+                    top: 0;
+                    bottom: 0;
+                    width: 2px;
+                    background: linear-gradient(to bottom, #43e97b, #4facfe, #667eea, #f093fb);
+                }
+                .timeline-item {
+                    position: relative;
+                    margin-bottom: 30px;
+                }
+                .timeline-marker {
+                    position: absolute;
+                    left: -40px;
+                    top: 20px;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    z-index: 1;
+                }
+                .timeline-content {
+                    margin-left: 20px;
+                    transition: all 0.3s ease;
+                }
+                .timeline-item:hover .timeline-content {
+                    transform: translateX(10px);
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+                }
+                .card {
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+                .card:hover {
+                    transform: translateY(-10px);
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.15) !important;
+                }
+                .shadow-lg {
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Portal: Create Permission -->
+    <template id="portal_create_child_exit_permission" name="Create Child Exit Permission">
+        <t t-call="website.layout">
+            <div class="oe_structure">
+                <div class="container mt-4">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-9 col-xl-8">
+                            <!-- Back Button -->
+                            <div class="mb-4">
+                                <a href="/my/child-exit-permissions" class="btn rounded-pill px-4" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none;">
+                                    <i class="fa fa-arrow-left mr-2"></i>Back to Permissions
+                                </a>
+                            </div>
+
+                            <!-- Success/Error Messages -->
+                            <t t-if="request.params.get('error')">
+                                <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0" role="alert" style="background: linear-gradient(135deg, #dc3545, #e83e8c); color: white; border-left: 5px solid #c82333;">
+                                    <i class="fa fa-exclamation-circle mr-2"></i>
+                                    <span t-esc="request.params.get('error')"/>
+                                    <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            </t>
+
+                            <!-- Create Form -->
+                            <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 25px;">
+                                <div class="card-header border-0 py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <h4 class="card-title mb-0 font-weight-bold text-white">
+                                        <i class="fa fa-plus-circle mr-2"></i>
+                                        Create Exit Permission
+                                    </h4>
+                                </div>
+                                <div class="card-body p-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                    <form id="createPermissionForm" method="POST"
+                                          action="/my/child-exit-permissions/create/submit">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                        <!-- Child Selection -->
+                                        <div class="form-group mb-5">
+                                            <label for="child_id" class="form-label font-weight-bold mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                                <i class="fa fa-child mr-2"></i>Select Child *
+                                            </label>
+                                            <select id="child_id" name="child_id"
+                                                    class="form-control form-control-lg rounded-pill px-4 py-3 shadow-sm" style="border: 2px solid #dee2e6; transition: all 0.3s;">
+                                                <option value="">-- Select Child --</option>
+                                                <t t-foreach="children" t-as="child">
+                                                    <option t-att-value="child.id" t-esc="child.name"/>
+                                                </t>
+                                            </select>
+                                            <small class="form-text mt-2 ml-3" style="color: #6c757d;">
+                                                <i class="fa fa-info-circle mr-1"></i> Select the child who needs exit permission
+                                            </small>
+                                        </div>
+
+                                        <!-- Exit Date and Time -->
+                                        <div class="form-group mb-5">
+                                            <label class="form-label font-weight-bold mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                                <i class="fa fa-calendar mr-2"></i>Exit Date and Time *
+                                            </label>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-4">
+                                                    <label for="exit_date" class="form-label" style="color: #495057;">Exit Date</label>
+                                                    <div class="input-group shadow-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text rounded-left" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white;">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="date" id="exit_date" name="exit_date"
+                                                               class="form-control rounded-right" style="border: 2px solid #dee2e6; border-left: none;"
+                                                               t-att-value="today_date"/>
+                                                    </div>
+                                                    <small class="form-text mt-2" style="color: #6c757d;">
+                                                        Select the exit date
+                                                    </small>
+                                                </div>
+                                                <div class="col-md-6 mb-4">
+                                                    <label for="exit_time" class="form-label" style="color: #495057;">Exit Time</label>
+                                                    <div class="input-group shadow-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text rounded-left" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border: none; color: white;">
+                                                                <i class="fa fa-clock-o"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="time" id="exit_time" name="exit_time"
+                                                               class="form-control rounded-right" style="border: 2px solid #dee2e6; border-left: none;"
+                                                               t-att-value="current_time"/>
+                                                    </div>
+                                                    <small class="form-text mt-2" style="color: #6c757d;">
+                                                        Select the exit time
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Duration Selection -->
+                                        <div class="form-group mb-5">
+                                            <label class="form-label font-weight-bold mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                                <i class="fa fa-hourglass-half mr-2"></i>Select Duration *
+                                            </label>
+                                            <div class="row">
+                                                <div class="col-4 mb-3">
+                                                    <input type="radio" id="duration_1" name="duration" value="1" class="d-none"/>
+                                                    <label for="duration_1" class="duration-card">
+                                                        <div class="card text-center border-2 shadow-sm rounded-lg" style="border-color: #dee2e6 !important; transition: all 0.3s;">
+                                                            <div class="card-body py-4">
+                                                                <div class="display-4 font-weight-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">1</div>
+                                                                <div style="color: #6c757d;">Hour</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="col-4 mb-3">
+                                                    <input type="radio" id="duration_2" name="duration" value="2" class="d-none" checked="checked"/>
+                                                    <label for="duration_2" class="duration-card active">
+                                                        <div class="card text-center shadow-lg rounded-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                                                            <div class="card-body py-4">
+                                                                <div class="display-4 font-weight-bold">2</div>
+                                                                <div>Hours</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="col-4 mb-3">
+                                                    <input type="radio" id="duration_4" name="duration" value="4" class="d-none"/>
+                                                    <label for="duration_4" class="duration-card">
+                                                        <div class="card text-center border-2 shadow-sm rounded-lg" style="border-color: #dee2e6 !important; transition: all 0.3s;">
+                                                            <div class="card-body py-4">
+                                                                <div class="display-4 font-weight-bold" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">4</div>
+                                                                <div style="color: #6c757d;">Hours</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="col-4 mb-3">
+                                                    <input type="radio" id="duration_8" name="duration" value="8" class="d-none"/>
+                                                    <label for="duration_8" class="duration-card">
+                                                        <div class="card text-center border-2 shadow-sm rounded-lg" style="border-color: #dee2e6 !important; transition: all 0.3s;">
+                                                            <div class="card-body py-4">
+                                                                <div class="display-4 font-weight-bold" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">8</div>
+                                                                <div style="color: #6c757d;">Hours</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="col-4 mb-3">
+                                                    <input type="radio" id="duration_12" name="duration" value="12" class="d-none"/>
+                                                    <label for="duration_12" class="duration-card">
+                                                        <div class="card text-center border-2 shadow-sm rounded-lg" style="border-color: #dee2e6 !important; transition: all 0.3s;">
+                                                            <div class="card-body py-4">
+                                                                <div class="display-4 font-weight-bold" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">12</div>
+                                                                <div style="color: #6c757d;">Hours</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="col-4 mb-3">
+                                                    <input type="radio" id="duration_24" name="duration" value="24" class="d-none"/>
+                                                    <label for="duration_24" class="duration-card">
+                                                        <div class="card text-center border-2 shadow-sm rounded-lg" style="border-color: #dee2e6 !important; transition: all 0.3s;">
+                                                            <div class="card-body py-4">
+                                                                <div class="display-4 font-weight-bold" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">24</div>
+                                                                <div style="color: #6c757d;">Hours</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <small class="form-text mt-3" style="color: #6c757d;">
+                                                <i class="fa fa-info-circle mr-1"></i> Permission will be valid for selected duration from exit time
+                                            </small>
+                                        </div>
+
+                                        <!-- Purpose -->
+                                        <div class="form-group mb-5">
+                                            <label for="purpose" class="form-label font-weight-bold mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                                <i class="fa fa-comment mr-2"></i>Purpose/Reason *
+                                            </label>
+                                            <textarea id="purpose" name="purpose"
+                                                      class="form-control rounded-lg shadow-sm"
+                                                      rows="4"
+                                                      placeholder="Enter the purpose for exit..."
+                                                      style="resize: none; border: 2px solid #dee2e6; border-radius: 15px !important;">Going out with permission</textarea>
+                                            <small class="form-text mt-2" style="color: #6c757d;">
+                                                <i class="fa fa-info-circle mr-1"></i> Briefly describe why the child needs to exit
+                                            </small>
+                                        </div>
+
+                                        <!-- Submit Button -->
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-lg btn-block rounded-pill py-3 shadow-lg" id="submitBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; transition: all 0.3s;">
+                                                <i class="fa fa-check-circle mr-2"></i>
+                                                Create Exit Permission
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Instructions -->
+                            <div class="card shadow-lg border-0 mt-5" style="border-radius: 25px; overflow: hidden;">
+                                <div class="card-body p-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                    <h5 class="font-weight-bold mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                        <i class="fa fa-info-circle mr-2"></i>
+                                        How it works
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-3">
+                                                    <div class="d-flex align-items-center p-3 rounded-lg shadow-sm" style="background: white;">
+                                                        <span class="badge badge-pill mr-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">1</span>
+                                                        <span style="color: #495057;">Select your child</span>
+                                                    </div>
+                                                </li>
+                                                <li class="mb-3">
+                                                    <div class="d-flex align-items-center p-3 rounded-lg shadow-sm" style="background: white;">
+                                                        <span class="badge badge-pill mr-3" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">2</span>
+                                                        <span style="color: #495057;">Choose exit date and time</span>
+                                                    </div>
+                                                </li>
+                                                <li class="mb-3">
+                                                    <div class="d-flex align-items-center p-3 rounded-lg shadow-sm" style="background: white;">
+                                                        <span class="badge badge-pill mr-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">3</span>
+                                                        <span style="color: #495057;">Select duration</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-3">
+                                                    <div class="d-flex align-items-center p-3 rounded-lg shadow-sm" style="background: white;">
+                                                        <span class="badge badge-pill mr-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">4</span>
+                                                        <span style="color: #495057;">Provide reason for exit</span>
+                                                    </div>
+                                                </li>
+                                                <li class="mb-3">
+                                                    <div class="d-flex align-items-center p-3 rounded-lg shadow-sm" style="background: white;">
+                                                        <span class="badge badge-pill mr-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); color: #856404; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">5</span>
+                                                        <span style="color: #495057;">Submit to create permission</span>
+                                                    </div>
+                                                </li>
+                                                <li class="mb-3">
+                                                    <div class="d-flex align-items-center p-3 rounded-lg shadow-sm" style="background: white;">
+                                                        <span class="badge badge-pill mr-3" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">6</span>
+                                                        <span style="color: #495057;">Share access code with child</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript for Form -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Set minimum date to today
+                    var today = new Date().toISOString().split('T')[0];
+                    document.getElementById('exit_date').min = today;
+
+                    // Duration card selection
+                    var durationCards = document.querySelectorAll('.duration-card');
+                    durationCards.forEach(function(card) {
+                        card.addEventListener('click', function() {
+                            durationCards.forEach(function(c) {
+                                c.classList.remove('active');
+                                const cardBody = c.querySelector('.card');
+                                cardBody.style.background = 'white';
+                                cardBody.style.color = '#495057';
+                                cardBody.style.borderColor = '#dee2e6';
+                                const display4 = cardBody.querySelector('.display-4');
+                                if (display4) {
+                                    const value = display4.textContent.trim();
+                                    if (value === '1') display4.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                                    else if (value === '2') display4.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                                    else if (value === '4') display4.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
+                                    else if (value === '8') display4.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                                    else if (value === '12') display4.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+                                    else if (value === '24') display4.style.background = 'linear-gradient(135deg, #ffd452 0%, #f9a852 100%)';
+                                    display4.style.webkitBackgroundClip = 'text';
+                                    display4.style.webkitTextFillColor = 'transparent';
+                                    display4.style.backgroundClip = 'text';
+                                }
+                                const textDiv = cardBody.querySelector('div:not(.display-4)');
+                                if (textDiv) {
+                                    textDiv.style.color = '#6c757d';
+                                }
+                            });
+
+                            this.classList.add('active');
+                            const cardBody = this.querySelector('.card');
+                            cardBody.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                            cardBody.style.color = 'white';
+                            cardBody.style.borderColor = 'transparent';
+                            const display4 = cardBody.querySelector('.display-4');
+                            if (display4) {
+                                display4.style.background = 'none';
+                                display4.style.webkitBackgroundClip = '';
+                                display4.style.webkitTextFillColor = '';
+                                display4.style.backgroundClip = '';
+                                display4.style.color = 'white';
+                            }
+                            const textDiv = cardBody.querySelector('div:not(.display-4)');
+                            if (textDiv) {
+                                textDiv.style.color = 'white';
+                            }
+                        });
+                    });
+
+                    // Set default duration
+                    document.getElementById('duration_2').checked = true;
+
+                    // Form validation
+                    var form = document.getElementById('createPermissionForm');
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            var childId = document.getElementById('child_id').value;
+                            var exitDate = document.getElementById('exit_date').value;
+                            var exitTime = document.getElementById('exit_time').value;
+                            var duration = document.querySelector('input[name="duration"]:checked');
+                            var purpose = document.getElementById('purpose').value.trim();
+
+                            // Validate all fields
+                            var errors = [];
+                            if (!childId) errors.push('Please select a child');
+                            if (!exitDate) errors.push('Please select exit date');
+                            if (!exitTime) errors.push('Please select exit time');
+
+                            // Check if exit time is in the past
+                            if (exitDate &amp;&amp; exitTime) {
+                                var selectedDateTime = new Date(exitDate + 'T' + exitTime);
+                                var now = new Date();
+                                if (selectedDateTime &lt; now) {
+                                    errors.push('Exit time cannot be in the past');
+                                }
+                            }
+
+                            if (!duration) errors.push('Please select a duration');
+                            if (!purpose) errors.push('Please enter purpose/reason');
+
+                            if (errors.length &gt; 0) {
+                                e.preventDefault();
+                                alert(errors.join('\n'));
+                                return false;
+                            }
+
+                            // Show loading
+                            var submitBtn = document.getElementById('submitBtn');
+                            if (submitBtn) {
+                                submitBtn.innerHTML = '&lt;i class="fa fa-spinner fa-spin mr-2"&gt;&lt;/i&gt;Creating...';
+                                submitBtn.disabled = true;
+                            }
+
+                            return true;
+                        });
+                    }
+                });
+            </script>
+
+            <!-- CSS -->
+            <style>
+                .duration-card {
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                .duration-card:hover .card {
+                    transform: translateY(-10px);
+                    box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+                }
+                .duration-card.active .card {
+                    transform: translateY(-10px);
+                    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3) !important;
+                }
+                .rounded-lg {
+                    border-radius: 15px !important;
+                }
+                .shadow-lg {
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+                }
+                .form-control-lg {
+                    font-size: 1.1rem;
+                }
+                .input-group-text {
+                    transition: all 0.3s;
+                }
+                select:hover, input:hover, textarea:hover {
+                    border-color: #667eea !important;
+                }
+                #submitBtn:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4) !important;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- ==================== -->
+    <!-- SECURITY TEMPLATES -->
+    <!-- ==================== -->
+
+    <!-- Security: Verify Interface -->
+    <template id="security_child_exit_verify" name="Security - Verify Child Exit Permissions">
+        <t t-call="website.layout">
+            <div class="oe_structure">
+                <div class="container mt-4">
+                    <!-- Header -->
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-5">
+                        <div>
+                            <h1 class="h2 font-weight-bold mb-2" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                <i class="fa fa-shield mr-2"></i>
+                                Security - Child Exit Verification
+                            </h1>
+                            <p class="mb-0" style="color: #6c757d;">Verify child exit permissions using access codes</p>
+                        </div>
+                        <div class="mt-3 mt-md-0">
+                            <span class="badge py-2 px-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); color: #856404; border: none;">
+                                <i class="fa fa-user-secret mr-2"></i>Security Portal
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="row">
+                        <!-- Verification Interface -->
+                        <div class="col-lg-8 mb-5 mb-lg-0">
+                            <div class="card shadow-lg border-0" style="border-radius: 25px; overflow: hidden;">
+                                <div class="card-header border-0 py-4" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%);">
+                                    <h5 class="card-title mb-0 font-weight-bold" style="color: #856404;">
+                                        <i class="fa fa-qrcode mr-2"></i>
+                                        Verify Permission
+                                    </h5>
+                                </div>
+                                <div class="card-body p-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                    <!-- Input Section -->
+                                    <div class="form-group">
+                                        <label for="accessCodeInput" class="form-label font-weight-bold mb-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            <i class="fa fa-key mr-2"></i>Enter Access Code
+                                        </label>
+                                        <div class="input-group input-group-lg shadow-lg" style="border-radius: 50px; overflow: hidden;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text rounded-left" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); border: none; color: #856404;">
+                                                    <i class="fa fa-lock"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" id="accessCodeInput"
+                                                   class="form-control form-control-lg border-0"
+                                                   placeholder="Enter 6-digit code"
+                                                   maxlength="6"
+                                                   pattern="\d{6}"
+                                                   style="font-size: 1.5rem; letter-spacing: 2px;"/>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-lg px-4 rounded-right" type="button"
+                                                        onclick="verifyPermission()" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); border: none; color: #856404; font-weight: bold;">
+                                                    <i class="fa fa-search mr-2"></i>Verify
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <small class="form-text mt-3 ml-3" style="color: #6c757d;">
+                                            <i class="fa fa-info-circle mr-1"></i> Enter the 6-digit access code provided by parent
+                                        </small>
+                                    </div>
+
+                                    <!-- Verification Result -->
+                                    <div id="verificationResult" class="mt-5" style="display: none;">
+                                        <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                                            <div class="card-body p-4">
+                                                <div id="resultContent"></div>
+                                                <div id="actionButtons" class="mt-4 text-center" style="display: none;">
+                                                    <button class="btn btn-lg rounded-pill px-4 mr-3 shadow-lg" onclick="markExited()" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border: none;">
+                                                        <i class="fa fa-sign-out mr-2"></i>Mark Exited
+                                                    </button>
+                                                    <button class="btn btn-lg rounded-pill px-4 shadow-lg" onclick="markReturned()" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none;">
+                                                        <i class="fa fa-sign-in mr-2"></i>Mark Returned
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instructions & Status -->
+                        <div class="col-lg-4">
+                            <!-- Instructions -->
+                            <div class="card shadow-lg border-0 mb-4" style="border-radius: 25px; overflow: hidden;">
+                                <div class="card-body p-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                    <h5 class="font-weight-bold mb-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                        <i class="fa fa-list-ol mr-2"></i>
+                                        Verification Process
+                                    </h5>
+                                    <div class="timeline-vertical">
+                                        <div class="timeline-step">
+                                            <div class="timeline-step-number" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%);">1</div>
+                                            <div class="timeline-step-content">
+                                                <h6 class="font-weight-bold" style="color: #495057;">Ask for Code</h6>
+                                                <p class="small mb-0" style="color: #6c757d;">Ask parent/child for 6-digit code</p>
+                                            </div>
+                                        </div>
+                                        <div class="timeline-step">
+                                            <div class="timeline-step-number" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">2</div>
+                                            <div class="timeline-step-content">
+                                                <h6 class="font-weight-bold" style="color: #495057;">Enter Code</h6>
+                                                <p class="small mb-0" style="color: #6c757d;">Enter code and click Verify</p>
+                                            </div>
+                                        </div>
+                                        <div class="timeline-step">
+                                            <div class="timeline-step-number" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">3</div>
+                                            <div class="timeline-step-content">
+                                                <h6 class="font-weight-bold" style="color: #495057;">Verify Details</h6>
+                                                <p class="small mb-0" style="color: #6c757d;">Check child details &amp; validity</p>
+                                            </div>
+                                        </div>
+                                        <div class="timeline-step">
+                                            <div class="timeline-step-number" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">4</div>
+                                            <div class="timeline-step-content">
+                                                <h6 class="font-weight-bold" style="color: #495057;">Mark Actions</h6>
+                                                <p class="small mb-0" style="color: #6c757d;">Mark exit/return as needed</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Indicators -->
+                            <div class="card shadow-lg border-0" style="border-radius: 25px; overflow: hidden;">
+                                <div class="card-body p-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                    <h5 class="font-weight-bold mb-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                        <i class="fa fa-tags mr-2"></i>
+                                        Status Indicators
+                                    </h5>
+                                    <div class="status-indicators">
+                                        <div class="status-item mb-3 p-3 rounded-lg shadow-sm" style="background: white;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="rounded-circle mr-3" style="width: 15px; height: 15px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                                                <div>
+                                                    <h6 class="font-weight-bold mb-0" style="color: #28a745;">Active</h6>
+                                                    <p class="small mb-0" style="color: #6c757d;">Valid permission, child can exit</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="status-item mb-3 p-3 rounded-lg shadow-sm" style="background: white;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="rounded-circle mr-3" style="width: 15px; height: 15px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                                                <div>
+                                                    <h6 class="font-weight-bold mb-0" style="color: #17a2b8;">Used</h6>
+                                                    <p class="small mb-0" style="color: #6c757d;">Child exited, awaiting return</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="status-item p-3 rounded-lg shadow-sm" style="background: white;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="rounded-circle mr-3" style="width: 15px; height: 15px; background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%);"></div>
+                                                <div>
+                                                    <h6 class="font-weight-bold mb-0" style="color: #ffc107;">Expired</h6>
+                                                    <p class="small mb-0" style="color: #6c757d;">Permission no longer valid</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript for Security Interface -->
+            <script>
+                let currentAccessCode = '';
+
+                function verifyPermission() {
+                    const accessCode = document.getElementById('accessCodeInput').value.trim();
+
+                    if (!accessCode || accessCode.length !== 6 || !/^\d{6}$/.test(accessCode)) {
+                        showAlert('Please enter a valid 6-digit access code', 'warning');
+                        return;
+                    }
+
+                    currentAccessCode = accessCode;
+
+                    // Show loading
+                    document.getElementById('resultContent').innerHTML = '&lt;div class="text-center py-4"&gt;&lt;div class="spinner-border" style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" role="status"&gt;&lt;span class="sr-only"&gt;Loading...&lt;/span&gt;&lt;/div&gt;&lt;h5 class="mt-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"&gt;Verifying Permission...&lt;/h5&gt;&lt;p style="color: #6c757d;"&gt;Please wait while we verify the access code&lt;/p&gt;&lt;/div&gt;';
+                    document.getElementById('verificationResult').style.display = 'block';
+                    document.getElementById('actionButtons').style.display = 'none';
+
+                    // Call API
+                    fetch('/api/child-exit/verify/' + accessCode)
+                        .then(response =&gt; response.json())
+                        .then(data =&gt; {
+                            if (data.success) {
+                                const perm = data.data;
+                                const validUntil = new Date(perm.valid_until);
+                                const now = new Date();
+                                const isValid = validUntil &gt; now;
+                                const isExpired = !isValid;
+                                const isUsed = perm.state === 'used';
+
+                                let statusBadge = '';
+                                if (isExpired) {
+                                    statusBadge = '&lt;span class="badge py-2 px-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); color: #856404;"&gt;&lt;i class="fa fa-exclamation-triangle mr-1"&gt;&lt;/i&gt; EXPIRED&lt;/span&gt;';
+                                } else if (isUsed) {
+                                    statusBadge = '&lt;span class="badge py-2 px-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;"&gt;&lt;i class="fa fa-check-circle mr-1"&gt;&lt;/i&gt; USED&lt;/span&gt;';
+                                } else {
+                                    statusBadge = '&lt;span class="badge py-2 px-3" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;"&gt;&lt;i class="fa fa-check-circle mr-1"&gt;&lt;/i&gt; ACTIVE&lt;/span&gt;';
+                                }
+
+                                let resultHtml = '&lt;div class="verification-result"&gt;';
+                                resultHtml += '&lt;div class="text-center mb-4"&gt;';
+                                resultHtml += statusBadge;
+                                resultHtml += '&lt;h4 class="font-weight-bold mt-3 ' + (isExpired ? 'text-warning' : 'text-success') + '"&gt;';
+                                resultHtml += isExpired ? 'EXPIRED PERMISSION' : 'VALID PERMISSION';
+                                resultHtml += '&lt;/h4&gt;';
+                                resultHtml += '&lt;/div&gt;';
+
+                                resultHtml += '&lt;div class="row"&gt;';
+                                resultHtml += '&lt;div class="col-md-6"&gt;';
+                                resultHtml += '&lt;div class="info-card mb-4 p-3 rounded-lg shadow-sm" style="background: white;"&gt;';
+                                resultHtml += '&lt;h6 class="font-weight-bold mb-2" style="color: #6c757d;"&gt;&lt;i class="fa fa-child mr-2"&gt;&lt;/i&gt;CHILD DETAILS&lt;/h6&gt;';
+                                resultHtml += '&lt;div class="pl-4"&gt;';
+                                resultHtml += '&lt;p class="mb-1"&gt;&lt;strong style="color: #495057;"&gt;Name:&lt;/strong&gt; &lt;span style="color: #495057;"&gt;' + perm.child_name + '&lt;/span&gt;&lt;/p&gt;';
+                                resultHtml += '&lt;p class="mb-1"&gt;&lt;strong style="color: #495057;"&gt;Age:&lt;/strong&gt; &lt;span style="color: #495057;"&gt;' + perm.child_age + ' years&lt;/span&gt;&lt;/p&gt;';
+                                resultHtml += '&lt;p class="mb-0"&gt;&lt;strong style="color: #495057;"&gt;Parent:&lt;/strong&gt; &lt;span style="color: #495057;"&gt;' + perm.parent_name + '&lt;/span&gt;&lt;/p&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;div class="col-md-6"&gt;';
+                                resultHtml += '&lt;div class="info-card mb-4 p-3 rounded-lg shadow-sm" style="background: white;"&gt;';
+                                resultHtml += '&lt;h6 class="font-weight-bold mb-2" style="color: #6c757d;"&gt;&lt;i class="fa fa-home mr-2"&gt;&lt;/i&gt;RESIDENCE&lt;/h6&gt;';
+                                resultHtml += '&lt;div class="pl-4"&gt;';
+                                resultHtml += '&lt;p class="mb-1"&gt;&lt;strong style="color: #495057;"&gt;Flat:&lt;/strong&gt; &lt;span style="color: #495057;"&gt;' + perm.flat_number + '&lt;/span&gt;&lt;/p&gt;';
+                                resultHtml += '&lt;p class="mb-1"&gt;&lt;strong style="color: #495057;"&gt;Valid Until:&lt;/strong&gt; &lt;span style="color: #495057;"&gt;' + validUntil.toLocaleString() + '&lt;/span&gt;&lt;/p&gt;';
+                                resultHtml += '&lt;p class="mb-0"&gt;&lt;strong style="color: #495057;"&gt;Time Left:&lt;/strong&gt; &lt;span class="badge" style="background: linear-gradient(135deg, ' + (isValid ? '#43e97b' : '#ffd452') + ' 0%, ' + (isValid ? '#38f9d7' : '#f9a852') + ' 100%); color: ' + (isValid ? '#155724' : '#856404') + ';"&gt;' + perm.time_remaining + '&lt;/span&gt;&lt;/p&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;/div&gt;';
+
+                                resultHtml += '&lt;div class="info-card p-3 rounded-lg shadow-sm" style="background: white;"&gt;';
+                                resultHtml += '&lt;h6 class="font-weight-bold mb-2" style="color: #6c757d;"&gt;&lt;i class="fa fa-comment mr-2"&gt;&lt;/i&gt;PURPOSE&lt;/h6&gt;';
+                                resultHtml += '&lt;div class="pl-4"&gt;';
+                                resultHtml += '&lt;p class="mb-0" style="color: #495057;"&gt;' + perm.purpose + '&lt;/p&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;/div&gt;';
+                                resultHtml += '&lt;/div&gt;';
+
+                                document.getElementById('resultContent').innerHTML = resultHtml;
+
+                                if (isValid &amp;&amp; !isUsed) {
+                                    document.getElementById('actionButtons').style.display = 'block';
+                                }
+                            } else {
+                                document.getElementById('resultContent').innerHTML = '&lt;div class="text-center py-4"&gt;&lt;div class="display-1 mb-3" style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"&gt;&lt;i class="fa fa-times-circle"&gt;&lt;/i&gt;&lt;/div&gt;&lt;h4 class="font-weight-bold text-danger"&gt;INVALID PERMISSION&lt;/h4&gt;&lt;p style="color: #6c757d;"&gt;' + (data.error || 'Permission not found or expired') + '&lt;/p&gt;&lt;button class="btn btn-outline-warning mt-3" onclick="document.getElementById(\'accessCodeInput\').focus()"&gt;&lt;i class="fa fa-refresh mr-2"&gt;&lt;/i&gt;Try Again&lt;/button&gt;&lt;/div&gt;';
+                            }
+                        })
+                        .catch(error =&gt; {
+                            document.getElementById('resultContent').innerHTML = '&lt;div class="text-center py-4"&gt;&lt;div class="display-1 mb-3" style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"&gt;&lt;i class="fa fa-exclamation-triangle"&gt;&lt;/i&gt;&lt;/div&gt;&lt;h4 class="font-weight-bold text-danger"&gt;Verification Error&lt;/h4&gt;&lt;p style="color: #6c757d;"&gt;Failed to verify permission. Please try again.&lt;/p&gt;&lt;button class="btn mt-3" style="background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); color: #856404; border: none;" onclick="verifyPermission()"&gt;&lt;i class="fa fa-refresh mr-2"&gt;&lt;/i&gt;Retry Verification&lt;/button&gt;&lt;/div&gt;';
+                            console.error('Verification error:', error);
+                        });
+                }
+
+                function markExited() {
+                    if (!currentAccessCode) return;
+
+                    showAlert('Marking child as exited...', 'info');
+
+                    fetch('/api/child-exit/mark-exited/' + currentAccessCode, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': odoo.csrf_token
+                        }
+                    })
+                    .then(response =&gt; response.json())
+                    .then(data =&gt; {
+                        if (data.success) {
+                            showAlert('✅ ' + data.message, 'success');
+                            resetVerification();
+                        } else {
+                            showAlert('Error: ' + data.error, 'danger');
+                        }
+                    })
+                    .catch(error =&gt; {
+                        showAlert('Failed to mark as exited', 'danger');
+                        console.error('Error:', error);
+                    });
+                }
+
+                function markReturned() {
+                    if (!currentAccessCode) return;
+
+                    showAlert('Marking child as returned...', 'info');
+
+                    fetch('/api/child-exit/mark-returned/' + currentAccessCode, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': odoo.csrf_token
+                        }
+                    })
+                    .then(response =&gt; response.json())
+                    .then(data =&gt; {
+                        if (data.success) {
+                            showAlert('✅ ' + data.message, 'success');
+                            resetVerification();
+                        } else {
+                            showAlert('Error: ' + data.error, 'danger');
+                        }
+                    })
+                    .catch(error =&gt; {
+                        showAlert('Failed to mark as returned', 'danger');
+                        console.error('Error:', error);
+                    });
+                }
+
+                function resetVerification() {
+                    document.getElementById('accessCodeInput').value = '';
+                    document.getElementById('verificationResult').style.display = 'none';
+                    document.getElementById('actionButtons').style.display = 'none';
+                    document.getElementById('accessCodeInput').focus();
+                }
+
+                function showAlert(message, type) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-dismissible fade show shadow-lg border-0';
+
+                    let gradient = '';
+                    let textColor = '';
+                    let borderColor = '';
+
+                    if (type === 'success') {
+                        gradient = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
+                        textColor = '#155724';
+                        borderColor = '#1e7e34';
+                    } else if (type === 'warning') {
+                        gradient = 'linear-gradient(135deg, #ffd452 0%, #f9a852 100%)';
+                        textColor = '#856404';
+                        borderColor = '#ffc107';
+                    } else if (type === 'info') {
+                        gradient = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                        textColor = '#0c5460';
+                        borderColor = '#17a2b8';
+                    } else {
+                        gradient = 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)';
+                        textColor = '#721c24';
+                        borderColor = '#c82333';
+                    }
+
+                    alertDiv.style.background = gradient;
+                    alertDiv.style.color = textColor;
+                    alertDiv.style.borderLeft = '5px solid ' + borderColor;
+
+                    alertDiv.innerHTML = '&lt;i class="fa fa-' + (type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle') + ' mr-2"&gt;&lt;/i&gt;' + message + '&lt;button type="button" class="close" data-dismiss="alert" style="color: ' + textColor + ';"&gt;&lt;span&gt;×&lt;/span&gt;&lt;/button&gt;';
+
+                    const container = document.querySelector('.container.mt-4');
+                    container.insertBefore(alertDiv, container.firstChild);
+
+                    setTimeout(() =&gt; {
+                        if (alertDiv.parentNode) {
+                            alertDiv.remove();
+                        }
+                    }, 5000);
+                }
+
+                // Auto-focus input and allow Enter key
+                document.addEventListener('DOMContentLoaded', function() {
+                    const input = document.getElementById('accessCodeInput');
+                    input.focus();
+
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            verifyPermission();
+                        }
+                    });
+
+                    // Format input with spacing
+                    input.addEventListener('input', function(e) {
+                        let value = e.target.value.replace(/\D/g, '');
+                        if (value.length &gt; 6) value = value.substr(0, 6);
+                        e.target.value = value;
+                    });
+                });
+            </script>
+
+            <!-- CSS -->
+            <style>
+                .text-gradient-warning {
+                    background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                .bg-gradient-warning {
+                    background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%);
+                }
+                .timeline-vertical {
+                    position: relative;
+                    padding-left: 40px;
+                }
+                .timeline-step {
+                    position: relative;
+                    margin-bottom: 25px;
+                }
+                .timeline-step-number {
+                    position: absolute;
+                    left: -40px;
+                    top: 0;
+                    width: 30px;
+                    height: 30px;
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+                .timeline-step-content {
+                    padding-left: 10px;
+                }
+                .status-badge {
+                    display: inline-block;
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                }
+                .status-badge.badge-success { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+                .status-badge.badge-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+                .status-badge.badge-warning { background: linear-gradient(135deg, #ffd452 0%, #f9a852 100%); }
+                .info-card {
+                    border-left: 4px solid #ffd452;
+                }
+                .verification-result {
+                    animation: slideIn 0.5s ease;
+                }
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .input-group-lg .form-control {
+                    font-size: 1.5rem;
+                    letter-spacing: 2px;
+                    text-align: center;
+                    font-weight: bold;
+                    font-family: monospace;
+                }
+                .btn-lg {
+                    padding: 0.75rem 2rem;
+                }
+                .card {
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+                .card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+                }
+            </style>
+        </t>
+    </template>
+</odoo>
