@@ -254,7 +254,7 @@ class FlatTransaction(models.Model):
 
         # Make flat available
         if self.flat_id:
-            self.flat_id.write({'status': 'available'})
+            self.flat_id.status = 'available'
 
         # Log cancellation
         self.message_post(
@@ -265,8 +265,12 @@ class FlatTransaction(models.Model):
         return True
 
     def action_reset_to_draft(self):
+        self.ensure_one()
+
         """Reset to draft"""
         self.write({'status': 'draft'})
+        if self.flat_id:
+            self.flat_id.status = 'available'
     #
     @api.model
     def _cron_expire_leases(self):
@@ -285,7 +289,7 @@ class FlatTransaction(models.Model):
 
             # Make flat available
             if lease.flat_id:
-                lease.flat_id.write({'status': 'available'})
+                lease.flat_id.status = 'available'
 
             # Log expiration
             lease.message_post(

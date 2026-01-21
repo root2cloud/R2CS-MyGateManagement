@@ -407,3 +407,4 @@ class MyGateVisitor(models.Model):
                 template.send_mail(visitor.id, force_send=False)
             except Exception as e:
                 _logger.error(f"Failed to send reminder for visitor {visitor.id}: {e}")
+

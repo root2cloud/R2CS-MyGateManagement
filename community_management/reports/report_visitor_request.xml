@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Report Template -->
+        <template id="visitor_report_qweb">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="container">
+                                <h2 class="text-center">Visitor Request Report</h2>
+                                <hr/>
+
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th width="30%">Visitor Name:</th>
+                                        <td><span t-esc="doc.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Mobile Number:</th>
+                                        <td><span t-esc="doc.mobile"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Flat Number:</th>
+                                        <td><span t-esc="doc.flat_id.name or 'Not specified'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Visitor Type:</th>
+                                        <td>
+                                            <t t-if="doc.visitor_type == 'guest'">Guest</t>
+                                            <t t-elif="doc.visitor_type == 'delivery'">Delivery</t>
+                                            <t t-elif="doc.visitor_type == 'service'">Service Provider</t>
+                                            <t t-elif="doc.visitor_type == 'cab'">Cab/Taxi</t>
+                                            <t t-elif="doc.visitor_type == 'other'">Other</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Status:</th>
+                                        <td><span t-esc="doc.state"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Expected Arrival:</th>
+                                        <td>
+                                            <t t-if="doc.expected_arrival">
+                                                <span t-esc="doc.expected_arrival.strftime('%Y-%m-%d %H:%M')"/>
+                                            </t>
+                                            <t t-else="">Not specified</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Purpose:</th>
+                                        <td><span t-esc="doc.purpose or 'Not specified'"/></td>
+                                    </tr>
+                                </table>
+
+                                <div class="mt-4 text-muted">
+                                    <small>Generated on: <span t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M')"/></small>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Report Action - This is CRITICAL -->
+        <record id="action_report_visitor" model="ir.actions.report">
+            <field name="name">Visitor Report</field>
+            <field name="model">mygate.visitor</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">community_management.visitor_report_qweb</field>
+            <field name="print_report_name">'Visitor Report - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="model_mygate_visitor"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

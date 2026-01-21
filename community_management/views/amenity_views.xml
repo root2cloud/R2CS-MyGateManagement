@@ -8,9 +8,10 @@
             <list>
                 <field name="name"/>
                 <field name="amenity_type"/>
-                <field name="amount" />
+                <field name="amount"/>
                 <field name="max_booking_per_day"/>
                 <field name="active"/>
+
             </list>
         </field>
     </record>
@@ -26,7 +27,7 @@
                         <field name="name"/>
                         <field name="description"/>
                         <field name="amenity_type"/>
-                        <field name="amount" />
+                        <field name="amount"/>
                         <field name="max_booking_per_day"/>
                         <field name="active"/>
                     </group>

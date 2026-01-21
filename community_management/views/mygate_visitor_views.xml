@@ -84,6 +84,8 @@
             <field name="arch" type="xml">
                 <form string="Visitor Request">
                     <header>
+
+
                         <!-- For Odoo 18, use attrs with states inside -->
                         <button name="action_confirm_request" string="Confirm Request" type="object" class="btn-primary"
                         />
@@ -177,13 +179,13 @@
                                     </div>
                                 </group>
                             </page>
-<!--                            <page string="Timeline">-->
-<!--                                <field name="message_ids" widget="mail_thread"/>-->
-<!--                            </page>-->
-<!--                            <page string="Security">-->
-<!--                                <field name="security_notes" widget="textarea" nolabel="1"/>-->
-<!--                                <field name="approval_history" widget="textarea" nolabel="1"/>-->
-<!--                            </page>-->
+                            <!--                            <page string="Timeline">-->
+                            <!--                                <field name="message_ids" widget="mail_thread"/>-->
+                            <!--                            </page>-->
+                            <!--                            <page string="Security">-->
+                            <!--                                <field name="security_notes" widget="textarea" nolabel="1"/>-->
+                            <!--                                <field name="approval_history" widget="textarea" nolabel="1"/>-->
+                            <!--                            </page>-->
                         </notebook>
                     </sheet>
                 </form>
@@ -273,10 +275,8 @@
                   name="Visitor Requests"
                   parent="menu_flat_transaction_menu"
                   action="action_mygate_visitors"
-                  sequence="10"/>
-
-
-        groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer"/>
+                  sequence="10"
+                  groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_treasurer,community_management.group_community_security_guard"/>
 
 
     </data>

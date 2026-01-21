@@ -472,7 +472,7 @@
                         <!-- Author Card -->
                         <div class="card shadow-sm mb-4">
                             <div class="card-body">
-                                <h5 class="card-title mb-3">About Author</h5>
+                                <h5 class="card-title mb-3">About Resident</h5>
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="avatar-lg me-3">
                                         <div class="avatar-title bg-primary rounded-circle text-white">

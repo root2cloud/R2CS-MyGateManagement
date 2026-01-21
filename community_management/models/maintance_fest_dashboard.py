@@ -52,15 +52,11 @@ class RealEstateDashboard(models.TransientModel):
     def _compute_stats(self):
         """Compute all dashboard statistics"""
         for record in self:
-            # Tenant Stats
-            # tenants = self.env['res.partner'].search_count([
-            #     ('is_company', '=', False),
-            #     ('customer_rank', '>', 0)
-            # ])
-            # record.total_tenants_count = tenants
-            record.total_tenants_count = self.env['flat.management'].search_count([
-                ('status', '!=', 'occupied')
+
+            record.total_tenants_count = self.env['flat.transaction'].search_count([
+                ('status', 'in', ['draft', 'confirmed', 'expired', 'terminated', 'cancelled'])
             ])
+
             record.active_tenants_count = self.env['flat.management'].search_count([
                 ('status', '=', 'occupied')
             ])
@@ -72,8 +68,7 @@ class RealEstateDashboard(models.TransientModel):
             record.vacant_flats_count = self.env['flat.management'].search_count([
                 ('status', '=', 'available')
             ])
-
-            # Maintenance Stats
+            # Maintenance Stats (keep as is)
             record.total_maintenance_count = self.env['flat.maintenance'].search_count([])
             record.pending_maintenance_count = self.env['flat.maintenance'].search_count([
                 ('status', '=', 'draft')
@@ -82,13 +77,50 @@ class RealEstateDashboard(models.TransientModel):
                 ('status', '=', 'confirmed')
             ])
 
-            # Maintenance Amounts
-            maintenance_records = self.env['flat.maintenance'].search([])
-            record.total_maintenance_amount = sum(rec.total_amount for rec in maintenance_records)
+            # CORRECTED: Maintenance Amounts based on INVOICES only
+            total_invoiced_amount = 0.0  # Sum of all invoice amounts
+            collected_amount = 0.0  # Sum of PAID invoice amounts
+            pending_amount = 0.0  # Sum of UNPAID invoice amounts
 
-            draft_records = self.env['flat.maintenance'].search([('status', '=', 'draft')])
-            record.pending_amount = sum(rec.total_amount for rec in draft_records)
-            record.collected_amount = record.total_maintenance_amount - record.pending_amount
+            # Get all maintenance records
+            maintenance_records = self.env['flat.maintenance'].search([])
+
+            # Track invoices we've already counted (to avoid duplicates)
+            processed_invoices = set()
+
+            for maintenance in maintenance_records:
+                # Check each invoice for this maintenance
+                for invoice in maintenance.invoice_ids:
+                    # Skip if we already processed this invoice
+                    if invoice.id in processed_invoices:
+                        continue
+
+                    processed_invoices.add(invoice.id)
+
+                    # Add to total invoiced amount (all invoices)
+                    total_invoiced_amount += invoice.amount_total
+
+                    # Check payment status
+                    if invoice.payment_state == 'paid':
+                        # Invoice is fully PAID
+                        collected_amount += invoice.amount_total
+                    elif invoice.payment_state in ['not_paid', 'partial']:
+                        # Invoice is NOT PAID or PARTIALLY PAID
+                        if invoice.payment_state == 'partial':
+                            # For partial payments: paid portion to collected, unpaid to pending
+                            paid_amount = invoice.amount_total - invoice.amount_residual
+                            collected_amount += paid_amount
+                            pending_amount += invoice.amount_residual
+                        else:  # not_paid
+                            pending_amount += invoice.amount_total
+                    elif invoice.state == 'draft':
+                        # Invoice is still draft
+                        pending_amount += invoice.amount_total
+
+            # Set the computed values
+            record.total_maintenance_amount = total_invoiced_amount  # Total of all invoices
+            record.collected_amount = collected_amount  # Total paid amount
+            record.pending_amount = pending_amount  # Total unpaid amount
 
             # Event Stats
             record.total_events_count = self.env['community.festival'].search_count([])

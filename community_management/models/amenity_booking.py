@@ -105,3 +105,8 @@ class CommunityAmenityBooking(models.Model):
                 self.payment_status = 'partial'
             else:
                 self.payment_status = 'unpaid'
+
+
+
+
+
