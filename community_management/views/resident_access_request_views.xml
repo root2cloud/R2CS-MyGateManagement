@@ -21,6 +21,7 @@
                 <field name="lease_start_date"/>
                 <field name="lease_end_date"/>
                 <field name="owner_id"/>
+                <field name="flat_transaction_id" widget="many2one" options="{'no_create': True, 'no_open': True}"/>
             </list>
         </field>
     </record>
@@ -33,7 +34,6 @@
         <field name="model">resident.access.request</field>
         <field name="arch" type="xml">
             <form string="Resident Access Request">
-
                 <header>
                     <button name="action_submit"
                             type="object"
@@ -52,6 +52,13 @@
                             string="Reject"
                             class="btn-danger"
                             invisible="state != 'pending'"/>
+
+                    <!-- View Lease Transaction Button -->
+                    <button name="action_view_flat_transaction"
+                            type="object"
+                            string="View Lease Transaction"
+                            class="btn-info"
+                            invisible="state != 'approved' or not flat_transaction_id"/>
 
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,pending,approved,rejected"/>
@@ -87,6 +94,14 @@
                         </group>
                     </group>
 
+                    <!-- Link to Lease Transaction -->
+                    <group string="Generated Lease" invisible="state != 'approved'">
+                        <group>
+                            <field name="flat_transaction_id" string="Lease Transaction"
+                                   readonly="1" widget="many2one" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
                     <group string="System Info" invisible="1">
                         <field name="partner_id"/>
                         <field name="user_id"/>
@@ -105,7 +120,6 @@
         </field>
     </record>
 
-
     <!-- ========================= -->
     <!-- ACTION -->
     <!-- ========================= -->
@@ -113,14 +127,7 @@
         <field name="name">Resident Access Requests</field>
         <field name="res_model">resident.access.request</field>
         <field name="view_mode">list,form</field>
-
     </record>
 
-    <!-- ========================= -->
-    <!-- MENU -->
-    <!-- ========================= -->
-
-
-
-
 </odoo>
+

@@ -174,11 +174,12 @@ class FlatTransaction(models.Model):
             if not record.tenant_id:
                 raise ValidationError("Tenant is required for lease transaction.")
 
-    @api.constrains('rent_price')
-    def _check_rent_price(self):
-        for record in self:
-            if not record.rent_price or record.rent_price <= 0:
-                raise ValidationError("Monthly rent must be greater than zero.")
+    # @api.constrains('rent_price')
+    # def _check_rent_price(self):
+    #     for record in self:
+    #
+    #         if not record.rent_price or record.rent_price <= 0:
+    #             raise ValidationError("Monthly rent must be greater than zero.")
 
     @api.constrains('lease_start_date', 'lease_end_date')
     def _check_lease_dates(self):

@@ -18,9 +18,9 @@ class RealEstateDashboard(models.TransientModel):
     total_maintenance_count = fields.Integer(string=" Total Maintenance", compute='_compute_stats')
     pending_maintenance_count = fields.Integer(string=" Pending Maintenance", compute='_compute_stats')
     confirmed_maintenance_count = fields.Integer(string=" Confirmed Maintenance", compute='_compute_stats')
-    total_maintenance_amount = fields.Monetary(string="Total Amount", compute='_compute_stats')
-    collected_amount = fields.Monetary(string="Collected Amount", compute='_compute_stats')
-    pending_amount = fields.Monetary(string="Pending Amount", compute='_compute_stats')
+    total_maintenance_amount = fields.Monetary(string=" Total Amount", compute='_compute_stats')
+    collected_amount = fields.Monetary(string=" Collected Amount", compute='_compute_stats')
+    pending_amount = fields.Monetary(string=" Pending Amount", compute='_compute_stats')
 
     # Event Stats
     total_events_count = fields.Integer(string=" Total Events", compute='_compute_stats')
