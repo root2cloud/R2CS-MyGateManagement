@@ -13,19 +13,37 @@ class Maintenance(models.Model):
     flat_id = fields.Many2one('flat.management', string='Flat', tracking=True)
     building_id = fields.Many2one('building.management', string='Building', related='flat_id.building_id', store=True)
 
-    # Maintenance Items
-    maintenance_item_ids = fields.One2many('flat.maintenance.item', 'maintenance_id', string='Maintenance Items')
+    # Flat area - needed for area-based calculations
+    flat_area = fields.Float(string='Flat Area (sq.ft.)',
+                             related='flat_id.area',
+                             store=True,
+                             tracking=True)
 
-    # Total Amount
-    currency_id = fields.Many2one('res.currency', string='Currency',
-                                  default=lambda self: self.env.user.company_id.currency_id.id
-                                  )
+    # Calculation Type: Standard (fixed) or Area Based
+    calculation_type = fields.Selection([
+        ('standard', 'Standard'),
+        ('area_based', 'Area Based'),
+    ], string='Calculation Type', default='standard', required=True, tracking=True)
+
+    # For Standard calculation
+    standard_amount = fields.Monetary(string='Standard Amount',
+                                      currency_field='currency_id',
+                                      tracking=True)
+
+    # For Area Based calculation
+    area_rate = fields.Float(string='Rate per sq.ft.',
+                             help='Rate to multiply with flat area',
+                             tracking=True)
+
+    # Total Amount (calculated based on calculation type)
     total_amount = fields.Monetary(string='Total Maintenance Amount',
                                    compute='_compute_total_amount',
                                    store=True,
-
                                    currency_field='currency_id',
                                    tracking=True)
+
+    currency_id = fields.Many2one('res.currency', string='Currency',
+                                  default=lambda self: self.env.user.company_id.currency_id.id)
 
     # Multiple Invoices Support
     invoice_ids = fields.Many2many('account.move', string='Invoices', readonly=True, copy=False)
@@ -64,11 +82,21 @@ class Maintenance(models.Model):
                 else:
                     self.flat_id = False
 
-    @api.depends('maintenance_item_ids.amount')
+    @api.depends('calculation_type', 'standard_amount', 'area_rate', 'flat_area')
     def _compute_total_amount(self):
+        """Calculate total amount based on calculation type"""
         for record in self:
-            record.total_amount = sum(item.amount for item in record.maintenance_item_ids)
-    #
+            if record.calculation_type == 'standard':
+                record.total_amount = record.standard_amount
+            elif record.calculation_type == 'area_based':
+                # Check if we have both area and rate
+                if record.flat_area and record.area_rate:
+                    record.total_amount = record.flat_area * record.area_rate
+                else:
+                    record.total_amount = 0.0
+            else:
+                record.total_amount = 0.0
+
     @api.depends('invoice_ids')
     def _compute_invoice_count(self):
         """Count all invoices created for this maintenance record"""
@@ -78,7 +106,11 @@ class Maintenance(models.Model):
     def action_confirm(self):
         """Confirm maintenance"""
         self.write({'status': 'confirmed'})
-    #
+
+    def action_draft(self):
+        """Reset maintenance to draft state"""
+        self.write({'status': 'draft'})
+
     def action_create_maintenance_invoice(self):
         """Create maintenance invoice - Can be created multiple times"""
         self.ensure_one()
@@ -86,20 +118,15 @@ class Maintenance(models.Model):
         if not self.tenant_id:
             raise ValidationError("Tenant is required to create invoice.")
 
-        if not self.maintenance_item_ids:
-            raise ValidationError("Please add at least one maintenance item.")
-
         if self.total_amount <= 0:
             raise ValidationError("Total maintenance amount must be greater than zero.")
 
-        # Prepare invoice lines
-        invoice_lines = []
-        for item in self.maintenance_item_ids:
-            invoice_lines.append((0, 0, {
-                'name': f'{item.get_maintenance_type_name()} - {self.flat_id.name if self.flat_id else ""}',
-                'quantity': 1,
-                'price_unit': item.amount,
-            }))
+        # Prepare invoice line
+        invoice_line_name = ""
+        if self.calculation_type == 'standard':
+            invoice_line_name = f"Standard Maintenance - {self.flat_id.name if self.flat_id else ''}"
+        elif self.calculation_type == 'area_based':
+            invoice_line_name = f"Area Based Maintenance ({self.flat_area} sq.ft. × {self.area_rate}) - {self.flat_id.name if self.flat_id else ''}"
 
         # Create invoice
         invoice = self.env['account.move'].create({
@@ -107,7 +134,12 @@ class Maintenance(models.Model):
             'partner_id': self.tenant_id.id,
             'invoice_date': fields.Date.today(),
             'invoice_origin': f'Maintenance - {self.flat_id.name if self.flat_id else "N/A"}',
-            'invoice_line_ids': invoice_lines,
+            'invoice_line_ids': [(0, 0, {
+                'name': invoice_line_name,
+                'quantity': 1,
+                'price_unit': self.total_amount,
+                'product_id': False,
+            })],
         })
 
         # Link invoice to maintenance record (Many2many - allows multiple)
@@ -147,38 +179,22 @@ class Maintenance(models.Model):
             'context': {'create': False}
         }
 
+    @api.onchange('calculation_type')
+    def _onchange_calculation_type(self):
+        """Reset fields when calculation type changes"""
+        if self.calculation_type == 'standard':
+            self.area_rate = 0.0
+        elif self.calculation_type == 'area_based':
+            self.standard_amount = 0.0
 
-class MaintenanceItem(models.Model):
-    _name = 'flat.maintenance.item'
-    _description = 'Maintenance Item'
+    @api.constrains('calculation_type', 'standard_amount', 'area_rate')
+    def _check_amounts(self):
+        """Validate that appropriate amount is set based on calculation type"""
+        for record in self:
+            if record.calculation_type == 'standard' and record.standard_amount <= 0:
+                raise ValidationError("Standard amount must be greater than 0 for Standard calculation type.")
 
-    maintenance_id = fields.Many2one('flat.maintenance', string='Maintenance', required=True, ondelete='cascade')
+            if record.calculation_type == 'area_based' and record.area_rate <= 0:
+                raise ValidationError("Area rate must be greater than 0 for Area Based calculation type.")
 
-    maintenance_type = fields.Selection([
-        ('electricity', 'Electricity Bill'),
-        ('water', 'Water Bill'),
-        ('gas', 'Gas Bill'),
-        ('cleaning', 'Cleaning Charges'),
-        ('security', 'Security Charges'),
-        ('parking', 'Parking Charges'),
-        ('common_area', 'Common Area Maintenance'),
-        ('lift', 'Lift Maintenance'),
-        ('generator', 'Generator Maintenance'),
-        ('waste', 'Waste Management'),
-        ('repair', 'Repair & Maintenance'),
-        ('other', 'Other')
-    ], string='Maintenance Type', required=True)
 
-    currency_id = fields.Many2one('res.currency',
-                                  related='maintenance_id.currency_id',
-                                  store=True)
-    amount = fields.Monetary(string='Amount', required=True,
-                             currency_field='currency_id'
-                             )
-
-    description = fields.Char(string='Description')
-
-    def get_maintenance_type_name(self):
-        """Get display name of maintenance type"""
-        type_dict = dict(self._fields['maintenance_type'].selection)
-        return type_dict.get(self.maintenance_type, 'Maintenance')

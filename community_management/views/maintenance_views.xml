@@ -9,6 +9,9 @@
                     <button name="action_confirm" string="Confirm" type="object"
                             class="btn-primary" invisible="status != 'draft'"/>
 
+                    <button name="action_draft" string="Reset to Draft" type="object"
+                            class="btn-secondary" invisible="status != 'confirmed'"/>
+
                     <!-- Create Maintenance Invoice Button - Always visible after confirm -->
                     <button name="action_create_maintenance_invoice"
                             string="Create Maintenance Invoice"
@@ -35,6 +38,9 @@
                             <field name="tenant_id"/>
                             <field name="flat_id"/>
                             <field name="building_id" readonly="1"/>
+                            <field name="flat_area" widget="float" readonly="1"
+
+                                   string="Flat Area (sq.ft.)"/>
                         </group>
                         <group>
                             <field name="total_amount" widget="monetary" readonly="1"
@@ -43,34 +49,45 @@
                         </group>
                     </group>
 
-                    <group string="Maintenance Items">
-                        <field name="maintenance_item_ids" nolabel="1">
-                            <list editable="bottom">
-                                <field name="maintenance_type"/>
-                                <field name="description"/>
-                                <field name="amount"/>
-                                <field name="currency_id" column_invisible="1"/>
-                            </list>
-                        </field>
+                    <separator string="Maintenance Calculation"/>
+
+                    <group>
+                        <group>
+                            <field name="calculation_type"/>
+
+                            <field name="standard_amount"
+                                   invisible="calculation_type == 'area'"/>
+
+                            <field name="area_rate"
+                                   invisible="calculation_type == 'standard'"/>
+
+                        </group>
+                    </group>
+
+                    <group>
+                        <group>
+                            <div class="o_form_label col-12" string="Maintenance Type"/>
+                            <div class="col-12">
+                                <field name="calculation_type" readonly="1"/>
+                                <div>
+                                    (Standard Amount:<field name="standard_amount" widget="monetary" readonly="1"/>)
+                                </div>
+                                <div>
+                                    (Area Rate:
+                                    <field name="area_rate" readonly="1"/>
+                                    ×
+                                    Flat Area:
+                                    <field name="flat_area" readonly="1"/>
+                                    sq.ft.)
+                                </div>
+                            </div>
+                        </group>
                     </group>
 
                     <group string="Additional Notes">
                         <field name="notes" nolabel="1" placeholder="Add any additional notes..."/>
                     </group>
 
-                    <!-- Display all created invoices -->
-                    <notebook invisible="invoice_count == 0">
-                        <page string="Invoices" name="invoices">
-                            <field name="invoice_ids" nolabel="1">
-                                <list>
-                                    <field name="name"/>
-                                    <field name="invoice_date"/>
-                                    <field name="amount_total"/>
-                                    <field name="state" widget="badge"/>
-                                </list>
-                            </field>
-                        </page>
-                    </notebook>
                 </sheet>
                 <chatter/>
             </form>
@@ -86,6 +103,10 @@
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
                 <field name="building_id"/>
+                <field name="flat_area"/>
+                <field name="calculation_type"/>
+                <field name="standard_amount"/>
+                <field name="area_rate"/>
                 <field name="total_amount"/>
                 <field name="invoice_count"/>
                 <field name="status"/>
@@ -100,7 +121,8 @@
                                             <field name="tenant_id"/>
                                         </strong>
                                     </div>
-                                    <span class="badge" t-att-class="record.status.raw_value === 'draft' ? 'text-bg-info' : 'text-bg-success'">
+                                    <span class="badge"
+                                          t-att-class="record.status.raw_value === 'draft' ? 'text-bg-info' : 'text-bg-success'">
                                         <field name="status"/>
                                     </span>
                                 </div>
@@ -108,12 +130,33 @@
                                 <div class="o_kanban_record_body">
                                     <div class="row mt-2">
                                         <div class="col-12">
-                                            <i class="fa fa-building"/> <field name="building_id"/> - <field name="flat_id"/>
+                                            <i class="fa fa-building"/>
+                                            <field name="building_id"/>
+                                            -
+                                            <field name="flat_id"/>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <small>
+                                                <field name="calculation_type"/>
+                                                <span t-if="record.calculation_type.raw_value == 'standard'">
+                                                    (<field name="standard_amount" widget="monetary"/>)
+                                                </span>
+                                                <span t-if="record.calculation_type.raw_value == 'area_based'">
+                                                    (
+                                                    <field name="area_rate"/>
+                                                    ×
+                                                    <field name="flat_area"/>
+                                                    sq.ft.)
+                                                </span>
+                                            </small>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-12">
                                             <strong style="font-size: 16px; color: #28a745;">
+                                                Total:
                                                 <field name="total_amount" widget="monetary"/>
                                             </strong>
                                         </div>
@@ -124,10 +167,12 @@
                                     <div class="oe_kanban_bottom_left">
                                         <span t-if="record.invoice_count.raw_value > 0">
                                             <i class="fa fa-file-text-o"/>
-                                            <field name="invoice_count"/> Invoice(s)
+                                            <field name="invoice_count"/>
+                                            Invoice(s)
                                         </span>
                                         <span t-else="" class="text-muted">
-                                            <i class="fa fa-file-text-o"/> No Invoices
+                                            <i class="fa fa-file-text-o"/>
+                                            No Invoices
                                         </span>
                                     </div>
                                 </div>
@@ -148,6 +193,8 @@
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
                 <field name="building_id"/>
+                <field name="flat_area" string="Area (sq.ft.)"/>
+                <field name="calculation_type"/>
                 <field name="total_amount"/>
                 <field name="invoice_count"/>
                 <field name="status" widget="badge"
@@ -166,8 +213,13 @@
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
                 <field name="building_id"/>
+                <field name="calculation_type"/>
                 <filter name="filter_draft" string="Draft" domain="[('status', '=', 'draft')]"/>
                 <filter name="filter_confirmed" string="Confirmed" domain="[('status', '=', 'confirmed')]"/>
+                <separator/>
+                <filter name="filter_standard" string="Standard Type" domain="[('calculation_type', '=', 'standard')]"/>
+                <filter name="filter_area_based" string="Area Based"
+                        domain="[('calculation_type', '=', 'area_based')]"/>
                 <separator/>
                 <filter name="filter_has_invoices" string="Has Invoices" domain="[('invoice_count', '>', 0)]"/>
                 <filter name="filter_no_invoices" string="No Invoices" domain="[('invoice_count', '=', 0)]"/>
@@ -175,6 +227,8 @@
                     <filter name="group_tenant" string="Tenant" context="{'group_by': 'tenant_id'}"/>
                     <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
                     <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_calculation_type" string="Calculation Type"
+                            context="{'group_by': 'calculation_type'}"/>
                 </group>
             </search>
         </field>
@@ -186,7 +240,5 @@
         <field name="res_model">flat.maintenance</field>
         <field name="view_mode">kanban,list,form</field>
     </record>
-
-    <!-- Menu -->
-
 </odoo>
+
