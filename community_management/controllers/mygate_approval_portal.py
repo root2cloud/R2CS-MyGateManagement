@@ -223,6 +223,13 @@ class MyGatePortal(CustomerPortal):
                     'security_guard_id': request.env.user.id if request.env.user and request.env.user.has_group(
                         'community_management.group_community_security_guard') else False,
                 })
+                image_data = post.get('visitor_image')
+                if image_data:
+                    # Handle base64 image upload (remove data:image/... prefix if present)
+                    visitor['visitor_image'] = image_data.split(',')[1] if ',' in image_data else image_data
+
+                # Create visitor record
+                visitor = request.env['mygate.visitor'].sudo().create(visitor)
 
                 # Confirm the request - this will send notification to tenant
                 visitor.action_confirm_request()

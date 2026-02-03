@@ -21,3 +21,4 @@ from . import portal_visiting_help
 from . import community_post_controller
 from . import mygate_approval_portal
 from . import child_exit_permission_controllers
+from . import mygate_billing_portal

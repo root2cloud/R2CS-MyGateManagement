@@ -160,6 +160,14 @@ class MyGateVisitor(models.Model):
     # History
     approval_history = fields.Text(string='Approval History', tracking=True)
 
+    visitor_image = fields.Binary(
+        string='Visitor Photo',
+        attachment=True,
+
+    )
+
+    visitor_image_filename = fields.Char(string='Photo Filename')
+
     # Computed Fields
     @api.depends('flat_id', 'flat_id.tenant_id')
     def _compute_tenant_id(self):

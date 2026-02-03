@@ -84,6 +84,7 @@
 
         'reports/report_visitor_request.xml',
         'views/mygate_visitor_views.xml',
+        'views/mygate_billing_portal_templates.xml',
 
         # 'views/assets.xml',
 
