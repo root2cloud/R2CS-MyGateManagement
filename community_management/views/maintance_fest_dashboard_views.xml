@@ -101,16 +101,16 @@
                                             <p style="margin: 5px 0;">
                                                 Total:
                                                 <field name="total_maintenance_amount" widget="statinfo"/>
-<!--                                                Total Maintenance-->
+                                                <!--                                                Total Maintenance-->
                                             </p>
-<!--                                            <p style="margin: 5px 0; color: #28a745;">-->
-<!--                                                Collected: ₹-->
-<!--                                                <field name="collected_amount" widget="monetary"/>-->
-<!--                                            </p>-->
-<!--                                            <p style="margin: 5px 0; color: #dc3545;">-->
-<!--                                                Pending: ₹-->
-<!--                                                <field name="pending_amount" widget="monetary"/>-->
-<!--                                            </p>-->
+                                            <!--                                            <p style="margin: 5px 0; color: #28a745;">-->
+                                            <!--                                                Collected: ₹-->
+                                            <!--                                                <field name="collected_amount" widget="monetary"/>-->
+                                            <!--                                            </p>-->
+                                            <!--                                            <p style="margin: 5px 0; color: #dc3545;">-->
+                                            <!--                                                Pending: ₹-->
+                                            <!--                                                <field name="pending_amount" widget="monetary"/>-->
+                                            <!--                                            </p>-->
                                         </div>
                                     </div>
                                 </div>
@@ -134,6 +134,33 @@
                                 <!--                                        </p>-->
                                 <!--                                    </div>-->
                                 <!--                                </div>-->
+
+
+                                <!-- Card 4: Corpus Fund Amount -->
+                                <div style="flex: 1; min-width: 200px;">
+                                    <div style="background: linear-gradient(135deg, #6f42c1 0%, #9d4edd 100%); color: white; padding: 20px; border-radius: 10px; height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
+                                                    Corpus Fund
+                                                </h6>
+                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
+                                                    <field name="pending_corpus_fund_amount" widget="statinfo"/>
+                                                </h2>
+                                            </div>
+                                            <div>
+                                                <i class="fa fa-money-bill-wave fa-3x" style="opacity: 0.5;"
+                                                   title="Corpus Fund"/>
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 15px; font-size: 0.9rem;">
+                                            <p style="margin: 5px 0;">
+                                                Total:
+                                                <field name="total_corpus_fund_amount" widget="statinfo"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- Card 4: Events -->
                                 <div style="flex: 1; min-width: 250px;">
@@ -210,6 +237,61 @@
                                                     style="background: #007bff; color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500;">
                                                 <i class="fa fa-list mr-1" title="List View"/>
                                                 View All Maintenance
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Add this after Maintenance Overview section and before Community Events section -->
+
+                                <!-- Corpus Fund Overview -->
+                                <div style="flex: 1; min-width: 300px;">
+                                    <div style="background: white; border-radius: 10px; padding: 20px; height: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">
+                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
+                                                <i class="fa fa-money-bill-wave" style="color: #6f42c1;"
+                                                   title="Corpus Fund"/>
+                                                Corpus Fund Overview
+                                            </h5>
+                                        </div>
+                                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                                <h4 style="margin: 0;">
+                                                    <field name="total_corpus_fund_count" widget="statinfo"/>
+                                                </h4>
+                                                <small style="color: #64748b;">Total</small>
+                                            </div>
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                                <h4 style="margin: 0; color: #007bff;">
+                                                    <field name="draft_corpus_fund_count" widget="statinfo"/>
+                                                </h4>
+                                                <small style="color: #64748b;">Draft</small>
+                                            </div>
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                                <h4 style="margin: 0; color: #28a745;">
+                                                    <field name="invoiced_corpus_fund_count" widget="statinfo"/>
+                                                </h4>
+                                                <small style="color: #64748b;">Invoiced</small>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h6 style="color: #2d3748; margin-bottom: 10px;">
+                                                Total Amount: ₹
+                                                <field name="total_corpus_fund_amount" widget="monetary"/>
+                                            </h6>
+                                            <h6 style="color: #2d3748; margin-bottom: 10px;">
+                                                Collected: ₹
+                                                <field name="collected_corpus_fund_amount" widget="monetary"/>
+                                            </h6>
+                                            <h6 style="color: #2d3748; margin-bottom: 20px;">
+                                                Pending: ₹
+                                                <field name="pending_corpus_fund_amount" widget="monetary"/>
+                                            </h6>
+                                        </div>
+                                        <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                                            <button name="action_open_corpus_fund" type="object"
+                                                    style="background: #6f42c1; color: white; border: none; padding: 8px 20px; border-radius: 5px; font-weight: 500;">
+                                                <i class="fa fa-list mr-1" title="List View"/>
+                                                View All Corpus Fund
                                             </button>
                                         </div>
                                     </div>
@@ -415,6 +497,14 @@
                                                style="color: #007bff; margin-bottom: 10px; display: block;"
                                                title="Create Invoice"/>
                                             <small>Create Maintenance Invoice</small>
+                                        </a>
+                                        <!-- Add this to the Quick Actions section -->
+                                        <a href="/web#model=corpus.fund.invoice&amp;view_type=form"
+                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 8px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box;">
+                                            <i class="fa fa-file-invoice-dollar fa-2x"
+                                               style="color: #6f42c1; margin-bottom: 10px; display: block;"
+                                               title="Create Corpus Fund Invoice"/>
+                                            <small>Corpus Fund Invoice</small>
                                         </a>
                                         <a href="/web#model=community.festival&amp;view_type=form"
                                            style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 8px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box;">

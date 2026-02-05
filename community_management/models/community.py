@@ -237,6 +237,14 @@ class ResPartner(models.Model):
         string='Vehicles'
     )
 
+    occupant_type = fields.Selection(
+        [
+            ('owner', 'Owner'),
+            ('tenant', 'Tenant'),
+        ],
+        string="Occupant Type"
+    )
+
     def action_open_vehicle_details(self):
         return {
             'type': 'ir.actions.act_window',

@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <form string="Flat">
                 <header>
+
                     <field name="status" widget="statusbar" statusbar_visible="available,occupied"/>
                 </header>
                 <sheet>
@@ -285,7 +286,6 @@
     </record>
 
     <!-- Menu -->
-
 
 
     <record id="view_flat_type_list" model="ir.ui.view">

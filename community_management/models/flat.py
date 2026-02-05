@@ -101,6 +101,7 @@ class Flat(models.Model):
             },
         }
 
+    # ---
 
 from odoo import models, fields
 

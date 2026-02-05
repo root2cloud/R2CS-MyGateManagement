@@ -288,7 +288,6 @@
     </record>
 
 
-
     <record id="view_partner_form_family_button" model="ir.ui.view">
         <field name="name">res.partner.family.smart.button</field>
         <field name="model">res.partner</field>
@@ -354,8 +353,49 @@
         </field>
     </record>
 
+    <record id="view_partner_form_inherit_occupant_type" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.occupant.type</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
 
+            <!-- Insert before Job Position -->
+            <xpath expr="//field[@name='function']" position="before">
+                <field name="occupant_type"/>
+            </xpath>
 
+        </field>
+    </record>
+
+    <record id="view_res_partner_filter_occupant_type" model="ir.ui.view">
+        <field name="name">res.partner.search.occupant.type</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+
+            <!-- Add Owner / Tenant filters -->
+            <xpath expr="//filter[@name='customer']" position="after">
+                <filter
+                        name="filter_owner"
+                        string="Owner"
+                        domain="[('occupant_type', '=', 'owner')]"/>
+
+                <filter
+                        name="filter_tenant"
+                        string="Tenant"
+                        domain="[('occupant_type', '=', 'tenant')]"/>
+            </xpath>
+
+            <!-- Group By: Occupant Type -->
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter
+                        name="group_by_occupant_type"
+                        string="Occupant Type"
+                        context="{'group_by': 'occupant_type'}"/>
+            </xpath>
+
+        </field>
+    </record>
 
 
 </odoo>

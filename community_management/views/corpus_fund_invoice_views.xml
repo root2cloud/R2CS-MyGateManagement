@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_corpus_fund_invoice_form" model="ir.ui.view">
+        <field name="name">corpus.fund.invoice.form</field>
+        <field name="model">corpus.fund.invoice</field>
+        <field name="arch" type="xml">
+            <form string="Corpus Fund Invoice">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_corpus_invoices"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text-o"
+                            invisible="invoice_count == 0">
+                        <field string="Invoices" name="invoice_count" widget="statinfo"/>
+                    </button>
+                </div>
+                <header>
+                    <!-- Status bar – shows Draft → Invoiced -->
+                    <field
+                            name="state"
+                            statusbar_visible="draft,invoiced"
+                            widget="statusbar"
+                            statusbar_colors='{"draft":"blue", "invoiced":"green"}'
+                    />
+
+                    <!-- Buttons -->
+                    <button name="action_generate_invoice"
+                            string="Generate Invoice"
+                            type="object"
+                            class="btn-primary oe_highlight"
+
+                    />
+
+                </header>
+
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="flat_id" options="{'no_create': True}"/>
+                            <field name="owner_id"/>
+                        </group>
+                        <group>
+                            <field name="building_id"/>
+                            <field name="floor_id"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="amount" options="{'type': 'number'}"/>
+                        <!-- REMOVE or hide this invoice_id field since we have the button -->
+                        <!-- <field name="invoice_id"
+                               readonly="1"
+                               groups="account.group_account_invoice"
+                               context="{'form_view_ref': 'account.view_move_form'}"/> -->
+
+                        <!-- Optional: Show just the invoice reference as text, not clickable -->
+                        <field name="invoice_id" invisible="1"/>
+                        <label for="invoice_id" string="Invoice"/>
+                        <div>
+                            <field name="invoice_id" readonly="1" widget="external_link"
+                                   />
+                            <span >-</span>
+                        </div>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- /LIST VIEW -->
+    <record id="view_corpus_fund_invoice_list" model="ir.ui.view">
+        <field name="name">corpus.fund.invoice.list</field>
+        <field name="model">corpus.fund.invoice</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="flat_id"/>
+                <field name="owner_id"/>
+                <field name="building_id" optional="hide"/>
+                <field name="floor_id" optional="hide"/>
+                <field name="amount" sum="Total Amount"/>
+                <field name="state" widget="badge"/>
+                <field name="invoice_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ACTION & MENU (unchanged) -->
+    <record id="action_corpus_fund_invoice" model="ir.actions.act_window">
+        <field name="name">Corpus Fund Invoices</field>
+        <field name="res_model">corpus.fund.invoice</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_corpus_fund_invoice_list"/>
+    </record>
+
+    <menuitem id="menu_corpus_fund_invoice"
+              name="Corpus Fund Invoices"
+              parent="menu_flat_transaction_menu"
+              action="action_corpus_fund_invoice"
+              sequence="10"/>
+
+</odoo>
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<odoo>-->
+<!--    <record id="view_corpus_fund_invoice_form" model="ir.ui.view">-->
+<!--        <field name="name">corpus.fund.invoice.form</field>-->
+<!--        <field name="model">corpus.fund.invoice</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="Corpus Fund Invoice">-->
+<!--                <div class="oe_button_box" name="button_box">-->
+<!--                    <button name="action_view_corpus_invoices"-->
+<!--                            type="object"-->
+<!--                            class="oe_stat_button"-->
+<!--                            icon="fa-file-text-o"-->
+<!--                            invisible="invoice_count == 0">-->
+<!--                        <field string="Invoices" name="invoice_count" widget="statinfo"/>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                <header>-->
+<!--                    &lt;!&ndash; Status bar – shows Draft → Invoiced &ndash;&gt;-->
+<!--                    <field-->
+<!--                            name="state"-->
+<!--                            statusbar_visible="draft,invoiced"-->
+<!--                            widget="statusbar"-->
+<!--                            statusbar_colors='{"draft":"blue", "invoiced":"green"}'-->
+<!--                    />-->
+
+<!--                    &lt;!&ndash; Buttons &ndash;&gt;-->
+<!--                    <button name="action_generate_invoice"-->
+<!--                            string="Generate Invoice"-->
+<!--                            type="object"-->
+<!--                            class="btn-primary oe_highlight"-->
+<!--                    />-->
+
+
+<!--                </header>-->
+
+<!--                <sheet>-->
+<!--                    <group>-->
+<!--                        <group>-->
+<!--                            <field name="flat_id" options="{'no_create': True}"/>-->
+<!--                            <field name="owner_id"/>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--                            <field name="building_id"/>-->
+<!--                            <field name="floor_id"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
+
+<!--                    <group>-->
+<!--                        <field name="amount" options="{'type': 'number'}"/>-->
+<!--                        &lt;!&ndash; Optional: show invoice reference &ndash;&gt;-->
+<!--                        <field name="invoice_id"-->
+<!--                               readonly="1"-->
+<!--                               groups="account.group_account_invoice"-->
+<!--                               context="{'form_view_ref': 'account.view_move_form'}"/>-->
+<!--                    </group>-->
+<!--                </sheet>-->
+<!--                <chatter/>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    &lt;!&ndash; /LIST VIEW &ndash;&gt;-->
+<!--    <record id="view_corpus_fund_invoice_list" model="ir.ui.view">-->
+<!--        <field name="name">corpus.fund.invoice.list</field>-->
+<!--        <field name="model">corpus.fund.invoice</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <list>-->
+<!--                <field name="flat_id"/>-->
+<!--                <field name="owner_id"/>-->
+<!--                <field name="building_id" optional="hide"/>-->
+<!--                <field name="floor_id" optional="hide"/>-->
+<!--                <field name="amount" sum="Total Amount"/>-->
+<!--                <field name="state" widget="badge"/>-->
+<!--                <field name="invoice_id" />-->
+<!--            </list>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    &lt;!&ndash; ACTION & MENU (unchanged) &ndash;&gt;-->
+<!--    <record id="action_corpus_fund_invoice" model="ir.actions.act_window">-->
+<!--        <field name="name">Corpus Fund Invoices</field>-->
+<!--        <field name="res_model">corpus.fund.invoice</field>-->
+<!--        <field name="view_mode">list,form</field>-->
+<!--        <field name="view_id" ref="view_corpus_fund_invoice_list"/>-->
+<!--    </record>-->
+
+<!--    <menuitem id="menu_corpus_fund_invoice"-->
+<!--              name="Corpus Fund Invoices"-->
+<!--              parent="menu_flat_transaction_menu"-->
+<!--              action="action_corpus_fund_invoice"-->
+<!--              sequence="10"/>-->
+
+<!--</odoo>-->

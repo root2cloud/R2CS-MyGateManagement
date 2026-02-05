@@ -22,6 +22,15 @@ class RealEstateDashboard(models.TransientModel):
     collected_amount = fields.Monetary(string=" Collected Amount", compute='_compute_stats')
     pending_amount = fields.Monetary(string=" Pending Amount", compute='_compute_stats')
 
+    # curpus fund
+
+    total_corpus_fund_count = fields.Integer(string=" Total Corpus Fund Invoices", compute='_compute_stats')
+    draft_corpus_fund_count = fields.Integer(string=" Draft Corpus Fund", compute='_compute_stats')
+    invoiced_corpus_fund_count = fields.Integer(string=" Invoiced Corpus Fund", compute='_compute_stats')
+    total_corpus_fund_amount = fields.Monetary(string=" Total Corpus Fund Amount", compute='_compute_stats')
+    collected_corpus_fund_amount = fields.Monetary(string=" Collected Corpus Fund Amount", compute='_compute_stats')
+    pending_corpus_fund_amount = fields.Monetary(string=" Pending Corpus Fund Amount", compute='_compute_stats')
+
     # Event Stats
     total_events_count = fields.Integer(string=" Total Events", compute='_compute_stats')
     draft_events_count = fields.Integer(string=" Draft Events", compute='_compute_stats')
@@ -122,6 +131,49 @@ class RealEstateDashboard(models.TransientModel):
             record.collected_amount = collected_amount  # Total paid amount
             record.pending_amount = pending_amount  # Total unpaid amount
 
+            # NEW: Corpus Fund Statistics
+            record.total_corpus_fund_count = self.env['corpus.fund.invoice'].search_count([])
+            record.draft_corpus_fund_count = self.env['corpus.fund.invoice'].search_count([
+                ('state', '=', 'draft')
+            ])
+            record.invoiced_corpus_fund_count = self.env['corpus.fund.invoice'].search_count([
+                ('state', '=', 'invoiced')
+            ])
+
+            # Corpus Fund Amounts
+            total_corpus_fund_amount = 0.0
+            collected_corpus_fund_amount = 0.0
+            pending_corpus_fund_amount = 0.0
+
+            # Get all corpus fund invoices
+            corpus_fund_records = self.env['corpus.fund.invoice'].search([])
+
+            for corpus in corpus_fund_records:
+                total_corpus_fund_amount += corpus.amount
+
+                # Check if invoice exists and its payment status
+                if corpus.invoice_id:
+                    invoice = corpus.invoice_id
+                    if invoice.payment_state == 'paid':
+                        collected_corpus_fund_amount += invoice.amount_total
+                    elif invoice.payment_state in ['not_paid', 'partial']:
+                        if invoice.payment_state == 'partial':
+                            paid_amount = invoice.amount_total - invoice.amount_residual
+                            collected_corpus_fund_amount += paid_amount
+                            pending_corpus_fund_amount += invoice.amount_residual
+                        else:  # not_paid
+                            pending_corpus_fund_amount += invoice.amount_total
+                    elif invoice.state == 'draft':
+                        pending_corpus_fund_amount += invoice.amount_total
+                else:
+                    # No invoice created yet, amount is pending
+                    pending_corpus_fund_amount += corpus.amount
+
+            # Set corpus fund values
+            record.total_corpus_fund_amount = total_corpus_fund_amount
+            record.collected_corpus_fund_amount = collected_corpus_fund_amount
+            record.pending_corpus_fund_amount = pending_corpus_fund_amount
+
             # Event Stats
             record.total_events_count = self.env['community.festival'].search_count([])
             record.draft_events_count = self.env['community.festival'].search_count([
@@ -187,6 +239,16 @@ class RealEstateDashboard(models.TransientModel):
             'type': 'ir.actions.act_window',
             'name': 'Maintenance',
             'res_model': 'flat.maintenance',
+            'view_mode': 'list,form',
+            'target': 'current',
+        }
+
+    def action_open_corpus_fund(self):
+        """Open corpus fund list view"""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Corpus Fund Invoices',
+            'res_model': 'corpus.fund.invoice',
             'view_mode': 'list,form',
             'target': 'current',
         }
