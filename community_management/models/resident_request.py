@@ -1,6 +1,8 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 from datetime import timedelta
+from odoo.exceptions import UserError
+
 
 
 class ResidentAccessRequest(models.Model):
@@ -65,9 +67,7 @@ class ResidentAccessRequest(models.Model):
     # Approver
     approver_id = fields.Many2one(
         'res.users',
-        string='Approver',
-        domain="[('share', '=', False)]",
-        tracking=True,
+        string='Approver'
     )
 
     # Status & Dates
@@ -86,6 +86,17 @@ class ResidentAccessRequest(models.Model):
 
     # Link to flat transaction
     flat_transaction_id = fields.Many2one('flat.transaction', string='Lease Transaction', readonly=True)
+
+    is_current_approver = fields.Boolean(
+        compute='_compute_is_current_approver',
+        store=False
+    )
+
+    def _compute_is_current_approver(self):
+        for rec in self:
+            rec.is_current_approver = (
+                    rec.approver_id.id == self.env.user.id
+            )
 
     @api.depends('community_id')
     def _compute_default_approver(self):
@@ -192,9 +203,14 @@ class ResidentAccessRequest(models.Model):
             return transaction
 
     def action_approve(self):
-        self.ensure_one()
-        if self.state != 'pending':
-            raise ValidationError("Only pending requests can be approved.")
+        for rec in self:
+            if rec.approver_id != self.env.user:
+                raise UserError("You are not allowed to approve this record.")
+            rec.state = 'approved'
+
+        # self.ensure_one()
+        # if self.state != 'pending':
+        #     raise ValidationError("Only pending requests can be approved.")
 
         # Find or create partner (resident)
         partner = self.env['res.partner'].search([('email', '=', self.email)], limit=1)
