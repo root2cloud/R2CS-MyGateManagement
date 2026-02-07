@@ -286,7 +286,7 @@ class CustomDashboard(models.TransientModel):
         return {
             'name': 'Amenity Bookings',
             'type': 'ir.actions.act_window',
-            'res_model': 'community.amenity.booking',
+            'res_model': 'community.amenity',
             'view_mode': 'list,form',
             'target': 'current',
             'domain': [],
