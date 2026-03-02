@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_saas_master_dashboard" model="ir.actions.act_window">
+            <field name="name">Enterprise Analytics Dashboard</field>
+            <field name="res_model">saas.master.dashboard</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="menu_saas_master_dashboard" name="Master Dashboard" parent="menu_community_dashboard_root" sequence="0" action="action_saas_master_dashboard"/>
+
+        <record id="view_saas_master_dashboard_form" model="ir.ui.view">
+            <field name="name">saas.master.dashboard.form</field>
+            <field name="model">saas.master.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="SaaS Master Dashboard" create="false" edit="false">
+
+                    <style>
+                        :root {
+                            --bg-color: #f8fafc;
+                            --card-bg: #ffffff;
+                            --text-main: #0f172a;
+                            --text-muted: #64748b;
+                            --primary: #3b82f6;
+                            --success: #10b981;
+                            --warning: #f59e0b;
+                            --danger: #ef4444;
+                            --border: #e2e8f0;
+                        }
+                        .saas-wrapper { background-color: var(--bg-color); padding: 30px; min-height: 100vh; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+                        /* HEADER */
+                        .saas-header { background: #ffffff; border-radius: 20px; padding: 25px 35px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+                        .filter-box { background: var(--bg-color); padding: 12px 25px; border-radius: 12px; border: 1px solid var(--border); min-width: 350px; }
+                        .filter-box .o_field_widget { font-weight: 700 !important; font-size: 1.1rem !important; color: var(--primary) !important; }
+
+                        /* CARDS */
+                        .saas-card { background: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--border); transition: all 0.3s ease; height: 100%; position: relative; overflow: hidden; }
+                        .saas-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); }
+
+                        /* GRIDS */
+                        .grid-kpi { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 25px; }
+                        .grid-charts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 25px; }
+                        .grid-activities { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+                        /* TYPOGRAPHY &amp; ICONS */
+                        .kpi-val { font-size: 2.2rem; font-weight: 800; color: var(--text-main); line-height: 1.1; margin-top: 15px; }
+                        .kpi-label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+                        .kpi-icon { position: absolute; top: 24px; right: 24px; font-size: 2rem; opacity: 0.15; }
+
+                        .section-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+                        /* RESPONSIVE */
+                        @media (max-width: 1400px) { .grid-kpi { grid-template-columns: repeat(3, 1fr); } }
+                        @media (max-width: 992px) { .grid-kpi, .grid-charts, .grid-activities { grid-template-columns: 1fr; } }
+                    </style>
+
+                    <div class="saas-wrapper">
+
+                        <div class="saas-header">
+                            <div>
+                                <h1 style="font-weight: 900; margin: 0; font-size: 2rem; color: #0f172a;"><i class="fa fa-cubes text-primary mr-2"/> Workspace Hub</h1>
+                                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 1rem;">Real-time enterprise analytics and operations.</p>
+                            </div>
+                            <div class="filter-box">
+                                <label for="community_id" style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; margin-bottom: 4px; display: block;">Target Community</label>
+                                <field name="community_id" options="{'no_create': True}" placeholder="Select Community..."/>
+                            </div>
+                        </div>
+
+                        <div invisible="not community_id">
+
+                            <div class="grid-kpi">
+                                <div class="saas-card" style="border-bottom: 4px solid var(--primary);">
+                                    <i class="fa fa-building kpi-icon text-primary"/>
+                                    <div class="kpi-label">Total Flats</div>
+                                    <div class="kpi-val"><field name="total_flats"/></div>
+                                </div>
+                                <div class="saas-card" style="border-bottom: 4px solid var(--success);">
+                                    <i class="fa fa-users kpi-icon text-success"/>
+                                    <div class="kpi-label">Total Residents</div>
+                                    <div class="kpi-val"><field name="total_residents"/></div>
+                                </div>
+                                <div class="saas-card" style="border-bottom: 4px solid var(--warning);">
+                                    <i class="fa fa-id-badge kpi-icon text-warning"/>
+                                    <div class="kpi-label">Visitors Today</div>
+                                    <div class="kpi-val"><field name="visitors_today"/></div>
+                                </div>
+                                <div class="saas-card" style="border-bottom: 4px solid #8b5cf6;">
+                                    <i class="fa fa-check-circle kpi-icon" style="color: #8b5cf6;"/>
+                                    <div class="kpi-label">Pending Approvals</div>
+                                    <div class="kpi-val"><field name="pending_approvals"/></div>
+                                </div>
+                                <div class="saas-card" style="border-bottom: 4px solid var(--danger);">
+                                    <i class="fa fa-ticket kpi-icon text-danger"/>
+                                    <div class="kpi-label">Open Amenities/Complaints</div>
+                                    <div class="kpi-val"><field name="open_complaints"/></div>
+                                </div>
+                            </div>
+
+                            <div class="grid-charts">
+                                <div class="saas-card">
+                                    <div class="section-title"><i class="fa fa-pie-chart text-primary"/> Property Occupancy Overview</div>
+                                    <div style="padding: 20px 0;">
+                                        <h2 style="font-weight: 800; color: var(--text-main); margin:0;"><field name="occupied_flats"/> / <field name="total_flats"/> <span style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">Flats Occupied</span></h2>
+                                        <field name="chart_occupancy" widget="html" nolabel="1"/>
+                                    </div>
+                                </div>
+                                <div class="saas-card">
+                                    <div class="section-title"><i class="fa fa-line-chart text-success"/> Maintenance Collections</div>
+                                    <div style="padding: 20px 0;">
+                                        <h2 style="font-weight: 800; color: var(--text-main); margin:0;">₹ <field name="maintenance_collected" widget="float" digits="[16,0]"/> <span style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">Collected</span></h2>
+                                        <field name="chart_financial" widget="html" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid-activities">
+                                <div class="saas-card">
+                                    <div class="section-title"><i class="fa fa-address-book text-warning"/> Latest Visitor Entries</div>
+                                    <field name="recent_visitors" widget="html" nolabel="1"/>
+                                    <a href="/web#model=mygate.visitor&amp;view_type=list" style="display: block; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; text-decoration: none;">View All Visitors &amp;rarr;</a>
+                                </div>
+                                <div class="saas-card">
+                                    <div class="section-title"><i class="fa fa-envelope text-info"/> Recent Access &amp; Portal Requests</div>
+                                    <field name="recent_requests" widget="html" nolabel="1"/>
+                                    <a href="/web#model=resident.access.request&amp;view_type=list" style="display: block; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; text-decoration: none;">Manage Requests &amp;rarr;</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
