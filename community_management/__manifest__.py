@@ -25,10 +25,10 @@
         'views/community_views.xml',
         'views/building_views.xml',
         'views/flat_views.xml',
-        'views/portal_family_member_template.xml',
+        # 'views/portal_family_member_template.xml',
         'views/pet_views.xml',
-        'views/portal_pet_template.xml',
-        'views/portal_vehicle_template.xml',
+        # 'views/portal_pet_template.xml',
+        # 'views/portal_vehicle_template.xml',
         'views/inquiry_form_template.xml',
         'views/customer_inquiry_views.xml',
         'views/floor_views.xml',
@@ -41,9 +41,9 @@
         # 'views/custom_helpdesk_team_views.xml',
         # 'views/portal_templates.xml',
         'views/notice_board_views.xml',
-        'views/portal_notice_board_templates.xml',
+        # 'views/portal_notice_board_templates.xml',
         'views/amenity_views.xml',
-        'views/portal_profile_overview.xml',
+        # 'views/portal_profile_overview.xml',
 
         # not completed below one
         'views/amenity_portal_templates.xml',
@@ -73,7 +73,7 @@
         'views/community_post_views.xml',
         'views/community_post_template.xml',
         'views/maintance_fest_dashboard_views.xml',
-        'views/custom_dashboard_views.xml',
+        'views/saas_dashboard_views.xml',
         'views/party_cab_del_dashboard_views.xml',
 
         'views/menu_views.xml',
@@ -86,8 +86,11 @@
         'views/mygate_visitor_views.xml',
         'views/mygate_billing_portal_templates.xml',
         'views/corpus_fund_invoice_views.xml',
+        # new files
+        'views/portal_multi_flat_template.xml',
 
         # 'views/assets.xml',
+        'data/overdue_reminder_cron.xml',
 
     ],
     'assets': {

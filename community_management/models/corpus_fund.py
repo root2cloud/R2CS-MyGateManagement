@@ -28,6 +28,12 @@ class CorpusFundInvoice(models.Model):
         store=True,
         readonly=True
     )
+    community_id = fields.Many2one(
+        'community.management',
+        string='Community',
+        required=True,
+        tracking=True
+    )
     building_id = fields.Many2one(
         'building.management',
         string='Building',

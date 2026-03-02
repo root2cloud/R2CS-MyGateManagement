@@ -17,6 +17,9 @@ class DeliveryPass(models.Model):
         ('expired', 'Expired'),
         ('cancelled', 'Cancelled'),
     ]
+    flat_id = fields.Many2one('flat.management', string='Flat', required=True)
+    community_id = fields.Many2one('community.management', string='Community',
+                                   related='flat_id.community_id', store=True)
 
     resident_id = fields.Many2one(
         'res.partner',

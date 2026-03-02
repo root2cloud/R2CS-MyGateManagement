@@ -1,23 +1,22 @@
 <odoo>
-
     <record id="view_notice_board_search" model="ir.ui.view">
         <field name="name">property.notice.board.search</field>
         <field name="model">property.notice.board</field>
         <field name="arch" type="xml">
             <search string="Search Notice Board">
+                <field name="name"/>
+                <field name="community_id"/>
 
                 <filter name="active_filter" string="Active" domain="[('active','=',True)]"/>
                 <filter name="inactive_filter" string="Inactive" domain="[('active','=',False)]"/>
 
                 <group expand="0" string="Group By">
-                    <filter name="group_notice_type" string="Notice Type"
-                            context="{'group_by':'notice_type'}"/>
+                    <filter name="group_community" string="Community" context="{'group_by':'community_id'}"/>
+                    <filter name="group_notice_type" string="Notice Type" context="{'group_by':'notice_type'}"/>
                 </group>
-
             </search>
         </field>
     </record>
-
 
     <record id="view_notice_board_list" model="ir.ui.view">
         <field name="name">property.notice.board.list</field>
@@ -25,6 +24,7 @@
         <field name="arch" type="xml">
             <list string="Notice Board">
                 <field name="name"/>
+                <field name="community_id"/>
                 <field name="notice_type"/>
                 <field name="date_start"/>
                 <field name="date_end"/>
@@ -42,6 +42,7 @@
                     <group>
                         <group>
                             <field name="name"/>
+                            <field name="community_id" placeholder="Select community first..."/>
                             <field name="notice_type"/>
                             <field name="description" widget="html"/>
                             <field name="image" widget="image" options="{'preview_image': 'image'}"/>
@@ -49,31 +50,109 @@
                         <group>
                             <field name="date_start"/>
                             <field name="date_end"/>
-                            <field name="target_group_ids" widget="many2many_tags"/>
+
+                            <field name="target_flat_ids" widget="many2many_tags"
+                                   domain="[('community_id', '=', community_id)]"
+                                   placeholder="Select specific flats (leave empty for all)..."/>
                             <field name="active"/>
                         </group>
                     </group>
                 </sheet>
                 <chatter/>
             </form>
-
         </field>
     </record>
 
-
-    <!-- Action to open Notice Board list -->
     <record id="action_notice_board" model="ir.actions.act_window">
         <field name="name">Notice Board</field>
         <field name="res_model">property.notice.board</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[]</field>
     </record>
+
     <menuitem id="menu_notice_board"
               name="Notice Board"
               parent="menu_community_management_root"
               action="action_notice_board"
               sequence="40"/>
-
-    <!-- Menu item under your module root (adjust parent as needed) -->
-
 </odoo>
+
+<!--<odoo>-->
+
+<!--    <record id="view_notice_board_search" model="ir.ui.view">-->
+<!--        <field name="name">property.notice.board.search</field>-->
+<!--        <field name="model">property.notice.board</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <search string="Search Notice Board">-->
+
+<!--                <filter name="active_filter" string="Active" domain="[('active','=',True)]"/>-->
+<!--                <filter name="inactive_filter" string="Inactive" domain="[('active','=',False)]"/>-->
+
+<!--                <group expand="0" string="Group By">-->
+<!--                    <filter name="group_notice_type" string="Notice Type"-->
+<!--                            context="{'group_by':'notice_type'}"/>-->
+<!--                </group>-->
+
+<!--            </search>-->
+<!--        </field>-->
+<!--    </record>-->
+
+
+<!--    <record id="view_notice_board_list" model="ir.ui.view">-->
+<!--        <field name="name">property.notice.board.list</field>-->
+<!--        <field name="model">property.notice.board</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <list string="Notice Board">-->
+<!--                <field name="name"/>-->
+<!--                <field name="notice_type"/>-->
+<!--                <field name="date_start"/>-->
+<!--                <field name="date_end"/>-->
+<!--                <field name="active"/>-->
+<!--            </list>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    <record id="view_notice_board_form" model="ir.ui.view">-->
+<!--        <field name="name">property.notice.board.form</field>-->
+<!--        <field name="model">property.notice.board</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="Notice Board">-->
+<!--                <sheet>-->
+<!--                    <group>-->
+<!--                        <group>-->
+<!--                            <field name="name"/>-->
+<!--                            <field name="notice_type"/>-->
+<!--                            <field name="description" widget="html"/>-->
+<!--                            <field name="image" widget="image" options="{'preview_image': 'image'}"/>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--                            <field name="date_start"/>-->
+<!--                            <field name="date_end"/>-->
+<!--                            <field name="target_group_ids" widget="many2many_tags"/>-->
+<!--                            <field name="active"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
+<!--                </sheet>-->
+<!--                <chatter/>-->
+<!--            </form>-->
+
+<!--        </field>-->
+<!--    </record>-->
+
+
+<!--    &lt;!&ndash; Action to open Notice Board list &ndash;&gt;-->
+<!--    <record id="action_notice_board" model="ir.actions.act_window">-->
+<!--        <field name="name">Notice Board</field>-->
+<!--        <field name="res_model">property.notice.board</field>-->
+<!--        <field name="view_mode">list,form</field>-->
+<!--        <field name="domain">[]</field>-->
+<!--    </record>-->
+<!--    <menuitem id="menu_notice_board"-->
+<!--              name="Notice Board"-->
+<!--              parent="menu_community_management_root"-->
+<!--              action="action_notice_board"-->
+<!--              sequence="40"/>-->
+
+<!--    &lt;!&ndash; Menu item under your module root (adjust parent as needed) &ndash;&gt;-->
+
+<!--</odoo>-->

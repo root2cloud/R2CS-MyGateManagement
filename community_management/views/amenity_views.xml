@@ -11,6 +11,7 @@
                 <field name="amount"/>
                 <field name="max_booking_per_day"/>
                 <field name="active"/>
+                <field name="community_id" optional="show"/>
 
             </list>
         </field>
@@ -25,11 +26,13 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="community_id"/>
                         <field name="description"/>
                         <field name="amenity_type"/>
                         <field name="amount"/>
                         <field name="max_booking_per_day"/>
                         <field name="active"/>
+
                     </group>
                     <notebook>
                         <page string="Bookings">

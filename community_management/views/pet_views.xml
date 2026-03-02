@@ -29,6 +29,7 @@
                             <field name="tenant_id"/>
                             <field name="flat_id"/>
                             <field name="building_id"/>
+                            <field name="community_id"/>
                         </group>
                     </group>
 
@@ -127,6 +128,7 @@
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
                 <field name="building_id"/>
+                <field name="community_id"/>
             </list>
         </field>
     </record>
@@ -146,6 +148,8 @@
                 <field name="days_until_vaccination"/>
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
+                <field name="building_id"/>
+                 <field name="community_id"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card">
@@ -178,6 +182,8 @@
                                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
                                     <span><i class="fa fa-user"/> <field name="tenant_id"/></span><br/>
                                     <span t-if="record.flat_id.raw_value"><i class="fa fa-home"/> <field name="flat_id"/></span>
+                                    <span t-if="record.building_id.raw_value"><i class="fa fa-building"/> <field name="building_id"/></span><br/>
+                                    <span t-if="record.community_id.raw_value"><i class="fa fa-globe"/> <field name="community_id"/></span>
                                 </div>
                             </div>
                         </div>
@@ -188,6 +194,7 @@
     </record>
 
     <!-- Search View -->
+        <!-- Search View -->
     <record id="view_search_pet_management" model="ir.ui.view">
         <field name="name">pet.management.search</field>
         <field name="model">pet.management</field>
@@ -197,19 +204,37 @@
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
                 <field name="building_id"/>
+                <field name="community_id"/>
+                <field name="breed"/>
+                <field name="microchip_number"/>
+
                 <filter name="filter_up_to_date" string="Up to Date" domain="[('vaccination_status', '=', 'up_to_date')]"/>
                 <filter name="filter_due" string="Due Soon" domain="[('vaccination_status', '=', 'due_soon')]"/>
                 <filter name="filter_overdue" string="Overdue" domain="[('vaccination_status', '=', 'overdue')]"/>
                 <filter name="filter_not_vaccinated" string="Not Vaccinated" domain="[('vaccination_status', '=', 'not_vaccinated')]"/>
+
                 <separator/>
+
                 <filter name="filter_dog" string="Dogs" domain="[('pet_type', '=', 'dog')]"/>
                 <filter name="filter_cat" string="Cats" domain="[('pet_type', '=', 'cat')]"/>
+                <filter name="filter_bird" string="Birds" domain="[('pet_type', '=', 'bird')]"/>
+                <filter name="filter_rabbit" string="Rabbits" domain="[('pet_type', '=', 'rabbit')]"/>
+                <filter name="filter_fish" string="Fish" domain="[('pet_type', '=', 'fish')]"/>
+
+                <separator/>
+
+                <!-- Community Filters -->
+                <filter name="filter_community" string="By Community" context="{'group_by': 'community_id'}"/>
+
                 <group expand="0" string="Group By">
                     <filter name="group_pet_type" string="Pet Type" context="{'group_by': 'pet_type'}"/>
                     <filter name="group_vaccination_status" string="Vaccination Status" context="{'group_by': 'vaccination_status'}"/>
                     <filter name="group_tenant" string="Tenant" context="{'group_by': 'tenant_id'}"/>
                     <filter name="group_flat" string="Flat" context="{'group_by': 'flat_id'}"/>
                     <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                    <filter name="group_community" string="Community" context="{'group_by': 'community_id'}"/>
+                    <filter name="group_gender" string="Gender" context="{'group_by': 'gender'}"/>
+                    <filter name="group_breed" string="Breed" context="{'group_by': 'breed'}"/>
                 </group>
             </search>
         </field>

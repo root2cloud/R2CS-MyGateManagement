@@ -40,6 +40,8 @@
                             <field name="owner_id"/>
                         </group>
                         <group>
+                            <field name="community_id"/>
+
                             <field name="building_id"/>
                             <field name="floor_id"/>
                         </group>
@@ -76,6 +78,7 @@
             <list>
                 <field name="flat_id"/>
                 <field name="owner_id"/>
+                <field name="community_id"/>
                 <field name="building_id" optional="hide"/>
                 <field name="floor_id" optional="hide"/>
                 <field name="amount" sum="Total Amount"/>

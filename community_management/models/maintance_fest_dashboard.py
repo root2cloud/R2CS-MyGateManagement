@@ -1,294 +1,249 @@
-# dashboard.py
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from datetime import datetime
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class RealEstateDashboard(models.TransientModel):
     _name = 'real.estate.dashboard'
     _description = 'Real Estate Dashboard'
 
-    # Tenant Stats
-    active_tenants_count = fields.Integer(string=" Active Tenants", compute='_compute_stats')
-    total_tenants_count = fields.Integer(string=" Total Tenants", compute='_compute_stats')
+    community_id = fields.Many2one('community.management', string='Select Community', required=True)
 
     # Flat Stats
-    occupied_flats_count = fields.Integer(string=" Occupied Flats", compute='_compute_stats')
-    vacant_flats_count = fields.Integer(string=" Vacant Flats", compute='_compute_stats')
+    total_flats_count = fields.Integer(string="Total Flats")
+    occupied_flats_count = fields.Integer(string="Occupied Flats")
+    vacant_flats_count = fields.Integer(string="Vacant Flats")
+    occupancy_rate = fields.Float(string='Occupancy Rate (%)')
+
+    # Tenant Stats
+    active_tenants_count = fields.Integer(string="Active Tenants")
+    total_tenants_count = fields.Integer(string="Total Tenants")
 
     # Maintenance Stats
-    total_maintenance_count = fields.Integer(string=" Total Maintenance", compute='_compute_stats')
-    pending_maintenance_count = fields.Integer(string=" Pending Maintenance", compute='_compute_stats')
-    confirmed_maintenance_count = fields.Integer(string=" Confirmed Maintenance", compute='_compute_stats')
-    total_maintenance_amount = fields.Monetary(string=" Total Amount", compute='_compute_stats')
-    collected_amount = fields.Monetary(string=" Collected Amount", compute='_compute_stats')
-    pending_amount = fields.Monetary(string=" Pending Amount", compute='_compute_stats')
+    total_maintenance_count = fields.Integer(string="Total Maintenance")
+    pending_maintenance_count = fields.Integer(string="Pending Maintenance")
+    confirmed_maintenance_count = fields.Integer(string="Confirmed Maintenance")
+    total_maintenance_amount = fields.Monetary(string="Total Amount")
+    collected_amount = fields.Monetary(string="Collected Amount")
+    pending_amount = fields.Monetary(string="Pending Amount")
 
-    # curpus fund
-
-    total_corpus_fund_count = fields.Integer(string=" Total Corpus Fund Invoices", compute='_compute_stats')
-    draft_corpus_fund_count = fields.Integer(string=" Draft Corpus Fund", compute='_compute_stats')
-    invoiced_corpus_fund_count = fields.Integer(string=" Invoiced Corpus Fund", compute='_compute_stats')
-    total_corpus_fund_amount = fields.Monetary(string=" Total Corpus Fund Amount", compute='_compute_stats')
-    collected_corpus_fund_amount = fields.Monetary(string=" Collected Corpus Fund Amount", compute='_compute_stats')
-    pending_corpus_fund_amount = fields.Monetary(string=" Pending Corpus Fund Amount", compute='_compute_stats')
+    # Corpus Fund
+    total_corpus_fund_count = fields.Integer(string="Total Corpus Fund Invoices")
+    draft_corpus_fund_count = fields.Integer(string="Draft Corpus Fund")
+    invoiced_corpus_fund_count = fields.Integer(string="Invoiced Corpus Fund")
+    total_corpus_fund_amount = fields.Monetary(string="Total Corpus Fund Amount")
+    collected_corpus_fund_amount = fields.Monetary(string="Collected Corpus Fund Amount")
+    pending_corpus_fund_amount = fields.Monetary(string="Pending Corpus Fund Amount")
 
     # Event Stats
-    total_events_count = fields.Integer(string=" Total Events", compute='_compute_stats')
-    draft_events_count = fields.Integer(string=" Draft Events", compute='_compute_stats')
-    submitted_events_count = fields.Integer(string=" Submitted Events", compute='_compute_stats')
-    approved_events_count = fields.Integer(string=" Approved Events", compute='_compute_stats')
-    total_events_expense = fields.Monetary(string="Total Expense", compute='_compute_stats')
+    total_events_count = fields.Integer(string="Total Events")
+    draft_events_count = fields.Integer(string="Draft Events")
+    submitted_events_count = fields.Integer(string="Submitted Events")
+    approved_events_count = fields.Integer(string="Approved Events")
+    total_events_expense = fields.Monetary(string="Total Expense")
 
-    # Resident Stats
-    total_residents_count = fields.Integer(string=" Total Residents", compute='_compute_stats')
-    adult_residents_count = fields.Integer(string=" Adult Residents", compute='_compute_stats')
-    child_residents_count = fields.Integer(string=" Child Residents", compute='_compute_stats')
+    # Demographics
+    total_residents_count = fields.Integer()
+    total_pets_count = fields.Integer()
+    total_vehicles_count = fields.Integer()
 
-    # Pet Stats
-    total_pets_count = fields.Integer(string=" Total Pets", compute='_compute_stats')
-    dog_count = fields.Integer(string=" Dogs", compute='_compute_stats')
-    cat_count = fields.Integer(string=" Cats", compute='_compute_stats')
-    other_pets_count = fields.Integer(string=" Other Pets", compute='_compute_stats')
+    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
-    # Vehicle Stats
-    total_vehicles_count = fields.Integer(string=" Total Vehicles", compute='_compute_stats')
-    car_count = fields.Integer(string=" Cars", compute='_compute_stats')
-    motorcycle_count = fields.Integer(string=" Motorcycles", compute='_compute_stats')
-    other_vehicles_count = fields.Integer(string=" Other Vehicles", compute='_compute_stats')
+    # --- NEW HTML FIELDS FOR PREMIUM UI ---
+    chart_occupancy_html = fields.Html()
+    chart_finance_html = fields.Html()
+    feed_maintenance_html = fields.Html()
+    feed_corpus_html = fields.Html()
+    feed_events_html = fields.Html()
 
-    currency_id = fields.Many2one('res.currency', string='Currency',
-                                  default=lambda self: self.env.company.currency_id)
+    @api.onchange('community_id')
+    def _onchange_community_id(self):
+        if not self.community_id:
+            self.total_flats_count = self.occupied_flats_count = self.vacant_flats_count = self.occupancy_rate = 0
+            self.total_maintenance_amount = self.collected_amount = self.pending_amount = 0.0
+            self.total_corpus_fund_amount = self.collected_corpus_fund_amount = self.pending_corpus_fund_amount = 0.0
+            self.total_events_expense = self.total_events_count = 0
+            self.chart_occupancy_html = self.chart_finance_html = ""
+            self.feed_maintenance_html = self.feed_corpus_html = self.feed_events_html = "<p class='text-muted'>Select a community.</p>"
+            return
 
-    def _compute_stats(self):
-        """Compute all dashboard statistics"""
-        for record in self:
+        cid = self.community_id.id
+        limit = 5
 
-            record.total_tenants_count = self.env['flat.transaction'].search_count([
-                ('status', 'in', ['draft', 'confirmed', 'expired', 'terminated', 'cancelled'])
-            ])
+        try:
+            # 1. Flats & Occupancy
+            flats = self.env['flat.management'].search([('community_id', '=', cid)])
+            self.total_flats_count = len(flats)
+            self.occupied_flats_count = len(flats.filtered(lambda f: f.status == 'occupied'))
+            self.vacant_flats_count = len(flats.filtered(lambda f: f.status == 'available'))
+            self.occupancy_rate = (
+                        self.occupied_flats_count / self.total_flats_count * 100) if self.total_flats_count else 0.0
 
-            record.active_tenants_count = self.env['flat.management'].search_count([
-                ('status', '=', 'occupied')
-            ])
+            flat_ids = flats.ids
+            if flat_ids:
+                self.total_residents_count = self.env['family.member'].search_count([('flat_id', 'in', flat_ids)])
+                self.total_pets_count = self.env['pet.management'].search_count(
+                    [('flat_id', 'in', flat_ids), ('active', '=', True)])
+                self.total_vehicles_count = self.env['vehicle.management'].search_count(
+                    [('flat_id', 'in', flat_ids), ('active', '=', True)])
+            else:
+                self.total_residents_count = self.total_pets_count = self.total_vehicles_count = 0
 
-            # Flat Stats
-            record.occupied_flats_count = self.env['flat.management'].search_count([
-                ('status', '=', 'occupied')
-            ])
-            record.vacant_flats_count = self.env['flat.management'].search_count([
-                ('status', '=', 'available')
-            ])
-            # Maintenance Stats (keep as is)
-            record.total_maintenance_count = self.env['flat.maintenance'].search_count([])
-            record.pending_maintenance_count = self.env['flat.maintenance'].search_count([
-                ('status', '=', 'draft')
-            ])
-            record.confirmed_maintenance_count = self.env['flat.maintenance'].search_count([
-                ('status', '=', 'confirmed')
-            ])
+            # 2. Maintenance Analytics
+            m_records = self.env['flat.maintenance'].search([('community_id', '=', cid)])
+            self.total_maintenance_count = len(m_records)
+            self.pending_maintenance_count = len(m_records.filtered(lambda m: m.status == 'draft'))
+            self.confirmed_maintenance_count = len(m_records.filtered(lambda m: m.status == 'confirmed'))
 
-            # CORRECTED: Maintenance Amounts based on INVOICES only
-            total_invoiced_amount = 0.0  # Sum of all invoice amounts
-            collected_amount = 0.0  # Sum of PAID invoice amounts
-            pending_amount = 0.0  # Sum of UNPAID invoice amounts
+            t_inv, c_amt, p_amt = 0.0, 0.0, 0.0
+            seen_inv = set()
+            for m in m_records:
+                for inv in m.invoice_ids:
+                    if inv.id in seen_inv: continue
+                    seen_inv.add(inv.id)
+                    t_inv += inv.amount_total
+                    if inv.payment_state == 'paid':
+                        c_amt += inv.amount_total
+                    elif inv.payment_state == 'partial':
+                        c_amt += (inv.amount_total - inv.amount_residual)
+                        p_amt += inv.amount_residual
+                    else:
+                        p_amt += inv.amount_total
 
-            # Get all maintenance records
-            maintenance_records = self.env['flat.maintenance'].search([])
+            self.total_maintenance_amount = t_inv
+            self.collected_amount = c_amt
+            self.pending_amount = p_amt
 
-            # Track invoices we've already counted (to avoid duplicates)
-            processed_invoices = set()
+            # 3. Corpus Fund Analytics
+            c_records = self.env['corpus.fund.invoice'].search([('community_id', '=', cid)])
+            self.total_corpus_fund_count = len(c_records)
+            self.draft_corpus_fund_count = len(c_records.filtered(lambda c: c.state == 'draft'))
+            self.invoiced_corpus_fund_count = len(c_records.filtered(lambda c: c.state == 'invoiced'))
 
-            for maintenance in maintenance_records:
-                # Check each invoice for this maintenance
-                for invoice in maintenance.invoice_ids:
-                    # Skip if we already processed this invoice
-                    if invoice.id in processed_invoices:
-                        continue
-
-                    processed_invoices.add(invoice.id)
-
-                    # Add to total invoiced amount (all invoices)
-                    total_invoiced_amount += invoice.amount_total
-
-                    # Check payment status
-                    if invoice.payment_state == 'paid':
-                        # Invoice is fully PAID
-                        collected_amount += invoice.amount_total
-                    elif invoice.payment_state in ['not_paid', 'partial']:
-                        # Invoice is NOT PAID or PARTIALLY PAID
-                        if invoice.payment_state == 'partial':
-                            # For partial payments: paid portion to collected, unpaid to pending
-                            paid_amount = invoice.amount_total - invoice.amount_residual
-                            collected_amount += paid_amount
-                            pending_amount += invoice.amount_residual
-                        else:  # not_paid
-                            pending_amount += invoice.amount_total
-                    elif invoice.state == 'draft':
-                        # Invoice is still draft
-                        pending_amount += invoice.amount_total
-
-            # Set the computed values
-            record.total_maintenance_amount = total_invoiced_amount  # Total of all invoices
-            record.collected_amount = collected_amount  # Total paid amount
-            record.pending_amount = pending_amount  # Total unpaid amount
-
-            # NEW: Corpus Fund Statistics
-            record.total_corpus_fund_count = self.env['corpus.fund.invoice'].search_count([])
-            record.draft_corpus_fund_count = self.env['corpus.fund.invoice'].search_count([
-                ('state', '=', 'draft')
-            ])
-            record.invoiced_corpus_fund_count = self.env['corpus.fund.invoice'].search_count([
-                ('state', '=', 'invoiced')
-            ])
-
-            # Corpus Fund Amounts
-            total_corpus_fund_amount = 0.0
-            collected_corpus_fund_amount = 0.0
-            pending_corpus_fund_amount = 0.0
-
-            # Get all corpus fund invoices
-            corpus_fund_records = self.env['corpus.fund.invoice'].search([])
-
-            for corpus in corpus_fund_records:
-                total_corpus_fund_amount += corpus.amount
-
-                # Check if invoice exists and its payment status
-                if corpus.invoice_id:
-                    invoice = corpus.invoice_id
-                    if invoice.payment_state == 'paid':
-                        collected_corpus_fund_amount += invoice.amount_total
-                    elif invoice.payment_state in ['not_paid', 'partial']:
-                        if invoice.payment_state == 'partial':
-                            paid_amount = invoice.amount_total - invoice.amount_residual
-                            collected_corpus_fund_amount += paid_amount
-                            pending_corpus_fund_amount += invoice.amount_residual
-                        else:  # not_paid
-                            pending_corpus_fund_amount += invoice.amount_total
-                    elif invoice.state == 'draft':
-                        pending_corpus_fund_amount += invoice.amount_total
+            t_corp, c_corp, p_corp = 0.0, 0.0, 0.0
+            for c in c_records:
+                t_corp += c.amount
+                if c.invoice_id:
+                    inv = c.invoice_id
+                    if inv.payment_state == 'paid':
+                        c_corp += inv.amount_total
+                    elif inv.payment_state == 'partial':
+                        c_corp += (inv.amount_total - inv.amount_residual)
+                        p_corp += inv.amount_residual
+                    else:
+                        p_corp += inv.amount_total
                 else:
-                    # No invoice created yet, amount is pending
-                    pending_corpus_fund_amount += corpus.amount
+                    p_corp += c.amount
 
-            # Set corpus fund values
-            record.total_corpus_fund_amount = total_corpus_fund_amount
-            record.collected_corpus_fund_amount = collected_corpus_fund_amount
-            record.pending_corpus_fund_amount = pending_corpus_fund_amount
+            self.total_corpus_fund_amount = t_corp
+            self.collected_corpus_fund_amount = c_corp
+            self.pending_corpus_fund_amount = p_corp
 
-            # Event Stats
-            record.total_events_count = self.env['community.festival'].search_count([])
-            record.draft_events_count = self.env['community.festival'].search_count([
-                ('state', '=', 'draft')
-            ])
-            record.submitted_events_count = self.env['community.festival'].search_count([
-                ('state', '=', 'submitted')
-            ])
-            record.approved_events_count = self.env['community.festival'].search_count([
-                ('state', '=', 'approved')
-            ])
+            # 4. Events Analytics
+            events = self.env['community.festival'].search([('community_id', '=', cid)])
+            self.total_events_count = len(events)
+            self.draft_events_count = len(events.filtered(lambda e: e.state == 'draft'))
+            self.approved_events_count = len(events.filtered(lambda e: e.state == 'approved'))
+            self.total_events_expense = sum(events.mapped('total_expense'))
 
-            event_records = self.env['community.festival'].search([])
-            record.total_events_expense = sum(rec.total_expense for rec in event_records)
+            # --- GENERATE CSS CHARTS ---
 
-            # Resident Stats
-            record.total_residents_count = self.env['family.member'].search_count([])
-            record.adult_residents_count = self.env['family.member'].search_count([
-                ('member_type', '=', 'adult')
-            ])
-            record.child_residents_count = self.env['family.member'].search_count([
-                ('member_type', '=', 'child')
-            ])
+            # Occupancy Bar
+            occ_pct = self.occupancy_rate
+            vac_pct = 100 - occ_pct
+            self.chart_occupancy_html = f"""
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 700; font-size: 0.85rem; color: #475569;">
+                        <span><i class="fa fa-circle text-primary"></i> Occupied ({self.occupied_flats_count})</span>
+                        <span><i class="fa fa-circle text-warning"></i> Available ({self.vacant_flats_count})</span>
+                    </div>
+                    <div style="height: 20px; width: 100%; background: #fef3c7; border-radius: 10px; overflow: hidden; display: flex; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="width: {occ_pct}%; background: linear-gradient(90deg, #3b82f6, #60a5fa); transition: 1s ease;"></div>
+                    </div>
+                </div>
+            """
 
-            # Pet Stats
-            record.total_pets_count = self.env['pet.management'].search_count([
-                ('active', '=', True)
-            ])
-            record.dog_count = self.env['pet.management'].search_count([
-                ('pet_type', '=', 'dog'),
-                ('active', '=', True)
-            ])
-            record.cat_count = self.env['pet.management'].search_count([
-                ('pet_type', '=', 'cat'),
-                ('active', '=', True)
-            ])
-            record.other_pets_count = record.total_pets_count - record.dog_count - record.cat_count
+            # Financial Bar (Maintenance)
+            m_total = self.collected_amount + self.pending_amount or 1
+            m_col_pct = (self.collected_amount / m_total) * 100
+            self.chart_finance_html = f"""
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 700; font-size: 0.85rem; color: #475569;">
+                        <span><i class="fa fa-circle text-success"></i> Collected (₹{int(self.collected_amount):,})</span>
+                        <span><i class="fa fa-circle text-danger"></i> Pending (₹{int(self.pending_amount):,})</span>
+                    </div>
+                    <div style="height: 20px; width: 100%; background: #fee2e2; border-radius: 10px; overflow: hidden; display: flex; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="width: {m_col_pct}%; background: linear-gradient(90deg, #10b981, #34d399); transition: 1s ease;"></div>
+                    </div>
+                </div>
+            """
 
-            # Vehicle Stats
-            record.total_vehicles_count = self.env['vehicle.management'].search_count([
-                ('active', '=', True)
-            ])
-            record.car_count = self.env['vehicle.management'].search_count([
-                ('vehicle_type', '=', 'car'),
-                ('active', '=', True)
-            ])
-            record.motorcycle_count = self.env['vehicle.management'].search_count([
-                ('vehicle_type', '=', 'motorcycle'),
-                ('active', '=', True)
-            ])
-            record.other_vehicles_count = record.total_vehicles_count - record.car_count - record.motorcycle_count
+            # --- GENERATE ACTIVITY FEEDS ---
+            def get_badge(text, color_type):
+                colors = {
+                    'draft': ('#f1f5f9', '#475569'), 'confirmed': ('#dbeafe', '#2563eb'),
+                    'approved': ('#d1fae5', '#059669'),
+                    'invoiced': ('#fef3c7', '#d97706'), 'submitted': ('#f3e8ff', '#7e22ce')
+                }
+                bg, txt = colors.get(text.lower(), ('#f1f5f9', '#475569'))
+                return f"<span style='background:{bg}; color:{txt}; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase;'>{text}</span>"
 
+            # Maintenance Feed
+            recent_m = self.env['flat.maintenance'].search([('community_id', '=', cid)], limit=limit,
+                                                           order='create_date desc')
+            m_html = "<div style='display:flex; flex-direction:column; gap:12px;'>"
+            for m in recent_m:
+                amt = m.standard_amount if m.calculation_type == 'standard' else (m.flat_area * m.area_rate)
+                m_html += f"<div style='padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;'><div style='display:flex; flex-direction:column;'><strong style='color:#0f172a;'>{m.tenant_id.name}</strong><span style='color:#64748b; font-size:0.8rem;'>{m.flat_id.name if m.flat_id else 'General'} - ₹{amt:,.2f}</span></div>{get_badge(m.status, 'maint')}</div>"
+            self.feed_maintenance_html = m_html + "</div>" if recent_m else "<p class='text-muted'>No recent maintenance records.</p>"
+
+            # Corpus Feed
+            recent_c = self.env['corpus.fund.invoice'].search([('community_id', '=', cid)], limit=limit,
+                                                              order='create_date desc')
+            c_html = "<div style='display:flex; flex-direction:column; gap:12px;'>"
+            for c in recent_c:
+                c_html += f"<div style='padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;'><div style='display:flex; flex-direction:column;'><strong style='color:#0f172a;'>{c.flat_id.name}</strong><span style='color:#64748b; font-size:0.8rem;'>₹{c.amount:,.2f}</span></div>{get_badge(c.state, 'corpus')}</div>"
+            self.feed_corpus_html = c_html + "</div>" if recent_c else "<p class='text-muted'>No recent corpus invoices.</p>"
+
+            # Events Feed
+            recent_e = self.env['community.festival'].search([('community_id', '=', cid)], limit=limit,
+                                                             order='date_start desc')
+            e_html = "<div style='display:flex; flex-direction:column; gap:12px;'>"
+            for e in recent_e:
+                e_html += f"<div style='padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;'><div style='display:flex; flex-direction:column;'><strong style='color:#0f172a;'>{e.name}</strong><span style='color:#64748b; font-size:0.8rem;'><i class='fa fa-calendar-o'></i> {e.date_start.strftime('%b %d, %Y') if e.date_start else 'TBD'}</span></div>{get_badge(e.state, 'event')}</div>"
+            self.feed_events_html = e_html + "</div>" if recent_e else "<p class='text-muted'>No upcoming events.</p>"
+
+        except Exception as e:
+            _logger.error(f"Error computing financial dashboard data: {e}")
+
+    # Standard Actions
     def refresh_dashboard(self):
-        """Refresh dashboard data"""
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'reload',
-        }
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     def action_open_maintenance(self):
-        """Open maintenance list view"""
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Maintenance',
-            'res_model': 'flat.maintenance',
-            'view_mode': 'list,form',
-            'target': 'current',
-        }
+        return {'type': 'ir.actions.act_window', 'name': 'Maintenance', 'res_model': 'flat.maintenance',
+                'view_mode': 'list,form', 'target': 'current'}
 
     def action_open_corpus_fund(self):
-        """Open corpus fund list view"""
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Corpus Fund Invoices',
-            'res_model': 'corpus.fund.invoice',
-            'view_mode': 'list,form',
-            'target': 'current',
-        }
+        return {'type': 'ir.actions.act_window', 'name': 'Corpus Fund', 'res_model': 'corpus.fund.invoice',
+                'view_mode': 'list,form', 'target': 'current'}
 
     def action_open_events(self):
-        """Open events list view"""
+        return {'type': 'ir.actions.act_window', 'name': 'Events', 'res_model': 'community.festival',
+                'view_mode': 'list,form', 'target': 'current'}
+
+    @api.model
+    def action_open_dashboard(self):
+        dashboard = self.create({})
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Community Events',
-            'res_model': 'community.festival',
-            'view_mode': 'list,form',
-            'target': 'current',
+            'name': 'Financial Operations Dashboard',
+            'res_model': 'real.estate.dashboard',
+            'res_id': dashboard.id,
+            'view_mode': 'form',
+            'target': 'inline',
+            'flags': {'mode': 'readonly'},
         }
 
-    def action_open_residents(self):
-        """Open residents list view"""
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Family Members',
-            'res_model': 'family.member',
-            'view_mode': 'list,form',
-            'target': 'current',
-        }
-
-    def action_open_pets(self):
-        """Open pets list view"""
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Pets',
-            'res_model': 'pet.management',
-            'view_mode': 'list,form',
-            'target': 'current',
-        }
-
-    def action_open_vehicles(self):
-        """Open vehicles list view"""
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Vehicles',
-            'res_model': 'vehicle.management',
-            'view_mode': 'list,form',
-            'target': 'current',
-        }

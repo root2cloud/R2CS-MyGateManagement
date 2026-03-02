@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="1">
+        <record id="ir_cron_daily_overdue_invoice_reminder" model="ir.cron">
+            <field name="name">MyGate: Daily Overdue Invoice Reminders</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_send_overdue_reminders()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+
+    <data>
+        <record id="email_template_overdue_invoice" model="mail.template">
+            <field name="name">Overdue Invoice Reminder</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="subject">Action Required: Overdue Invoice {{ object.name }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
+                    <div style="background-color: #ffffff; max-width: 600px; margin: 0 auto; border-radius: 10px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <h2 style="color: #ee5253; margin-top: 0;">Payment Reminder</h2>
+                        <p style="font-size: 16px; color: #2c3e50;">
+                            Dear <strong><t t-out="object.partner_id.name"></t></strong>,
+                        </p>
+                        <p style="font-size: 15px; color: #4a5568; line-height: 1.5;">
+                            This is a friendly reminder that your community invoice <strong><t t-out="object.name"></t></strong> is currently overdue.
+                        </p>
+
+                        <div style="background-color: #f1f2f6; border-left: 4px solid #ee5253; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                            <p style="margin: 0 0 10px 0; font-size: 15px;"><strong>Amount Due:</strong> <span style="color: #ee5253; font-weight: bold; font-size: 18px;"><t t-out="format_amount(object.amount_residual, object.currency_id)"></t></span></p>
+                            <p style="margin: 0; font-size: 14px; color: #747d8c;"><strong>Due Date:</strong> <t t-out="object.invoice_date_due"></t></p>
+                        </div>
+
+                        <p style="font-size: 15px; color: #4a5568;">
+                            Please clear this balance at your earliest convenience. You can view and pay your invoice directly through the community portal:
+                        </p>
+
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a t-att-href="object.get_portal_url()" style="background-color: #0984e3; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px; display: inline-block;">
+                                Pay Invoice Now
+                            </a>
+                        </div>
+
+                        <p style="font-size: 13px; color: #a4b0be; border-top: 1px solid #dfe4ea; padding-top: 15px;">
+                            If you have already made this payment, please disregard this email.<br/>
+                            Thank you,<br/>
+                            <strong>MyGate Community Management</strong>
+                        </p>
+                    </div>
+                </div>
+            </field>
+        </record>
+    </data>
+
+</odoo>

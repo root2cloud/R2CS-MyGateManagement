@@ -28,6 +28,9 @@ class VisitingHelpEntry(models.Model):
         default=lambda self: self.env.user.partner_id,
         readonly=True
     )
+    flat_id = fields.Many2one('flat.management', string='Flat', required=True)
+    community_id = fields.Many2one('community.management', string='Community',
+                                   related='flat_id.community_id', store=True)
 
     category_id = fields.Many2one(
         'community.visiting.help.category',

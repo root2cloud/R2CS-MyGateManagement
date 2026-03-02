@@ -4,13 +4,10 @@
         <field name="name">guest.invite.kanban</field>
         <field name="model">guest.invite</field>
         <field name="arch" type="xml">
-            <kanban
-                    class="o_kanban_mobile"
-                    default_group_by="state"
-            >
-                <!-- Fields used in kanban -->
+            <kanban class="o_kanban_mobile" default_group_by="state">
                 <field name="state"/>
                 <field name="resident_id"/>
+                <field name="flat_id"/>
                 <field name="invite_type"/>
                 <field name="start_datetime"/>
                 <field name="end_datetime"/>
@@ -20,68 +17,29 @@
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card oe_kanban_global_click">
-
-                            <!-- Header -->
                             <div class="o_kanban_header d-flex justify-content-between">
                                 <strong>
                                     <t t-esc="record.resident_id.value"/>
                                 </strong>
-                                <span
-                                        t-att-class="
-                                    'badge ' +
-                                    (record.state.raw_value == 'active' and 'bg-success' or
-                                     record.state.raw_value == 'expired' and 'bg-secondary' or
-                                     record.state.raw_value == 'cancelled' and 'bg-danger' or
-                                     'bg-warning')
-                                "
-                                >
+                                <span t-att-class="'badge ' + (record.state.raw_value == 'active' and 'bg-success' or record.state.raw_value == 'expired' and 'bg-secondary' or record.state.raw_value == 'cancelled' and 'bg-danger' or 'bg-warning')">
                                     <t t-esc="record.state.value"/>
                                 </span>
                             </div>
 
-                            <!-- Body -->
                             <div class="o_kanban_content mt-2">
-                                <div>
-                                    <strong>Invite Type:</strong>
-                                    <t t-esc="record.invite_type.value"/>
-                                </div>
-
+                                <div><strong>Flat:</strong> <t t-esc="record.flat_id.value"/></div>
+                                <div><strong>Invite Type:</strong> <t t-esc="record.invite_type.value"/></div>
                                 <div class="mt-1">
                                     <strong>OTP:</strong>
-                                    <span class="text-primary fw-bold">
-                                        <t t-esc="record.otpcode.value"/>
-                                    </span>
+                                    <span class="text-primary fw-bold"><t t-esc="record.otpcode.value"/></span>
                                 </div>
-
                                 <div class="mt-1">
-                                    <strong>Valid From:</strong>
-                                    <t t-esc="record.start_datetime.value"/>
+                                    <strong>Valid From:</strong> <t t-esc="record.start_datetime.value"/>
                                 </div>
-
                                 <div>
-                                    <strong>Valid Till:</strong>
-                                    <t t-esc="record.end_datetime.value"/>
+                                    <strong>Valid Till:</strong> <t t-esc="record.end_datetime.value"/>
                                 </div>
-
-                                <t t-if="record.is_private.raw_value">
-                                    <div class="mt-1 text-muted">
-                                        🔒 Private Invite
-                                    </div>
-                                </t>
                             </div>
-
-                            <!-- Footer -->
-                            <div class="o_kanban_footer mt-2 d-flex justify-content-end">
-                                <button
-                                        type="object"
-                                        name="action_share_invite"
-                                        class="btn btn-sm btn-outline-success"
-                                        t-if="record.state.raw_value == 'active'"
-                                >
-                                    Share
-                                </button>
-                            </div>
-
                         </div>
                     </t>
                 </templates>
@@ -89,7 +47,6 @@
         </field>
     </record>
 
-    <!-- SIMPLE FORM VIEW -->
     <record id="view_guest_invite_form" model="ir.ui.view">
         <field name="name">guest.invite.form</field>
         <field name="model">guest.invite</field>
@@ -98,9 +55,11 @@
                 <sheet>
                     <group>
                         <field name="resident_id" options="{'no_create': True}"/>
+                        <field name="flat_id"/>
+                        <field name="community_id"/>
                         <field name="invite_type" widget="radio"/>
                         <field name="is_private"/>
-                        <field name="otpcode" readonly="1"/>  <!-- ✅ FIXED: otpcode (no underscore) -->
+                        <field name="otpcode" readonly="1"/>
                     </group>
 
                     <group string="Guest(s)">
@@ -143,7 +102,6 @@
         </field>
     </record>
 
-    <!-- SIMPLE LIST VIEW -->
     <record id="view_guest_invite_list" model="ir.ui.view">
         <field name="name">guest.invite.list</field>
         <field name="model">guest.invite</field>
@@ -152,14 +110,14 @@
                 <field name="otpcode"/>
                 <field name="invite_type"/>
                 <field name="resident_id"/>
+                <field name="flat_id"/>
                 <field name="start_datetime"/>
                 <field name="end_datetime"/>
-                <field name="note"/>
+                <field name="state"/>
             </list>
         </field>
     </record>
 
-    <!-- SIMPLE ACTION -->
     <record id="action_guest_invite" model="ir.actions.act_window">
         <field name="name">Guest Invites</field>
         <field name="res_model">guest.invite</field>
@@ -170,16 +128,198 @@
     </record>
 
     <record id="cron_expire_guest_invites" model="ir.cron">
-    <field name="name">Expire Guest Invites</field>
-    <field name="model_id" ref="model_guest_invite"/>
-    <field name="state">code</field>
-    <field name="code">model.cron_expire_invites()</field>
-    <field name="interval_number">1</field>  <!-- Every 1 unit -->
-    <field name="interval_type">hours</field>  <!-- Check hourly -->
-      <!-- Unlimited runs -->
-    <field name="active" eval="True"/>
-</record>
-
-    <!-- MENU -->
+        <field name="name">Expire Guest Invites</field>
+        <field name="model_id" ref="model_guest_invite"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_expire_invites()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
 
 </odoo>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
+<!--    <record id="view_guest_invite_kanban" model="ir.ui.view">-->
+<!--        <field name="name">guest.invite.kanban</field>-->
+<!--        <field name="model">guest.invite</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <kanban-->
+<!--                    class="o_kanban_mobile"-->
+<!--                    default_group_by="state"-->
+<!--            >-->
+<!--                &lt;!&ndash; Fields used in kanban &ndash;&gt;-->
+<!--                <field name="state"/>-->
+<!--                <field name="resident_id"/>-->
+<!--                <field name="invite_type"/>-->
+<!--                <field name="start_datetime"/>-->
+<!--                <field name="end_datetime"/>-->
+<!--                <field name="otpcode"/>-->
+<!--                <field name="is_private"/>-->
+
+<!--                <templates>-->
+<!--                    <t t-name="kanban-box">-->
+<!--                        <div class="oe_kanban_card oe_kanban_global_click">-->
+
+<!--                            &lt;!&ndash; Header &ndash;&gt;-->
+<!--                            <div class="o_kanban_header d-flex justify-content-between">-->
+<!--                                <strong>-->
+<!--                                    <t t-esc="record.resident_id.value"/>-->
+<!--                                </strong>-->
+<!--                                <span-->
+<!--                                        t-att-class="-->
+<!--                                    'badge ' +-->
+<!--                                    (record.state.raw_value == 'active' and 'bg-success' or-->
+<!--                                     record.state.raw_value == 'expired' and 'bg-secondary' or-->
+<!--                                     record.state.raw_value == 'cancelled' and 'bg-danger' or-->
+<!--                                     'bg-warning')-->
+<!--                                "-->
+<!--                                >-->
+<!--                                    <t t-esc="record.state.value"/>-->
+<!--                                </span>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; Body &ndash;&gt;-->
+<!--                            <div class="o_kanban_content mt-2">-->
+<!--                                <div>-->
+<!--                                    <strong>Invite Type:</strong>-->
+<!--                                    <t t-esc="record.invite_type.value"/>-->
+<!--                                </div>-->
+
+<!--                                <div class="mt-1">-->
+<!--                                    <strong>OTP:</strong>-->
+<!--                                    <span class="text-primary fw-bold">-->
+<!--                                        <t t-esc="record.otpcode.value"/>-->
+<!--                                    </span>-->
+<!--                                </div>-->
+
+<!--                                <div class="mt-1">-->
+<!--                                    <strong>Valid From:</strong>-->
+<!--                                    <t t-esc="record.start_datetime.value"/>-->
+<!--                                </div>-->
+
+<!--                                <div>-->
+<!--                                    <strong>Valid Till:</strong>-->
+<!--                                    <t t-esc="record.end_datetime.value"/>-->
+<!--                                </div>-->
+
+<!--                                <t t-if="record.is_private.raw_value">-->
+<!--                                    <div class="mt-1 text-muted">-->
+<!--                                        🔒 Private Invite-->
+<!--                                    </div>-->
+<!--                                </t>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; Footer &ndash;&gt;-->
+<!--                            <div class="o_kanban_footer mt-2 d-flex justify-content-end">-->
+<!--                                <button-->
+<!--                                        type="object"-->
+<!--                                        name="action_share_invite"-->
+<!--                                        class="btn btn-sm btn-outline-success"-->
+<!--                                        t-if="record.state.raw_value == 'active'"-->
+<!--                                >-->
+<!--                                    Share-->
+<!--                                </button>-->
+<!--                            </div>-->
+
+<!--                        </div>-->
+<!--                    </t>-->
+<!--                </templates>-->
+<!--            </kanban>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    &lt;!&ndash; SIMPLE FORM VIEW &ndash;&gt;-->
+<!--    <record id="view_guest_invite_form" model="ir.ui.view">-->
+<!--        <field name="name">guest.invite.form</field>-->
+<!--        <field name="model">guest.invite</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="Guest Invite">-->
+<!--                <sheet>-->
+<!--                    <group>-->
+<!--                        <field name="resident_id" options="{'no_create': True}"/>-->
+<!--                        <field name="invite_type" widget="radio"/>-->
+<!--                        <field name="is_private"/>-->
+<!--                        <field name="otpcode" readonly="1"/>  &lt;!&ndash; ✅ FIXED: otpcode (no underscore) &ndash;&gt;-->
+<!--                    </group>-->
+
+<!--                    <group string="Guest(s)">-->
+<!--                        <field name="guest_line_ids">-->
+<!--                            <list editable="bottom">-->
+<!--                                <field name="guest_name"/>-->
+<!--                                <field name="guest_mobile"/>-->
+<!--                            </list>-->
+<!--                        </field>-->
+<!--                    </group>-->
+
+<!--                    <notebook>-->
+<!--                        <page string="Once">-->
+<!--                            <group>-->
+<!--                                <field name="once_date"/>-->
+<!--                                <field name="once_start_time" widget="float_time"/>-->
+<!--                                <field name="once_valid_hours"/>-->
+<!--                            </group>-->
+<!--                        </page>-->
+<!--                        <page string="Frequently">-->
+<!--                            <group>-->
+<!--                                <field name="duration_type"/>-->
+<!--                                <field name="freq_start_date"/>-->
+<!--                                <field name="freq_end_date"/>-->
+<!--                            </group>-->
+<!--                        </page>-->
+<!--                    </notebook>-->
+
+<!--                    <group string="Details">-->
+<!--                        <field name="start_datetime"/>-->
+<!--                        <field name="end_datetime"/>-->
+<!--                        <field name="note"/>-->
+<!--                    </group>-->
+<!--                </sheet>-->
+<!--                <footer>-->
+<!--                    <button string="Compute Window" type="object" name="action_compute_window" class="btn-primary"/>-->
+<!--                    <button string="Close" special="cancel" class="btn-secondary"/>-->
+<!--                </footer>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    &lt;!&ndash; SIMPLE LIST VIEW &ndash;&gt;-->
+<!--    <record id="view_guest_invite_list" model="ir.ui.view">-->
+<!--        <field name="name">guest.invite.list</field>-->
+<!--        <field name="model">guest.invite</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <list>-->
+<!--                <field name="otpcode"/>-->
+<!--                <field name="invite_type"/>-->
+<!--                <field name="resident_id"/>-->
+<!--                <field name="start_datetime"/>-->
+<!--                <field name="end_datetime"/>-->
+<!--                <field name="note"/>-->
+<!--            </list>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    &lt;!&ndash; SIMPLE ACTION &ndash;&gt;-->
+<!--    <record id="action_guest_invite" model="ir.actions.act_window">-->
+<!--        <field name="name">Guest Invites</field>-->
+<!--        <field name="res_model">guest.invite</field>-->
+<!--        <field name="view_mode">kanban,list,form</field>-->
+<!--        <field name="view_ids" eval="[(5, 0, 0),-->
+<!--            (0, 0, {'view_mode': 'list', 'view_id': ref('view_guest_invite_list')}),-->
+<!--            (0, 0, {'view_mode': 'form', 'view_id': ref('view_guest_invite_form')})]"/>-->
+<!--    </record>-->
+
+<!--    <record id="cron_expire_guest_invites" model="ir.cron">-->
+<!--    <field name="name">Expire Guest Invites</field>-->
+<!--    <field name="model_id" ref="model_guest_invite"/>-->
+<!--    <field name="state">code</field>-->
+<!--    <field name="code">model.cron_expire_invites()</field>-->
+<!--    <field name="interval_number">1</field>  &lt;!&ndash; Every 1 unit &ndash;&gt;-->
+<!--    <field name="interval_type">hours</field>  &lt;!&ndash; Check hourly &ndash;&gt;-->
+<!--      &lt;!&ndash; Unlimited runs &ndash;&gt;-->
+<!--    <field name="active" eval="True"/>-->
+<!--</record>-->
+
+<!--    &lt;!&ndash; MENU &ndash;&gt;-->
+
+<!--</odoo>-->

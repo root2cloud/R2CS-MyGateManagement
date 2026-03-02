@@ -10,6 +10,8 @@
                 <sheet>
                     <group>
                         <field name="resident_id"/>
+                        <field name="flat_id"/>
+                        <field name="community_id"/>
                         <field name="mode"/>
                         <field name="state" readonly="1"/>
                     </group>

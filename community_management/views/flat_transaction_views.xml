@@ -47,6 +47,7 @@
 
                     <group>
                         <group string="Property Selection">
+                            <field name="community_id" options="{'no_create': True}"/>
                             <field name="building_id" options="{'no_create': True}"/>
                             <field name="floor_id" options="{'no_create': True}"/>
                             <field name="flat_id" options="{'no_create': True}"/>

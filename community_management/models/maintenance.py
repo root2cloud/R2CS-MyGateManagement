@@ -10,8 +10,16 @@ class Maintenance(models.Model):
 
     # Tenant & Property
     tenant_id = fields.Many2one('res.partner', string='Tenant', required=True, tracking=True)
-    flat_id = fields.Many2one('flat.management', string='Flat', tracking=True)
-    building_id = fields.Many2one('building.management', string='Building', related='flat_id.building_id', store=True)
+    community_id = fields.Many2one('community.management', string='Community', tracking=True)
+    building_id = fields.Many2one('building.management', string='Building',
+                                  domain="[('community_id', '=', community_id)]", tracking=True)
+    flat_id = fields.Many2one('flat.management', string='Flat',
+                              domain="[('building_id', '=', building_id)]", tracking=True)
+
+    # Tenant & Property
+    # tenant_id = fields.Many2one('res.partner', string='Tenant', required=True, tracking=True)
+    # flat_id = fields.Many2one('flat.management', string='Flat', tracking=True)
+    # building_id = fields.Many2one('building.management', string='Building', related='flat_id.building_id', store=True)
 
     # Flat area - needed for area-based calculations
     flat_area = fields.Float(string='Flat Area (sq.ft.)',
@@ -61,7 +69,7 @@ class Maintenance(models.Model):
 
     @api.onchange('tenant_id')
     def _onchange_tenant_id(self):
-        """Auto-fill flat when tenant is selected"""
+        """Auto-fill property details when tenant is selected"""
         if self.tenant_id:
             # Find current flat occupied by this tenant
             flat = self.env['flat.management'].search([
@@ -69,18 +77,41 @@ class Maintenance(models.Model):
                 ('status', '=', 'occupied')
             ], limit=1)
 
-            if flat:
-                self.flat_id = flat.id
-            else:
+            if not flat:
                 # Try to find from any transaction
                 transaction = self.env['flat.transaction'].search([
                     ('tenant_id', '=', self.tenant_id.id)
                 ], order='lease_end_date desc', limit=1)
-
                 if transaction:
-                    self.flat_id = transaction.flat_id.id
-                else:
-                    self.flat_id = False
+                    flat = transaction.flat_id
+
+            if flat:
+                # Automatically fill all three fields
+                self.community_id = flat.community_id.id
+                self.building_id = flat.building_id.id
+                self.flat_id = flat.id
+            else:
+                self.community_id = False
+                self.building_id = False
+                self.flat_id = False
+
+    @api.onchange('community_id')
+    def _onchange_community_id(self):
+        """Clear downward dependencies when community changes"""
+        self.building_id = False
+        self.flat_id = False
+        return {'domain': {'building_id': [('community_id', '=', self.community_id.id)]}}
+
+    @api.onchange('building_id')
+    def _onchange_building_id(self):
+        """Clear downward dependencies when building changes"""
+        self.flat_id = False
+        return {'domain': {'flat_id': [('building_id', '=', self.building_id.id)]}}
+
+
+
+
+
 
     @api.depends('calculation_type', 'standard_amount', 'area_rate', 'flat_area')
     def _compute_total_amount(self):

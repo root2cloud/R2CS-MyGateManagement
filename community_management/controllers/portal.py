@@ -1,88 +1,103 @@
 from odoo import http
 from odoo.http import request
-from odoo.addons.portal.controllers.portal import CustomerPortal
 import base64
 
 
-class FamilyMemberPortal(CustomerPortal):
+class PortalFamilyMember(http.Controller):
 
-    @http.route(['/my/family'], type='http', auth='user', website=True)
-    def portal_my_family_members(self, **kw):
-        """Display family members list"""
+    # =====================================================
+    # CREATE FAMILY MEMBER
+    # =====================================================
+    @http.route(['/my/family-member/create'], type='http', auth="user", website=True)
+    def create_family_member(self, **post):
+
         partner = request.env.user.partner_id
 
-        # Get family members for current tenant
-        family_members = request.env['family.member'].search([('tenant_id', '=', partner.id)])
+        if request.httprequest.method == 'POST':
 
-        return request.render('community_management.portal_my_family_members', {
-            'family_members': family_members,
-            'page_name': 'family',
+            flat_id = int(post.get('flat_id'))
+
+            # Security check
+            flat = request.env['flat.management'].sudo().search([
+                '|',
+                ('tenant_id', '=', partner.id),
+                ('lease_owner_id', '=', partner.id),
+                ('id', '=', flat_id)
+            ], limit=1)
+
+            if not flat:
+                return request.redirect('/my/my-properties')
+
+            # Handle Photo
+            photo = False
+            if post.get('photo'):
+                photo = base64.b64encode(post.get('photo').read())
+
+            request.env['family.member'].sudo().create({
+                'tenant_id': partner.id,
+                'name': post.get('name'),
+                'member_type': post.get('member_type'),
+                'gender': post.get('gender'),
+                'date_of_birth': post.get('date_of_birth'),
+                'relationship': post.get('relationship'),
+                'email': post.get('email'),
+                'phone': post.get('phone'),
+                'aadhaar_number': post.get('aadhaar_number'),
+                'notes': post.get('notes'),
+                'photo': photo,
+            })
+
+            return request.redirect('/my/my-properties?property_id=%s&success=created' % flat_id)
+
+        flat = request.env['flat.management'].sudo().browse(int(post.get('flat_id')))
+        return request.render('community_management.portal_family_member_form', {
+            'page_name': 'create_family_member',
+            'flat': flat,
+            'member': False,
+            'relationships': request.env['family.member']._fields['relationship'].selection,
+            'genders': request.env['family.member']._fields['gender'].selection,
+            'member_types': request.env['family.member']._fields['member_type'].selection,
         })
 
-    @http.route(['/my/family/new'], type='http', auth='user', website=True)
-    def portal_family_member_new(self, **kw):
-        """Show form to add new family member"""
+
+    # =====================================================
+    # EDIT FAMILY MEMBER
+    # =====================================================
+    @http.route(['/my/family-member/edit/<int:member_id>'], type='http', auth="user", website=True)
+    def edit_family_member(self, member_id, **post):
+
+        partner = request.env.user.partner_id
+        member = request.env['family.member'].sudo().browse(member_id)
+
+        if member.tenant_id.id != partner.id:
+            return request.redirect('/my/my-properties')
+
+        if request.httprequest.method == 'POST':
+
+            photo = member.photo
+            if post.get('photo'):
+                photo = base64.b64encode(post.get('photo').read())
+
+            member.write({
+                'name': post.get('name'),
+                'member_type': post.get('member_type'),
+                'gender': post.get('gender'),
+                'date_of_birth': post.get('date_of_birth'),
+                'relationship': post.get('relationship'),
+                'email': post.get('email'),
+                'phone': post.get('phone'),
+                'aadhaar_number': post.get('aadhaar_number'),
+                'notes': post.get('notes'),
+                'photo': photo,
+            })
+
+            return request.redirect('/my/my-properties?property_id=%s&success=updated' % member.flat_id.id)
+
         return request.render('community_management.portal_family_member_form', {
-            'member': None,
-            'page_name': 'family',
-        })
-
-    @http.route(['/my/family/<int:member_id>/edit'], type='http', auth='user', website=True)
-    def portal_family_member_edit(self, member_id, **kw):
-        """Show form to edit family member"""
-        member = request.env['family.member'].browse(member_id)
-
-        # Check access
-        if member.tenant_id != request.env.user.partner_id:
-            return request.redirect('/my')
-
-        return request.render('community_management.portal_family_member_form', {
+            'page_name': 'edit_family_member',
             'member': member,
-            'page_name': 'family',
+            'flat': member.flat_id,
+            'relationships': request.env['family.member']._fields['relationship'].selection,
+            'genders': request.env['family.member']._fields['gender'].selection,
+            'member_types': request.env['family.member']._fields['member_type'].selection,
         })
-
-    @http.route(['/my/family/save'], type='http', auth='user', website=True, methods=['POST'], csrf=True)
-    def portal_family_member_save(self, member_id=None, **post):
-        """Save family member (create or update)"""
-        partner = request.env.user.partner_id
-
-        # Prepare values
-        values = {
-            'tenant_id': partner.id,
-            'name': post.get('name'),
-            'member_type': post.get('member_type'),
-            'relationship': post.get('relationship') or False,
-            'gender': post.get('gender') or False,
-            'date_of_birth': post.get('date_of_birth') or False,
-            'email': post.get('email') or False,
-            'phone': post.get('phone') or False,
-            'notes': post.get('notes') or False,
-            'aadhaar_number': post.get('aadhaar_number') or False,
-        }
-
-        # Handle photo upload
-        photo_file = request.httprequest.files.get('photo')
-        if photo_file and photo_file.filename:
-            values['photo'] = base64.b64encode(photo_file.read())
-
-        # Create or update
-        if member_id and member_id != 'None':
-            member = request.env['family.member'].browse(int(member_id))
-            # Check access
-            if member.tenant_id == partner:
-                member.write(values)
-        else:
-            request.env['family.member'].create(values)
-
-        return request.redirect('/my/family')
-
-    @http.route(['/my/family/<int:member_id>/delete'], type='http', auth='user', website=True)
-    def portal_family_member_delete(self, member_id, **kw):
-        """Delete family member"""
-        member = request.env['family.member'].browse(member_id)
-
-        # Check access
-        if member.tenant_id == request.env.user.partner_id:
-            member.unlink()
-
-        return request.redirect('/my/family')

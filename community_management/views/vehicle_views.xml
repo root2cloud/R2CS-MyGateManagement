@@ -25,6 +25,7 @@
                             <field name="tenant_id"/>
                             <field name="flat_id"/>
                             <field name="building_id"/>
+                            <field name="community_id"/>
                         </group>
                     </group>
 
@@ -51,6 +52,7 @@
                 <field name="color"/>
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
+                <field name="community_id"/>
             </list>
         </field>
     </record>
@@ -69,6 +71,9 @@
                 <field name="year"/>
                 <field name="color"/>
                 <field name="tenant_id"/>
+                <field name="flat_id"/>
+                <field name="building_id"/>
+                <field name="community_id"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card">
@@ -89,6 +94,9 @@
                                 <span t-if="record.color.raw_value"><i class="fa fa-paint-brush"/> <field name="color"/></span><br/>
                                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
                                     <span><i class="fa fa-user"/> <field name="tenant_id"/></span>
+                                    <span t-if="record.flat_id.raw_value"><i class="fa fa-home"/> <field name="flat_id"/></span><br/>
+                                    <span t-if="record.building_id.raw_value"><i class="fa fa-building"/> <field name="building_id"/></span><br/>
+                                    <span t-if="record.community_id.raw_value"><i class="fa fa-globe"/> <field name="community_id"/></span>
                                 </div>
                             </div>
                         </div>
@@ -99,6 +107,7 @@
     </record>
 
     <!-- Search View -->
+        <!-- Search View -->
     <record id="view_search_vehicle_management" model="ir.ui.view">
         <field name="name">vehicle.management.search</field>
         <field name="model">vehicle.management</field>
@@ -107,15 +116,30 @@
                 <field name="vehicle_number"/>
                 <field name="tenant_id"/>
                 <field name="flat_id"/>
+                <field name="building_id"/>
+                <field name="community_id"/>
                 <field name="make"/>
                 <field name="model"/>
+
                 <filter name="filter_car" string="Cars" domain="[('vehicle_type', '=', 'car')]"/>
                 <filter name="filter_motorcycle" string="Motorcycles" domain="[('vehicle_type', '=', 'motorcycle')]"/>
                 <filter name="filter_bicycle" string="Bicycles" domain="[('vehicle_type', '=', 'bicycle')]"/>
+                <filter name="filter_scooter" string="Scooters" domain="[('vehicle_type', '=', 'scooter')]"/>
+
+                <separator/>
+
+                <!-- Community Filters -->
+                <filter name="filter_community" string="By Community" context="{'group_by': 'community_id'}"/>
+
                 <group expand="0" string="Group By">
                     <filter name="group_vehicle_type" string="Vehicle Type" context="{'group_by': 'vehicle_type'}"/>
                     <filter name="group_tenant" string="Tenant" context="{'group_by': 'tenant_id'}"/>
+                    <filter name="group_flat" string="Flat" context="{'group_by': 'flat_id'}"/>
                     <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                    <filter name="group_community" string="Community" context="{'group_by': 'community_id'}"/>
+                    <filter name="group_make" string="Make/Brand" context="{'group_by': 'make'}"/>
+                    <filter name="group_year" string="Year" context="{'group_by': 'year'}"/>
+                    <filter name="group_color" string="Color" context="{'group_by': 'color'}"/>
                 </group>
             </search>
         </field>

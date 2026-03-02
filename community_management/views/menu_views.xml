@@ -183,13 +183,8 @@
               groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
 
 
-    <!-- Communication & Events -->
-    <menuitem id="menu_community_dashboard"
-              name="Overview Dashboard"
-              parent="menu_community_dashboard_root"
-              action="action_community_dashboard"
-              sequence="10"
-              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
+
 
 
     <menuitem id="menu_customer_inquiry"
@@ -200,12 +195,7 @@
               groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
 
 
-    <menuitem id="menu_notice_board"
-              name="Notice Board"
-              parent="menu_community_management_root"
-              action="action_notice_board"
-              sequence="40"
-              groups="community_management.group_community_president,community_management.group_community_secretary,community_management.group_community_security_guard"/>
+
 
     <menuitem id="menu_community_posts"
               name="Community Posts"

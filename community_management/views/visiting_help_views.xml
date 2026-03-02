@@ -8,6 +8,7 @@
             <list>
                 <field name="name"/>
                 <field name="active"/>
+
             </list>
         </field>
     </record>
@@ -34,6 +35,8 @@
                 <field name="category_id"/>
                 <field name="entry_type"/>
                 <field name="state"/>
+                <field name="flat_id"/>
+                <field name="community_id"/>
             </list>
         </field>
     </record>
@@ -46,6 +49,8 @@
                 <sheet>
                     <group>
                         <field name="tenant_id" readonly="1"/>
+                        <field name="flat_id"/>
+                        <field name="community_id"/>
                         <field name="category_id"/>
                         <field name="entry_type"/>
                         <field name="company_name"/>

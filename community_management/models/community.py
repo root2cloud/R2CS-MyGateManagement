@@ -244,6 +244,7 @@ class ResPartner(models.Model):
         ],
         string="Occupant Type"
     )
+    community_id = fields.Many2one('community.management', string='Community')
 
 
     def action_open_vehicle_details(self):

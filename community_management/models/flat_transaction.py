@@ -10,13 +10,25 @@ class FlatTransaction(models.Model):
     _rec_name = 'flat_id'
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    # Property Selection
-    building_id = fields.Many2one('building.management', string='Building', required=True, tracking=True)
+    community_id = fields.Many2one('community.management', string='Community', required=True, tracking=True)
+
+    # UPDATED: Domain filters buildings based on the selected community
+    building_id = fields.Many2one('building.management', string='Building',
+                                  domain="[('community_id', '=', community_id)]", required=True, tracking=True)
+
     floor_id = fields.Many2one('floor.management', string='Floor',
                                domain="[('building_id', '=', building_id)]", required=True, tracking=True)
     flat_id = fields.Many2one('flat.management', string='Flat',
                               domain="[('floor_id', '=', floor_id), ('building_id', '=', building_id)]",
                               required=True, tracking=True)
+
+    # Property Selection
+    # building_id = fields.Many2one('building.management', string='Building', required=True, tracking=True)
+    # floor_id = fields.Many2one('floor.management', string='Floor',
+    #                            domain="[('building_id', '=', building_id)]", required=True, tracking=True)
+    # flat_id = fields.Many2one('flat.management', string='Flat',
+    #                           domain="[('floor_id', '=', floor_id), ('building_id', '=', building_id)]",
+    #                           required=True, tracking=True)
 
     # Lease Parties
     lease_owner_id = fields.Many2one('res.partner', string='Lease Owner (Optional)',
@@ -130,11 +142,22 @@ class FlatTransaction(models.Model):
             }
         }
     #
+        # NEW ONCHANGE METHOD
+    @api.onchange('community_id')
+    def _onchange_community_id(self):
+        # Clear downward dependencies when community changes
+        self.building_id = False
+        self.floor_id = False
+        self.flat_id = False
+        return {'domain': {'building_id': [('community_id', '=', self.community_id.id)]}}
+
     @api.onchange('building_id')
     def _onchange_building_id(self):
         self.floor_id = False
         self.flat_id = False
         return {'domain': {'floor_id': [('building_id', '=', self.building_id.id)]}}
+
+
 
     @api.onchange('floor_id')
     def _onchange_floor_id(self):

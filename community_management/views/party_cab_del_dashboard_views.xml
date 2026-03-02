@@ -1,611 +1,754 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Dashboard Action -->
         <record id="action_community_access_dashboard" model="ir.actions.act_window">
             <field name="name">Access &amp; Guest Management Dashboard</field>
             <field name="res_model">community.access.dashboard</field>
             <field name="view_mode">form</field>
-            <field name="target">current</field>
-        </record>
+            <field name="target">inline</field> </record>
 
-        <!-- Dashboard Menu Item -->
-        <menuitem id="menu_community_access_dashboard"
-                  name="Access Dashboard"
-                  parent="menu_community_dashboard_root"
-                  sequence="3"
-                  action="action_community_access_dashboard"/>
+        <menuitem id="menu_community_access_dashboard" name="Access Dashboard" parent="menu_community_dashboard_root" sequence="3" action="action_community_access_dashboard"/>
 
-        <!-- Dashboard Form View -->
         <record id="view_community_access_dashboard_form" model="ir.ui.view">
-            <field name="name">community.access.dashboard.form</field>
+            <field name="name">community.access.dashboard.form.premium</field>
             <field name="model">community.access.dashboard</field>
             <field name="arch" type="xml">
-                <form string="Community Access &amp; Guest Management Dashboard" class="oe_dashboard_form">
-                    <header>
-                        <h1 style="color: #2c3e50; font-weight: 700; font-size: 2rem;">
-                            <i class="fa fa-door-open mr-2" title="Access Dashboard"/>
-                            Access &amp; Guest Management Dashboard
-                        </h1>
-                        <div style="float: right;">
-                            <button name="action_refresh_dashboard" type="object" string="Refresh" class="btn-primary"/>
-                        </div>
-                    </header>
-                    <sheet>
-                        <div style="padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
-                            <!-- Top Stats Cards Row - Gradient Colors -->
-                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
-                                <!-- Card 1: Visitor Requests (Added before Cab Approvals) -->
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(26, 188, 156, 0.2); transition: transform 0.3s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
-                                                    Visitor Requests
-                                                </h6>
-                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                                                    <field name="total_visitor_requests" widget="statinfo"/>
-                                                </h2>
-                                            </div>
-                                            <div>
-                                                <i class="fa fa-users fa-3x" style="opacity: 0.5;" title="Visitors"/>
-                                            </div>
-                                        </div>
-                                        <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Today:
-                                            <field name="today_visitor_requests" widget="statinfo"/>
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- Card 1: Cab Approvals -->
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(52, 152, 219, 0.2); transition: transform 0.3s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
-                                                    Cab Approvals
-                                                </h6>
-                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                                                    <field name="total_cab_approvals" widget="statinfo"/>
-                                                </h2>
-                                            </div>
-                                            <div>
-                                                <i class="fa fa-taxi fa-3x" style="opacity: 0.5;" title="Cabs"/>
-                                            </div>
-                                        </div>
-                                        <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Active:
-                                            <field name="active_cab_approvals" widget="statinfo"/>
-                                        </p>
-                                    </div>
-                                </div>
+                <form string="Community Access Dashboard" create="false" edit="false">
 
-                                <!-- Card 2: Delivery Passes -->
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(46, 204, 113, 0.2); transition: transform 0.3s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
-                                                    Delivery Passes
-                                                </h6>
-                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                                                    <field name="total_delivery_passes" widget="statinfo"/>
-                                                </h2>
-                                            </div>
-                                            <div>
-                                                <i class="fa fa-truck fa-3x" style="opacity: 0.5;" title="Delivery"/>
-                                            </div>
-                                        </div>
-                                        <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Active:
-                                            <field name="active_delivery_passes" widget="statinfo"/>
-                                        </p>
-                                    </div>
-                                </div>
+                    <style>
+                        .dash-bg3 { background-color: #f1f5f9; padding: 25px; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+                        .glass-header3 { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; border-radius: 20px; padding: 25px 35px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
+                        .community-dropdown3 { background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; backdrop-filter: blur(8px); min-width: 320px; border: 1px solid rgba(255,255,255,0.3); }
+                        .community-dropdown3 .o_input { background: transparent !important; color: white !important; font-weight: bold; font-size: 1.1rem; border: none !important; }
+                        .prem-card3 { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); margin-bottom: 25px; transition: transform 0.2s; height: 100%; border: 1px solid #e2e8f0; }
+                        .prem-card3:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
+                        .stat-lg3 { font-size: 2.2rem; font-weight: 800; color: #0f172a; line-height: 1.2; }
+                        .stat-sm3 { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; margin-top:5px; }
+                        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
+                        .feed-box { background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; padding: 15px; min-height: 200px; max-height: 250px; overflow-y: auto; }
+                    </style>
 
-                                <!-- Card 3: Guest Invites -->
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(155, 89, 182, 0.2); transition: transform 0.3s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
-                                                    Guest Invites
-                                                </h6>
-                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                                                    <field name="total_guest_invites" widget="statinfo"/>
-                                                </h2>
-                                            </div>
-                                            <div>
-                                                <i class="fa fa-user-friends fa-3x" style="opacity: 0.5;"
-                                                   title="Guests"/>
-                                            </div>
-                                        </div>
-                                        <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Total Guests:
-                                            <field name="total_guests" widget="statinfo"/>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Card 4: Party Invites -->
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(231, 76, 60, 0.2); transition: transform 0.3s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
-                                                    Party Invites
-                                                </h6>
-                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                                                    <field name="total_party_invites" widget="statinfo"/>
-                                                </h2>
-                                            </div>
-                                            <div>
-                                                <i class="fa fa-glass-cheers fa-3x" style="opacity: 0.5;"
-                                                   title="Parties"/>
-                                            </div>
-                                        </div>
-                                        <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Upcoming:
-                                            <field name="upcoming_parties" widget="statinfo"/>
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- Child Exit Permissions Card in Top Stats Row -->
-
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="background: linear-gradient(135deg, #00cec9 0%, #00b894 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(0, 206, 201, 0.2); transition: transform 0.3s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
-                                                    Child Exit Permissions
-                                                </h6>
-                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                                                    <field name="total_child_exit_permissions" widget="statinfo"/>
-                                                </h2>
-                                            </div>
-                                            <div>
-                                                <i class="fa fa-child fa-3x" style="opacity: 0.5;" title="Child Exit"/>
-                                            </div>
-                                        </div>
-                                        <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Today:
-                                            <field name="today_exit_permissions" widget="statinfo"/>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Card 5: Visiting Help -->
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(243, 156, 18, 0.2); transition: transform 0.3s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">
-                                                    Visiting Help
-                                                </h6>
-                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                                                    <field name="total_visiting_help" widget="statinfo"/>
-                                                </h2>
-                                            </div>
-                                            <div>
-                                                <i class="fa fa-hands-helping fa-3x" style="opacity: 0.5;"
-                                                   title="Help"/>
-                                            </div>
-                                        </div>
-                                        <p style="margin-top: 15px; font-size: 0.9rem;">
-                                            Active:
-                                            <field name="active_visiting_help" widget="statinfo"/>
-                                        </p>
-                                    </div>
-                                </div>
+                    <div class="dash-bg3">
+                        <div class="glass-header3">
+                            <div>
+                                <h1 style="font-weight: 800; margin: 0; font-size: 2.2rem; color: #ffffff !important;"><i class="fa fa-door-open mr-3"/> Security &amp; Access Control</h1>
+                                <p style="margin: 5px 0 0 0; color: #d1fae5 !important; font-size: 1rem;">Manage gates, visitors, and deliveries.</p>
                             </div>
-
-                            <!-- First Row: Cab Approvals & Delivery Passes -->
-                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
-                                <!-- Visitor Requests Section (Added before Cab Approvals) -->
-                                <div style="flex: 1; min-width: 400px;">
-                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-users" style="color: #1abc9c;"
-                                                   title="Visitor Requests"/>
-                                                Visitor Requests
-                                            </h5>
-                                            <button name="action_open_visitor_requests" type="object"
-                                                    style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
-                                                View All
-                                            </button>
-                                        </div>
-                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">
-                                                    <field name="pending_visitor_requests" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Pending</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">
-                                                    <field name="approved_visitor_requests" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Approved</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">
-                                                    <field name="completed_visitor_requests" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Completed</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-history" style="color: #1abc9c;"></i>
-                                                Recent Requests:
-                                            </h6>
-                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
-                                                <field name="recent_visitor_requests" widget="html"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Cab Approvals Section -->
-                                <div style="flex: 1; min-width: 400px;">
-                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-taxi" style="color: #3498db;" title="Cab Approvals"/>
-                                                Cab Pre-Approvals
-                                            </h5>
-                                            <button name="action_open_cab_approvals" type="object"
-                                                    style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
-                                                View All
-                                            </button>
-                                        </div>
-                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">
-                                                    <field name="active_cab_approvals" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Active</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">
-                                                    <field name="once_cab_approvals" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">One-Time</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">
-                                                    <field name="frequent_cab_approvals" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Frequent</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-history" style="color: #3498db;"></i>
-                                                Recent Approvals:
-                                            </h6>
-                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
-                                                <field name="recent_cab_approvals" widget="html"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Delivery Passes Section -->
-                                <div style="flex: 1; min-width: 400px;">
-                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-truck" style="color: #2ecc71;" title="Delivery"/>
-                                                Delivery Passes
-                                            </h5>
-                                            <button name="action_open_delivery_passes" type="object"
-                                                    style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
-                                                View All
-                                            </button>
-                                        </div>
-                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">
-                                                    <field name="active_delivery_passes" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Active</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #9b59b6; margin: 0; font-weight: 700;">
-                                                    <field name="surprise_deliveries" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Surprise</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">
-                                                    <field name="gate_leave_deliveries" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Leave at Gate</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-history" style="color: #2ecc71;"></i>
-                                                Recent Passes:
-                                            </h6>
-                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
-                                                <field name="recent_delivery_passes" widget="html"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Second Row: Guest Invites & Party Invites -->
-                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
-                                <!-- Guest Invites Section -->
-                                <div style="flex: 1; min-width: 400px;">
-                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-user-friends" style="color: #9b59b6;" title="Guests"/>
-                                                Guest Invites
-                                            </h5>
-                                            <button name="action_open_guest_invites" type="object"
-                                                    style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
-                                                View All
-                                            </button>
-                                        </div>
-                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #9b59b6; margin: 0; font-weight: 700;">
-                                                    <field name="active_guest_invites" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Active</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">
-                                                    <field name="once_guest_invites" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">One-Time</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">
-                                                    <field name="frequent_guest_invites" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Frequent</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-history" style="color: #9b59b6;"></i>
-                                                Recent Invites:
-                                            </h6>
-                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
-                                                <field name="recent_guest_invites" widget="html"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Party Invites Section -->
-                                <div style="flex: 1; min-width: 400px;">
-                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-glass-cheers" style="color: #e74c3c;" title="Parties"/>
-                                                Party &amp; Group Invites
-                                            </h5>
-                                            <button name="action_open_party_invites" type="object"
-                                                    style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
-                                                View All
-                                            </button>
-                                        </div>
-                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #e74c3c; margin: 0; font-weight: 700;">
-                                                    <field name="active_party_invites" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Active</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">
-                                                    <field name="upcoming_parties" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Upcoming</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-history" style="color: #e74c3c;"></i>
-                                                Recent Parties:
-                                            </h6>
-                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
-                                                <field name="recent_party_invites" widget="html"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Child Exit Permissions Section -->
-                            <!-- Add this after the Party Invites Section and before Visiting Help Section -->
-                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 1; min-width: 400px;">
-                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-child" style="color: #00cec9;"
-                                                   title="Child Exit Permissions"/>
-                                                Child Exit Permissions
-                                            </h5>
-                                            <button name="action_open_child_exit_permissions" type="object"
-                                                    style="background: linear-gradient(135deg, #00cec9 0%, #00b894 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
-                                                View All
-                                            </button>
-                                        </div>
-                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #00cec9; margin: 0; font-weight: 700;">
-                                                    <field name="active_child_exit_permissions" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Active</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #95a5a6; margin: 0; font-weight: 700;">
-                                                    <field name="expired_child_exit_permissions" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Expired</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">
-                                                    <field name="today_exit_permissions" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Today</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-history" style="color: #00cec9;"></i>
-                                                Recent Permissions:
-                                            </h6>
-                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
-                                                <field name="recent_child_exit_permissions" widget="html"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Third Row: Visiting Help -->
-                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
-                                <!-- Visiting Help Section -->
-                                <div style="flex: 1; min-width: 100%;">
-                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                                <i class="fa fa-hands-helping" style="color: #f39c12;"
-                                                   title="Visiting Help"/>
-                                                Visiting Help Management
-                                            </h5>
-                                            <button name="action_open_visiting_help" type="object"
-                                                    style="background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">
-                                                View All
-                                            </button>
-                                        </div>
-                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">
-                                                    <field name="active_visiting_help" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Active</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">
-                                                    <field name="once_visiting_help" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">One-Time</small>
-                                            </div>
-                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">
-                                                    <field name="frequent_visiting_help" widget="statinfo"/>
-                                                </h3>
-                                                <small style="color: #64748b; font-weight: 500;">Frequent</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fa fa-history" style="color: #f39c12;"></i>
-                                                Recent Help Requests:
-                                            </h6>
-                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">
-                                                <field name="recent_visiting_help" widget="html"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Quick Actions -->
-                            <div style="width: 100%;">
-                                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                                    <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">
-                                        <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">
-                                            <i class="fa fa-bolt" style="color: #ffc107;" title="Quick Actions"/>
-                                            Quick Actions
-                                        </h5>
-                                    </div>
-                                    <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
-                                        <a href="/web#model=mygate.visitor&amp;view_type=form"
-                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #1abc9c15 0%, #1abc9c05 100%);"
-                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(26, 188, 156, 0.2)';"
-                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-user-plus fa-2x"
-                                               style="color: #1abc9c; margin-bottom: 10px; display: block;"
-                                               title="New Visitor Request"/>
-                                            <small>New Visitor Request</small>
-                                        </a>
-                                        <a href="/web#model=cab.preapproval&amp;view_type=form"
-                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #3498db15 0%, #3498db05 100%);"
-                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.2)';"
-                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-taxi fa-2x"
-                                               style="color: #3498db; margin-bottom: 10px; display: block;"
-                                               title="New Cab Approval"/>
-                                            <small>New Cab Approval</small>
-                                        </a>
-                                        <a href="/web#model=community.delivery.pass&amp;view_type=form"
-                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #2ecc7115 0%, #2ecc7105 100%);"
-                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(46, 204, 113, 0.2)';"
-                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-truck fa-2x"
-                                               style="color: #2ecc71; margin-bottom: 10px; display: block;"
-                                               title="New Delivery Pass"/>
-                                            <small>New Delivery Pass</small>
-                                        </a>
-                                        <a href="/web#model=guest.invite&amp;view_type=form"
-                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #9b59b615 0%, #9b59b605 100%);"
-                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(155, 89, 182, 0.2)';"
-                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-user-plus fa-2x"
-                                               style="color: #9b59b6; margin-bottom: 10px; display: block;"
-                                               title="New Guest Invite"/>
-                                            <small>New Guest Invite</small>
-                                        </a>
-                                        <a href="/web#model=party.group.invite&amp;view_type=form"
-                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #e74c3c15 0%, #e74c3c05 100%);"
-                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.2)';"
-                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-glass-cheers fa-2x"
-                                               style="color: #e74c3c; margin-bottom: 10px; display: block;"
-                                               title="New Party Invite"/>
-                                            <small>New Party Invite</small>
-                                        </a>
-                                        <a href="/web#model=child.exit.permission&amp;view_type=form"
-                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #00cec915 0%, #00cec905 100%);"
-                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0, 206, 201, 0.2)';"
-                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-child fa-2x"
-                                               style="color: #00cec9; margin-bottom: 10px; display: block;"
-                                               title="New Child Exit Permission"/>
-                                            <small>New Child Exit</small>
-                                        </a>
-                                        <a href="/web#model=community.visiting.help.entry&amp;view_type=form"
-                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #f39c1215 0%, #f39c1205 100%);"
-                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(243, 156, 18, 0.2)';"
-                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                            <i class="fa fa-hands-helping fa-2x"
-                                               style="color: #f39c12; margin-bottom: 10px; display: block;"
-                                               title="New Visiting Help"/>
-                                            <small>New Visiting Help</small>
-                                        </a>
-                                    </div>
-                                </div>
+                            <div class="community-dropdown3">
+                                <label for="community_id" style="color: #d1fae5; font-size: 0.8rem; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Active Community Focus</label>
+                                <field name="community_id" options="{'no_create': True}" placeholder="Select Community..."/>
                             </div>
                         </div>
-                    </sheet>
-                    <footer>
-                        <button name="action_refresh_dashboard" type="object" string="Refresh" class="btn-primary"/>
-                        <button string="Close" special="cancel" class="btn-secondary"/>
-                    </footer>
+
+                        <div invisible="not community_id">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="prem-card3" style="border-left: 5px solid #10b981;">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h4 style="margin:0; font-weight:800; color:#1e293b;"><i class="fa fa-users text-success mr-2"/> Visitor &amp; Guest Flow</h4>
+                                            <h3 class="text-success m-0" style="font-weight:900;"><field name="visitor_approval_rate" widget="float" digits="[16,1]"/>% <small style="font-size:0.4em;">Approved</small></h3>
+                                        </div>
+                                        <field name="visitor_approval_rate" widget="progressbar" nolabel="1" class="w-100 my-3"/>
+
+                                        <div class="grid-4 mt-4 border-top pt-3">
+                                            <div><div class="stat-lg3"><field name="total_visitor_requests"/></div><div class="stat-sm3">Total Visitors</div></div>
+                                            <div><div class="stat-lg3 text-warning"><field name="pending_visitor_requests"/></div><div class="stat-sm3">Awaiting Approval</div></div>
+                                            <div><div class="stat-lg3 text-success"><field name="approved_visitor_requests"/></div><div class="stat-sm3">Approved</div></div>
+                                            <div><div class="stat-lg3 text-info"><field name="total_guest_invites"/></div><div class="stat-sm3">Pre-Invited Guests</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-7">
+                                    <div class="prem-card3">
+                                        <h4 style="margin-bottom:20px; font-weight:800; color:#1e293b;"><i class="fa fa-truck text-primary mr-2"/> Transport &amp; Logistics</h4>
+                                        <div class="row">
+                                            <div class="col-6 border-right pr-4">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <h1 class="m-0 mr-3 text-primary font-weight-bold"><field name="active_delivery_passes"/></h1>
+                                                    <span class="text-muted font-weight-bold text-uppercase" style="font-size:0.9rem;">Active Delivery<br/>Passes</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between text-muted font-weight-bold mb-2"><span><i class="fa fa-gift mr-1"/> Surprise Deliveries:</span> <span><field name="surprise_deliveries"/></span></div>
+                                                <div class="d-flex justify-content-between text-muted font-weight-bold mb-1"><span><i class="fa fa-home mr-1"/> Gate Drop-offs:</span> <span><field name="gate_leave_deliveries"/></span></div>
+                                            </div>
+                                            <div class="col-6 pl-4">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <h1 class="m-0 mr-3 text-info font-weight-bold"><field name="active_cab_approvals"/></h1>
+                                                    <span class="text-muted font-weight-bold text-uppercase" style="font-size:0.9rem;">Approved Cab<br/>Entries</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between text-muted font-weight-bold mb-2"><span><i class="fa fa-clock-o mr-1"/> One-Time Cabs:</span> <span><field name="once_cab_approvals"/></span></div>
+                                                <div class="d-flex justify-content-between text-muted font-weight-bold mb-1"><span><i class="fa fa-refresh mr-1"/> Frequent Cabs:</span> <span><field name="frequent_cab_approvals"/></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="prem-card3" style="background: linear-gradient(to bottom right, #ffffff, #fff1f2);">
+                                        <h4 style="margin-bottom:20px; font-weight:800; color:#1e293b;"><i class="fa fa-shield text-danger mr-2"/> Security Controls</h4>
+                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: white;">
+                                                <h3 style="color: #f43f5e; margin: 0; font-weight: 700;"><field name="active_child_exit_permissions"/></h3>
+                                                <small style="color: #64748b; font-weight: 500;">Child Exits</small>
+                                            </div>
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: white;">
+                                                <h3 style="color: #eab308; margin: 0; font-weight: 700;"><field name="active_visiting_help"/></h3>
+                                                <small style="color: #64748b; font-weight: 500;">Maids &amp; Help</small>
+                                            </div>
+                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: white;">
+                                                <h3 style="color: #8b5cf6; margin: 0; font-weight: 700;"><field name="active_party_invites"/></h3>
+                                                <small style="color: #64748b; font-weight: 500;">Parties</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-3">
+                                    <div class="prem-card3">
+                                        <h6 class="font-weight-bold text-uppercase text-muted mb-3"><i class="fa fa-users mr-1"/> Recent Visitors</h6>
+                                        <div class="feed-box"><field name="recent_visitor_requests" widget="html"/></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="prem-card3">
+                                        <h6 class="font-weight-bold text-uppercase text-muted mb-3"><i class="fa fa-taxi mr-1"/> Recent Cabs</h6>
+                                        <div class="feed-box"><field name="recent_cab_approvals" widget="html"/></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="prem-card3">
+                                        <h6 class="font-weight-bold text-uppercase text-muted mb-3"><i class="fa fa-truck mr-1"/> Recent Deliveries</h6>
+                                        <div class="feed-box"><field name="recent_delivery_passes" widget="html"/></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="prem-card3">
+                                        <h6 class="font-weight-bold text-uppercase text-muted mb-3"><i class="fa fa-glass mr-1"/> Recent Guest Invites</h6>
+                                        <div class="feed-box"><field name="recent_guest_invites" widget="html"/></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </form>
             </field>
         </record>
     </data>
 </odoo>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
+<!--    <data>-->
+<!--        &lt;!&ndash; Dashboard Action &ndash;&gt;-->
+<!--        <record id="action_community_access_dashboard" model="ir.actions.act_window">-->
+<!--            <field name="name">Access &amp; Guest Management Dashboard</field>-->
+<!--            <field name="res_model">community.access.dashboard</field>-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="target">current</field>-->
+<!--        </record>-->
+
+<!--        &lt;!&ndash; Dashboard Menu Item &ndash;&gt;-->
+<!--        <menuitem id="menu_community_access_dashboard"-->
+<!--                  name="Access Dashboard"-->
+<!--                  parent="menu_community_dashboard_root"-->
+<!--                  sequence="3"-->
+<!--                  action="action_community_access_dashboard"/>-->
+
+<!--        &lt;!&ndash; Dashboard Form View &ndash;&gt;-->
+<!--        <record id="view_community_access_dashboard_form" model="ir.ui.view">-->
+<!--            <field name="name">community.access.dashboard.form</field>-->
+<!--            <field name="model">community.access.dashboard</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <form string="Community Access &amp; Guest Management Dashboard" class="oe_dashboard_form">-->
+<!--                    <header>-->
+<!--                        <h1 style="color: #2c3e50; font-weight: 700; font-size: 2rem;">-->
+<!--                            <i class="fa fa-door-open mr-2" title="Access Dashboard"/>-->
+<!--                            Access &amp; Guest Management Dashboard-->
+<!--                        </h1>-->
+<!--                        <div style="float: right;">-->
+<!--                            <button name="action_refresh_dashboard" type="object" string="Refresh" class="btn-primary"/>-->
+<!--                        </div>-->
+<!--                    </header>-->
+<!--                    <sheet>-->
+<!--                        <div style="padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">-->
+<!--                            &lt;!&ndash; Top Stats Cards Row - Gradient Colors &ndash;&gt;-->
+<!--                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">-->
+<!--                                &lt;!&ndash; Card 1: Visitor Requests (Added before Cab Approvals) &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 250px;">-->
+<!--                                    <div style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(26, 188, 156, 0.2); transition: transform 0.3s ease;">-->
+<!--                                        <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <div>-->
+<!--                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">-->
+<!--                                                    Visitor Requests-->
+<!--                                                </h6>-->
+<!--                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">-->
+<!--                                                    <field name="total_visitor_requests" widget="statinfo"/>-->
+<!--                                                </h2>-->
+<!--                                            </div>-->
+<!--                                            <div>-->
+<!--                                                <i class="fa fa-users fa-3x" style="opacity: 0.5;" title="Visitors"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <p style="margin-top: 15px; font-size: 0.9rem;">-->
+<!--                                            Today:-->
+<!--                                            <field name="today_visitor_requests" widget="statinfo"/>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                &lt;!&ndash; Card 1: Cab Approvals &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 250px;">-->
+<!--                                    <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(52, 152, 219, 0.2); transition: transform 0.3s ease;">-->
+<!--                                        <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <div>-->
+<!--                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">-->
+<!--                                                    Cab Approvals-->
+<!--                                                </h6>-->
+<!--                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">-->
+<!--                                                    <field name="total_cab_approvals" widget="statinfo"/>-->
+<!--                                                </h2>-->
+<!--                                            </div>-->
+<!--                                            <div>-->
+<!--                                                <i class="fa fa-taxi fa-3x" style="opacity: 0.5;" title="Cabs"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <p style="margin-top: 15px; font-size: 0.9rem;">-->
+<!--                                            Active:-->
+<!--                                            <field name="active_cab_approvals" widget="statinfo"/>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash; Card 2: Delivery Passes &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 250px;">-->
+<!--                                    <div style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(46, 204, 113, 0.2); transition: transform 0.3s ease;">-->
+<!--                                        <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <div>-->
+<!--                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">-->
+<!--                                                    Delivery Passes-->
+<!--                                                </h6>-->
+<!--                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">-->
+<!--                                                    <field name="total_delivery_passes" widget="statinfo"/>-->
+<!--                                                </h2>-->
+<!--                                            </div>-->
+<!--                                            <div>-->
+<!--                                                <i class="fa fa-truck fa-3x" style="opacity: 0.5;" title="Delivery"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <p style="margin-top: 15px; font-size: 0.9rem;">-->
+<!--                                            Active:-->
+<!--                                            <field name="active_delivery_passes" widget="statinfo"/>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash; Card 3: Guest Invites &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 250px;">-->
+<!--                                    <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(155, 89, 182, 0.2); transition: transform 0.3s ease;">-->
+<!--                                        <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <div>-->
+<!--                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">-->
+<!--                                                    Guest Invites-->
+<!--                                                </h6>-->
+<!--                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">-->
+<!--                                                    <field name="total_guest_invites" widget="statinfo"/>-->
+<!--                                                </h2>-->
+<!--                                            </div>-->
+<!--                                            <div>-->
+<!--                                                <i class="fa fa-user-friends fa-3x" style="opacity: 0.5;"-->
+<!--                                                   title="Guests"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <p style="margin-top: 15px; font-size: 0.9rem;">-->
+<!--                                            Total Guests:-->
+<!--                                            <field name="total_guests" widget="statinfo"/>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash; Card 4: Party Invites &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 250px;">-->
+<!--                                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(231, 76, 60, 0.2); transition: transform 0.3s ease;">-->
+<!--                                        <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <div>-->
+<!--                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">-->
+<!--                                                    Party Invites-->
+<!--                                                </h6>-->
+<!--                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">-->
+<!--                                                    <field name="total_party_invites" widget="statinfo"/>-->
+<!--                                                </h2>-->
+<!--                                            </div>-->
+<!--                                            <div>-->
+<!--                                                <i class="fa fa-glass-cheers fa-3x" style="opacity: 0.5;"-->
+<!--                                                   title="Parties"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <p style="margin-top: 15px; font-size: 0.9rem;">-->
+<!--                                            Upcoming:-->
+<!--                                            <field name="upcoming_parties" widget="statinfo"/>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                &lt;!&ndash; Child Exit Permissions Card in Top Stats Row &ndash;&gt;-->
+
+<!--                                <div style="flex: 1; min-width: 250px;">-->
+<!--                                    <div style="background: linear-gradient(135deg, #00cec9 0%, #00b894 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(0, 206, 201, 0.2); transition: transform 0.3s ease;">-->
+<!--                                        <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <div>-->
+<!--                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">-->
+<!--                                                    Child Exit Permissions-->
+<!--                                                </h6>-->
+<!--                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">-->
+<!--                                                    <field name="total_child_exit_permissions" widget="statinfo"/>-->
+<!--                                                </h2>-->
+<!--                                            </div>-->
+<!--                                            <div>-->
+<!--                                                <i class="fa fa-child fa-3x" style="opacity: 0.5;" title="Child Exit"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <p style="margin-top: 15px; font-size: 0.9rem;">-->
+<!--                                            Today:-->
+<!--                                            <field name="today_exit_permissions" widget="statinfo"/>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash; Card 5: Visiting Help &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 250px;">-->
+<!--                                    <div style="background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; padding: 20px; border-radius: 15px; height: 100%; box-shadow: 0 6px 12px rgba(243, 156, 18, 0.2); transition: transform 0.3s ease;">-->
+<!--                                        <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <div>-->
+<!--                                                <h6 style="font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0.9;">-->
+<!--                                                    Visiting Help-->
+<!--                                                </h6>-->
+<!--                                                <h2 style="margin: 0; font-size: 2.5rem; font-weight: 700;">-->
+<!--                                                    <field name="total_visiting_help" widget="statinfo"/>-->
+<!--                                                </h2>-->
+<!--                                            </div>-->
+<!--                                            <div>-->
+<!--                                                <i class="fa fa-hands-helping fa-3x" style="opacity: 0.5;"-->
+<!--                                                   title="Help"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <p style="margin-top: 15px; font-size: 0.9rem;">-->
+<!--                                            Active:-->
+<!--                                            <field name="active_visiting_help" widget="statinfo"/>-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; First Row: Cab Approvals & Delivery Passes &ndash;&gt;-->
+<!--                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">-->
+<!--                                &lt;!&ndash; Visitor Requests Section (Added before Cab Approvals) &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 400px;">-->
+<!--                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">-->
+<!--                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                                <i class="fa fa-users" style="color: #1abc9c;"-->
+<!--                                                   title="Visitor Requests"/>-->
+<!--                                                Visitor Requests-->
+<!--                                            </h5>-->
+<!--                                            <button name="action_open_visitor_requests" type="object"-->
+<!--                                                    style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">-->
+<!--                                                View All-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="pending_visitor_requests" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Pending</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="approved_visitor_requests" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Approved</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="completed_visitor_requests" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Completed</small>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">-->
+<!--                                                <i class="fa fa-history" style="color: #1abc9c;"></i>-->
+<!--                                                Recent Requests:-->
+<!--                                            </h6>-->
+<!--                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">-->
+<!--                                                <field name="recent_visitor_requests" widget="html"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                &lt;!&ndash; Cab Approvals Section &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 400px;">-->
+<!--                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">-->
+<!--                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                                <i class="fa fa-taxi" style="color: #3498db;" title="Cab Approvals"/>-->
+<!--                                                Cab Pre-Approvals-->
+<!--                                            </h5>-->
+<!--                                            <button name="action_open_cab_approvals" type="object"-->
+<!--                                                    style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">-->
+<!--                                                View All-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="active_cab_approvals" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Active</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="once_cab_approvals" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">One-Time</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="frequent_cab_approvals" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Frequent</small>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">-->
+<!--                                                <i class="fa fa-history" style="color: #3498db;"></i>-->
+<!--                                                Recent Approvals:-->
+<!--                                            </h6>-->
+<!--                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">-->
+<!--                                                <field name="recent_cab_approvals" widget="html"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash; Delivery Passes Section &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 400px;">-->
+<!--                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">-->
+<!--                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                                <i class="fa fa-truck" style="color: #2ecc71;" title="Delivery"/>-->
+<!--                                                Delivery Passes-->
+<!--                                            </h5>-->
+<!--                                            <button name="action_open_delivery_passes" type="object"-->
+<!--                                                    style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">-->
+<!--                                                View All-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="active_delivery_passes" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Active</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #9b59b6; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="surprise_deliveries" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Surprise</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="gate_leave_deliveries" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Leave at Gate</small>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">-->
+<!--                                                <i class="fa fa-history" style="color: #2ecc71;"></i>-->
+<!--                                                Recent Passes:-->
+<!--                                            </h6>-->
+<!--                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">-->
+<!--                                                <field name="recent_delivery_passes" widget="html"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; Second Row: Guest Invites & Party Invites &ndash;&gt;-->
+<!--                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">-->
+<!--                                &lt;!&ndash; Guest Invites Section &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 400px;">-->
+<!--                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">-->
+<!--                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                                <i class="fa fa-user-friends" style="color: #9b59b6;" title="Guests"/>-->
+<!--                                                Guest Invites-->
+<!--                                            </h5>-->
+<!--                                            <button name="action_open_guest_invites" type="object"-->
+<!--                                                    style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">-->
+<!--                                                View All-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #9b59b6; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="active_guest_invites" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Active</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="once_guest_invites" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">One-Time</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="frequent_guest_invites" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Frequent</small>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">-->
+<!--                                                <i class="fa fa-history" style="color: #9b59b6;"></i>-->
+<!--                                                Recent Invites:-->
+<!--                                            </h6>-->
+<!--                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">-->
+<!--                                                <field name="recent_guest_invites" widget="html"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash; Party Invites Section &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 400px;">-->
+<!--                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">-->
+<!--                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                                <i class="fa fa-glass-cheers" style="color: #e74c3c;" title="Parties"/>-->
+<!--                                                Party &amp; Group Invites-->
+<!--                                            </h5>-->
+<!--                                            <button name="action_open_party_invites" type="object"-->
+<!--                                                    style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">-->
+<!--                                                View All-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #e74c3c; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="active_party_invites" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Active</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="upcoming_parties" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Upcoming</small>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">-->
+<!--                                                <i class="fa fa-history" style="color: #e74c3c;"></i>-->
+<!--                                                Recent Parties:-->
+<!--                                            </h6>-->
+<!--                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">-->
+<!--                                                <field name="recent_party_invites" widget="html"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; Child Exit Permissions Section &ndash;&gt;-->
+<!--                            &lt;!&ndash; Add this after the Party Invites Section and before Visiting Help Section &ndash;&gt;-->
+<!--                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">-->
+<!--                                <div style="flex: 1; min-width: 400px;">-->
+<!--                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">-->
+<!--                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                                <i class="fa fa-child" style="color: #00cec9;"-->
+<!--                                                   title="Child Exit Permissions"/>-->
+<!--                                                Child Exit Permissions-->
+<!--                                            </h5>-->
+<!--                                            <button name="action_open_child_exit_permissions" type="object"-->
+<!--                                                    style="background: linear-gradient(135deg, #00cec9 0%, #00b894 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">-->
+<!--                                                View All-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #00cec9; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="active_child_exit_permissions" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Active</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #95a5a6; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="expired_child_exit_permissions" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Expired</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="today_exit_permissions" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Today</small>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">-->
+<!--                                                <i class="fa fa-history" style="color: #00cec9;"></i>-->
+<!--                                                Recent Permissions:-->
+<!--                                            </h6>-->
+<!--                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">-->
+<!--                                                <field name="recent_child_exit_permissions" widget="html"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; Third Row: Visiting Help &ndash;&gt;-->
+<!--                            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">-->
+<!--                                &lt;!&ndash; Visiting Help Section &ndash;&gt;-->
+<!--                                <div style="flex: 1; min-width: 100%;">-->
+<!--                                    <div style="background: white; border-radius: 15px; padding: 25px; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">-->
+<!--                                        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">-->
+<!--                                            <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                                <i class="fa fa-hands-helping" style="color: #f39c12;"-->
+<!--                                                   title="Visiting Help"/>-->
+<!--                                                Visiting Help Management-->
+<!--                                            </h5>-->
+<!--                                            <button name="action_open_visiting_help" type="object"-->
+<!--                                                    style="background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">-->
+<!--                                                View All-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #f39c12; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="active_visiting_help" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Active</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #3498db; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="once_visiting_help" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">One-Time</small>-->
+<!--                                            </div>-->
+<!--                                            <div style="flex: 1; text-align: center; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">-->
+<!--                                                <h3 style="color: #2ecc71; margin: 0; font-weight: 700;">-->
+<!--                                                    <field name="frequent_visiting_help" widget="statinfo"/>-->
+<!--                                                </h3>-->
+<!--                                                <small style="color: #64748b; font-weight: 500;">Frequent</small>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <h6 style="color: #2d3748; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">-->
+<!--                                                <i class="fa fa-history" style="color: #f39c12;"></i>-->
+<!--                                                Recent Help Requests:-->
+<!--                                            </h6>-->
+<!--                                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; min-height: 100px;">-->
+<!--                                                <field name="recent_visiting_help" widget="html"/>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; Quick Actions &ndash;&gt;-->
+<!--                            <div style="width: 100%;">-->
+<!--                                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">-->
+<!--                                    <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">-->
+<!--                                        <h5 style="margin: 0; color: #2d3748; display: flex; align-items: center; gap: 10px;">-->
+<!--                                            <i class="fa fa-bolt" style="color: #ffc107;" title="Quick Actions"/>-->
+<!--                                            Quick Actions-->
+<!--                                        </h5>-->
+<!--                                    </div>-->
+<!--                                    <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">-->
+<!--                                        <a href="/web#model=mygate.visitor&amp;view_type=form"-->
+<!--                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #1abc9c15 0%, #1abc9c05 100%);"-->
+<!--                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(26, 188, 156, 0.2)';"-->
+<!--                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">-->
+<!--                                            <i class="fa fa-user-plus fa-2x"-->
+<!--                                               style="color: #1abc9c; margin-bottom: 10px; display: block;"-->
+<!--                                               title="New Visitor Request"/>-->
+<!--                                            <small>New Visitor Request</small>-->
+<!--                                        </a>-->
+<!--                                        <a href="/web#model=cab.preapproval&amp;view_type=form"-->
+<!--                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #3498db15 0%, #3498db05 100%);"-->
+<!--                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.2)';"-->
+<!--                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">-->
+<!--                                            <i class="fa fa-taxi fa-2x"-->
+<!--                                               style="color: #3498db; margin-bottom: 10px; display: block;"-->
+<!--                                               title="New Cab Approval"/>-->
+<!--                                            <small>New Cab Approval</small>-->
+<!--                                        </a>-->
+<!--                                        <a href="/web#model=community.delivery.pass&amp;view_type=form"-->
+<!--                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #2ecc7115 0%, #2ecc7105 100%);"-->
+<!--                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(46, 204, 113, 0.2)';"-->
+<!--                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">-->
+<!--                                            <i class="fa fa-truck fa-2x"-->
+<!--                                               style="color: #2ecc71; margin-bottom: 10px; display: block;"-->
+<!--                                               title="New Delivery Pass"/>-->
+<!--                                            <small>New Delivery Pass</small>-->
+<!--                                        </a>-->
+<!--                                        <a href="/web#model=guest.invite&amp;view_type=form"-->
+<!--                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #9b59b615 0%, #9b59b605 100%);"-->
+<!--                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(155, 89, 182, 0.2)';"-->
+<!--                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">-->
+<!--                                            <i class="fa fa-user-plus fa-2x"-->
+<!--                                               style="color: #9b59b6; margin-bottom: 10px; display: block;"-->
+<!--                                               title="New Guest Invite"/>-->
+<!--                                            <small>New Guest Invite</small>-->
+<!--                                        </a>-->
+<!--                                        <a href="/web#model=party.group.invite&amp;view_type=form"-->
+<!--                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #e74c3c15 0%, #e74c3c05 100%);"-->
+<!--                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.2)';"-->
+<!--                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">-->
+<!--                                            <i class="fa fa-glass-cheers fa-2x"-->
+<!--                                               style="color: #e74c3c; margin-bottom: 10px; display: block;"-->
+<!--                                               title="New Party Invite"/>-->
+<!--                                            <small>New Party Invite</small>-->
+<!--                                        </a>-->
+<!--                                        <a href="/web#model=child.exit.permission&amp;view_type=form"-->
+<!--                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #00cec915 0%, #00cec905 100%);"-->
+<!--                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0, 206, 201, 0.2)';"-->
+<!--                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">-->
+<!--                                            <i class="fa fa-child fa-2x"-->
+<!--                                               style="color: #00cec9; margin-bottom: 10px; display: block;"-->
+<!--                                               title="New Child Exit Permission"/>-->
+<!--                                            <small>New Child Exit</small>-->
+<!--                                        </a>-->
+<!--                                        <a href="/web#model=community.visiting.help.entry&amp;view_type=form"-->
+<!--                                           style="flex: 1; min-width: 150px; max-width: 200px; text-align: center; border: 2px solid #e2e8f0; padding: 15px; border-radius: 10px; text-decoration: none; color: #2d3748; transition: all 0.3s; box-sizing: border-box; background: linear-gradient(135deg, #f39c1215 0%, #f39c1205 100%);"-->
+<!--                                           onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(243, 156, 18, 0.2)';"-->
+<!--                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">-->
+<!--                                            <i class="fa fa-hands-helping fa-2x"-->
+<!--                                               style="color: #f39c12; margin-bottom: 10px; display: block;"-->
+<!--                                               title="New Visiting Help"/>-->
+<!--                                            <small>New Visiting Help</small>-->
+<!--                                        </a>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </sheet>-->
+<!--                    <footer>-->
+<!--                        <button name="action_refresh_dashboard" type="object" string="Refresh" class="btn-primary"/>-->
+<!--                        <button string="Close" special="cancel" class="btn-secondary"/>-->
+<!--                    </footer>-->
+<!--                </form>-->
+<!--            </field>-->
+<!--        </record>-->
+<!--    </data>-->
+<!--</odoo>-->

@@ -39,10 +39,12 @@
 
                     <group>
                         <group string="Basic Information">
+                            <field name="community_id"/>
                             <field name="building_id" options="{'no_create': True}"/>
                             <field name="floor_id" options="{'no_create': True}"/>
                             <field name="flat_type_id"/>
                             <field name="area"/>
+
                         </group>
                         <group string="Pricing">
                             <field name="rent_price"/>
@@ -150,6 +152,7 @@
         <field name="arch" type="xml">
             <list string="Flats">
                 <field name="name"/>
+                <field name="community_id"/>
                 <field name="building_id"/>
                 <field name="floor_id"/>
                 <field name="flat_type_id"/>
@@ -179,7 +182,9 @@
                 <field name="area"/>
                 <field name="status"/>
                 <field name="lease_owner_id"/>
+                <field name="community_id"/>
                 <field name="tenant_id"/>
+
                 <field name="rent_price"/>
                 <field name="transaction_count"/>
                 <templates>
@@ -230,6 +235,11 @@
                                         Lease Owner:
                                         <field name="lease_owner_id"/>
                                     </span>
+                                    <br/>
+                                    <div>
+                                        <strong>Community:</strong>
+                                        <field name="community_id"/>
+                                    </div>
                                     <br/>
                                     <span t-if="record.tenant_id.raw_value">
                                         <i class="fa fa-user"/>

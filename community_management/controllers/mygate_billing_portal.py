@@ -3,96 +3,81 @@ from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 
 
-class PortalDashboard(http.Controller):
+class MyGateBillingPortal(CustomerPortal):
 
-    @http.route(['/my/dashboard', '/my/dashboard/page/<int:page>'],
-                type='http', auth="user", website=True)
-    def portal_dashboard(self, page=1, sortby=None, filterby=None, **kw):
+    def _prepare_home_portal_values(self, counters):
+        values = super()._prepare_home_portal_values(counters)
+        if 'invoice_count' in counters:
+            partner = request.env.user.partner_id
+            invoice_count = request.env['account.move'].search_count([
+                ('move_type', '=', 'out_invoice'),
+                ('partner_id', '=', partner.id),
+                ('state', '=', 'posted')
+            ])
+            values['invoice_count'] = invoice_count
+        return values
+
+    @http.route(['/my/bills', '/my/bills/page/<int:page>'], type='http', auth="user", website=True)
+    def portal_my_bills(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
+        values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        AccountMove = request.env['account.move']
 
-        # Get today's date
-        today = fields.Date.today()
-
-        # Fetch invoices
-        Invoice = request.env['account.move']
-        invoice_domain = [
+        domain = [
+            ('move_type', '=', 'out_invoice'),
             ('partner_id', '=', partner.id),
-            ('move_type', 'in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']),
             ('state', '=', 'posted')
         ]
 
-        # Apply filters - use a different variable name
-        filter_options = {
-            'all': {'label': 'All Invoices', 'domain': []},
-            'paid': {'label': 'Paid', 'domain': [('payment_state', '=', 'paid')]},
-            'unpaid': {'label': 'Unpaid', 'domain': [('payment_state', '=', 'not_paid')]},
-            'partial': {'label': 'Partially Paid', 'domain': [('payment_state', '=', 'partial')]},
-            'overdue': {'label': 'Overdue', 'domain': [
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('invoice_date_due', '<', today)
-            ]},
+        searchbar_sortings = {
+            'date': {'label': 'Date', 'order': 'invoice_date desc'},
+            'name': {'label': 'Reference', 'order': 'name desc'},
+            'state': {'label': 'Status', 'order': 'state'},
         }
+        if not sortby:
+            sortby = 'date'
+        order = searchbar_sortings[sortby]['order']
 
-        if filterby and filterby in filter_options:
-            invoice_domain += filter_options[filterby]['domain']
+        invoice_count = AccountMove.search_count(domain)
 
-        invoice_count = Invoice.search_count(invoice_domain)
-
-        # Pager configuration
-        items_per_page = 10
-        invoice_pager = portal_pager(
-            url="/my/dashboard",
+        pager = portal_pager(
+            url="/my/bills",
+            url_args={'date_begin': date_begin, 'date_end': date_end, 'sortby': sortby},
             total=invoice_count,
             page=page,
-            step=items_per_page,
-            url_args={'sortby': sortby, 'filterby': filterby}
+            step=self._items_per_page
         )
 
-        invoices = Invoice.search(invoice_domain, limit=items_per_page,
-                                  offset=invoice_pager['offset'])
+        invoices = AccountMove.search(domain, order=order, limit=self._items_per_page, offset=pager['offset'])
 
-        # Calculate statistics
-        all_invoices = Invoice.search([
-            ('partner_id', '=', partner.id),
-            ('move_type', 'in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']),
-            ('state', '=', 'posted')
-        ])
+        # Separating Paid vs Unpaid for the dashboard
+        unpaid_invoices = request.env['account.move'].sudo().search(
+            domain + [('payment_state', 'in', ['not_paid', 'partial'])])
+        paid_invoices = request.env['account.move'].sudo().search(
+            domain + [('payment_state', 'in', ['paid', 'in_payment', 'reversed'])])
 
-        # Calculate statistics
-        invoice_stats = {
-            'total': len(all_invoices),
-            'paid': len(all_invoices.filtered(lambda inv: inv.payment_state == 'paid')),
-            'unpaid': len(all_invoices.filtered(lambda inv: inv.payment_state == 'not_paid')),
-            'partial': len(all_invoices.filtered(lambda inv: inv.payment_state == 'partial')),
-            'overdue': len(all_invoices.filtered(
-                lambda inv: inv.payment_state in ['not_paid', 'partial'] and
-                            inv.invoice_date_due and
-                            inv.invoice_date_due < today
-            )),
-        }
+        # CRASH FIX: Calculate Overdue Invoices to satisfy Odoo's native breadcrumb logic
+        today = fields.Date.today()
+        overdue_invoice_count = len(
+            unpaid_invoices.filtered(lambda inv: inv.invoice_date_due and inv.invoice_date_due < today))
 
-        # Calculate amounts
-        total_amount = sum(all_invoices.mapped('amount_total')) or 0
-        due_amount = sum(all_invoices.filtered(
-            lambda inv: inv.payment_state in ['not_paid', 'partial']
-        ).mapped('amount_residual')) or 0
+        total_due = sum((inv.amount_residual or 0.0) for inv in unpaid_invoices)
+        total_paid = sum((inv.amount_total or 0.0) for inv in paid_invoices)
 
-        # Get recent activity
-        recent_activity = all_invoices.sorted(key='invoice_date', reverse=True)[:5]
-
-        values = {
-            'partner': partner,
+        values.update({
+            'date': date_begin,
             'invoices': invoices,
-            'recent_activity': recent_activity,
-            'invoice_pager': invoice_pager,
-            'invoice_stats': invoice_stats,
-            'total_amount': total_amount,
-            'due_amount': due_amount,
-            'page_name': 'dashboard',
-            'filter_options': filter_options,
-            'filterby': filterby,
+            'unpaid_invoices': unpaid_invoices,
+            'paid_invoices': paid_invoices,
+            'total_due': total_due,
+            'total_paid': total_paid,
+            'page_name': 'invoice',
+            'overdue_invoice_count': overdue_invoice_count,  # Fixes the NoneType Error
+            'filterby': filterby or 'all',  # Fixes the Filterby Error
+            'pager': pager,
+            'default_url': '/my/bills',
+            'searchbar_sortings': searchbar_sortings,
             'sortby': sortby,
-            'today': today,
-        }
+        })
 
         return request.render("community_management.portal_dashboard", values)

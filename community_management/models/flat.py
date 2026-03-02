@@ -7,7 +7,12 @@ class Flat(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     name = fields.Char(string='Flat Number/Name', required=True, tracking=True)
-    building_id = fields.Many2one('building.management', string='Building', required=True, tracking=True)
+    building_id = fields.Many2one(
+        'building.management',
+        string="Building",
+        required=True,
+        domain="[('community_id', '=', community_id)]"
+    )
     floor_id = fields.Many2one('floor.management', string='Floor',
                                domain="[('building_id', '=', building_id)]", tracking=True)
 
@@ -16,6 +21,11 @@ class Flat(models.Model):
     area = fields.Float(string='Area (sq.ft.)', tracking=True)
     flat_image = fields.Image(string='Flat Image')
     room_ids = fields.One2many('room.management', 'flat_id', string='Rooms')
+    community_id = fields.Many2one(
+        'community.management',
+        string="Community",
+        required=True
+    )
 
     # Status
     status = fields.Selection([

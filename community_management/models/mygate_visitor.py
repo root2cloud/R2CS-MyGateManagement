@@ -269,7 +269,7 @@ class MyGateVisitor(models.Model):
         return f"{base_url}/my/visitors/{self.id}"
 
     def action_approve(self):
-        """Approve the visitor request from portal"""
+        """Approve the visitor request from portal or backend"""
         for record in self:
             # if record.state != 'pending':
             #     raise UserError(_("Only pending requests can be approved."))
@@ -278,7 +278,18 @@ class MyGateVisitor(models.Model):
             record.approval_date = fields.Datetime.now()
             record.approved_by_id = self.env.user.id
 
-            # Generate QR code
+            # FIX: Ensure access code and validity exist BEFORE generating the QR code!
+            if not record.access_code:
+                import random
+                import string
+                record.access_code = ''.join(random.choices(string.digits, k=6))
+
+            if not record.valid_until and record.expected_arrival:
+                from datetime import timedelta
+                record.valid_until = fields.Datetime.from_string(record.expected_arrival) + timedelta(
+                    minutes=record.validity_duration)
+
+            # Generate QR code safely and store it in the database
             record._generate_qr_code()
 
             # Send approval notification
@@ -292,6 +303,31 @@ class MyGateVisitor(models.Model):
             ])
             if activities:
                 activities.action_feedback(feedback=f"Visitor {record.name} approved.")
+
+    # def action_approve(self):
+    #     """Approve the visitor request from portal"""
+    #     for record in self:
+    #         # if record.state != 'pending':
+    #         #     raise UserError(_("Only pending requests can be approved."))
+    #
+    #         record.state = 'approved'
+    #         record.approval_date = fields.Datetime.now()
+    #         record.approved_by_id = self.env.user.id
+    #
+    #         # Generate QR code
+    #         record._generate_qr_code()
+    #
+    #         # Send approval notification
+    #         record._send_approval_notification()
+    #
+    #         # Mark activity as done
+    #         activities = self.env['mail.activity'].search([
+    #             ('res_id', '=', record.id),
+    #             ('res_model', '=', 'mygate.visitor'),
+    #             ('user_id', '=', self.env.user.id)
+    #         ])
+    #         if activities:
+    #             activities.action_feedback(feedback=f"Visitor {record.name} approved.")
 
     def action_reject(self):
         """Reject the visitor request from portal"""

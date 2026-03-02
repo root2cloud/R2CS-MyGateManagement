@@ -1,38 +1,143 @@
-<!-- filename: views/community_dashboard_views.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Action -->
     <record id="action_community_dashboard" model="ir.actions.act_window">
-        <field name="name">Community Dashboard</field>
+        <field name="name">Property Explorer Dashboard</field>
         <field name="res_model">community.dashboard</field>
         <field name="view_mode">form</field>
-        <field name="target">current</field>
+        <field name="target">inline</field>
     </record>
 
-    <!-- Menu (adjust parent to your module's main menu) -->
+    <menuitem id="menu_community_dashboard_explorer" name="Property Explorer" parent="menu_community_dashboard_root" sequence="5" action="action_community_dashboard"/>
 
-
-    <!-- Form View -->
     <record id="view_community_dashboard_form" model="ir.ui.view">
-        <field name="name">community.dashboard.form</field>
+        <field name="name">community.dashboard.form.premium</field>
         <field name="model">community.dashboard</field>
         <field name="arch" type="xml">
-            <form string="Community Dashboard">
-                <header>
-                    <button name="action_refresh_dashboard" type="object" string="Refresh" class="btn-primary"/>
-                </header>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="community_id" options="{'no_create': True, 'no_edit': True}"/>
-                            <field name="floor_id" options="{'no_create': True, 'no_edit': True}"/>
-                        </group>
-                        <group>
-                            <field name="building_id" options="{'no_create': True, 'no_edit': True}"/>
-                            <field name="flat_id" options="{'no_create': True, 'no_edit': True}"/>
-                        </group>
-                    </group>
-                    <field name="dashboard_html" nolabel="1" widget="html" options="{'height': '800px'}"/>
-                </sheet>
+            <form string="Property Explorer" create="false" edit="false">
+
+                <style>
+                    :root {
+                        --bg-color: #f8fafc;
+                        --card-bg: #ffffff;
+                        --text-main: #0f172a;
+                        --text-muted: #64748b;
+                        --primary: #4f46e5;
+                        --secondary: #0ea5e9;
+                        --border: #e2e8f0;
+                    }
+                    .explorer-wrapper { background-color: var(--bg-color); padding: 30px; min-height: 100vh; font-family: 'Inter', -apple-system, sans-serif; }
+
+                    /* GLASS HEADER DRILL-DOWN (FIXED Z-INDEX) */
+                    .explorer-header {
+                        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+                        border-radius: 20px;
+                        padding: 25px 35px;
+                        margin-bottom: 25px;
+                        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+                        position: relative; /* FIX */
+                        z-index: 999;       /* FIX: Forces dropdowns to appear ABOVE the cards below */
+                    }
+                    .header-title { color: white; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+
+                    .drill-down-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+                    .selector-box { background: rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(5px); }
+                    .selector-box label { color: #a5b4fc; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; margin-bottom: 4px; display: block; letter-spacing: 0.5px; }
+                    .selector-box .o_field_widget { font-weight: 700 !important; font-size: 1.05rem !important; color: white !important; }
+                    .selector-box .o_input { background: transparent !important; color: white !important; border: none !important; }
+
+                    /* KPI CARDS (FIXED Z-INDEX) */
+                    .kpi-row {
+                        display: grid;
+                        grid-template-columns: repeat(5, 1fr);
+                        gap: 20px;
+                        margin-bottom: 25px;
+                        position: relative; /* FIX */
+                        z-index: 10;        /* FIX: Keeps cards below the header */
+                    }
+                    .kpi-card {
+                        background: var(--card-bg);
+                        border-radius: 16px;
+                        padding: 20px;
+                        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+                        border: 1px solid var(--border);
+                        transition: transform 0.2s;
+                        position: relative;
+                        z-index: 1; /* Keep individual cards low */
+                    }
+                    .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); z-index: 2; }
+                    .kpi-val { font-size: 2rem; font-weight: 900; color: var(--text-main); line-height: 1.1; margin-top: 10px; }
+                    .kpi-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+                    .kpi-icon { position: absolute; top: 20px; right: 20px; font-size: 2rem; opacity: 0.1; }
+                </style>
+
+                <div class="explorer-wrapper">
+
+                    <div class="explorer-header">
+                        <div class="header-title">
+                            <i class="fa fa-sitemap fa-2x" style="color: #818cf8;"></i>
+                            <div>
+                                <h1 style="font-weight: 900; margin: 0; font-size: 1.8rem; color: white !important;">Property Explorer</h1>
+                                <p style="margin: 0; color: #a5b4fc !important; font-size: 0.95rem;">Drill down through your community hierarchy.</p>
+                            </div>
+                        </div>
+
+                        <div class="drill-down-grid">
+                            <div class="selector-box">
+                                <label for="community_id">1. Community</label>
+                                <field name="community_id" options="{'no_create': True}" placeholder="Select Community..."/>
+                            </div>
+                            <div class="selector-box" invisible="not community_id">
+                                <label for="building_id">2. Building</label>
+                                <field name="building_id" options="{'no_create': True}" placeholder="All Buildings..."/>
+                            </div>
+                            <div class="selector-box" invisible="not building_id">
+                                <label for="floor_id">3. Floor</label>
+                                <field name="floor_id" options="{'no_create': True}" placeholder="All Floors..."/>
+                            </div>
+                            <div class="selector-box" invisible="not floor_id">
+                                <label for="flat_id">4. Flat</label>
+                                <field name="flat_id" options="{'no_create': True}" placeholder="Select Flat..."/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div invisible="not community_id">
+
+                        <div class="kpi-row">
+                            <div class="kpi-card" style="border-bottom: 4px solid var(--primary);">
+                                <i class="fa fa-building kpi-icon text-primary"/>
+                                <div class="kpi-label">Buildings Filtered</div>
+                                <div class="kpi-val"><field name="kpi_buildings"/></div>
+                            </div>
+                            <div class="kpi-card" style="border-bottom: 4px solid var(--secondary);">
+                                <i class="fa fa-layer-group kpi-icon text-info"/>
+                                <div class="kpi-label">Floors Filtered</div>
+                                <div class="kpi-val"><field name="kpi_floors"/></div>
+                            </div>
+                            <div class="kpi-card" style="border-bottom: 4px solid #8b5cf6;">
+                                <i class="fa fa-home kpi-icon" style="color:#8b5cf6;"/>
+                                <div class="kpi-label">Total Flats</div>
+                                <div class="kpi-val"><field name="kpi_flats"/></div>
+                            </div>
+                            <div class="kpi-card" style="border-bottom: 4px solid #10b981;">
+                                <i class="fa fa-check-circle kpi-icon text-success"/>
+                                <div class="kpi-label">Occupied</div>
+                                <div class="kpi-val"><field name="kpi_occupied"/></div>
+                            </div>
+                            <div class="kpi-card" style="border-bottom: 4px solid #f59e0b;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="kpi-label">Occupancy Rate</div>
+                                    <i class="fa fa-pie-chart text-warning"/>
+                                </div>
+                                <div class="kpi-val"><field name="occupancy_rate" widget="float" digits="[16,1]"/>%</div>
+                                <field name="occupancy_rate" widget="progressbar" nolabel="1" class="w-100 mt-2"/>
+                            </div>
+                        </div>
+
+                        <field name="explorer_html" widget="html" nolabel="1"/>
+
+                    </div>
+                </div>
             </form>
         </field>
     </record>
