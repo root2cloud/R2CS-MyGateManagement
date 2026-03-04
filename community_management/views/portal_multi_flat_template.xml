@@ -1543,14 +1543,21 @@
                         </span>
                         <span class="mg-nav-label">Amenities</span>
                     </a>
-                    <!-- PROFILE -->
-                    <a href="/my/my-properties"
-                       t-attf-class="mg-nav-item #{'active' if page_name in ['family_member','pet','vehicle'] else ''}">
+                    <a href="/resident/request"
+                       t-attf-class="mg-nav-item #{'active' if page_name == 'resident_request' else ''}">
                         <span class="mg-nav-icon">
-                            <i class="fa fa-user"></i>
+                            <i class="fa fa-id-card-o"></i>
                         </span>
-                        <span class="mg-nav-label">Profile</span>
+                        <span class="mg-nav-label">Request</span>
                     </a>
+                    <!-- PROFILE -->
+                    <!--                    <a href="/my/my-properties"-->
+                    <!--                       t-attf-class="mg-nav-item #{'active' if page_name in ['family_member','pet','vehicle'] else ''}">-->
+                    <!--                        <span class="mg-nav-icon">-->
+                    <!--                            <i class="fa fa-user"></i>-->
+                    <!--                        </span>-->
+                    <!--                        <span class="mg-nav-label">Profile</span>-->
+                    <!--                    </a>-->
                 </nav>
                 <div class="mg-bottom-space"></div>
             </div>
@@ -2841,11 +2848,15 @@
             <t t-call="community_management.mygate_mobile_styles"/>
             <div class="mg-app-wrapper">
                 <div class="mg-topbar" style="background:linear-gradient(135deg,#0d9e6e,#065f46);">
-                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)" class="mg-topbar-back"><i class="fa fa-arrow-left"></i></a>
+                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)"
+                       class="mg-topbar-back">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
                     <div class="mg-topbar-left" style="flex:1;margin-left:10px;">
                         <div>
                             <div class="mg-topbar-title">
-                                🐾 <t t-if="page_name == 'create_pet'">Add New Pet</t>
+                                🐾
+                                <t t-if="page_name == 'create_pet'">Add New Pet</t>
                                 <t t-if="page_name == 'edit_pet'">Edit Pet</t>
                             </div>
                         </div>
@@ -2853,7 +2864,9 @@
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                    <t t-if="page_name == 'create_pet'"><input type="hidden" name="flat_id" t-att-value="flat.id"/></t>
+                    <t t-if="page_name == 'create_pet'">
+                        <input type="hidden" name="flat_id" t-att-value="flat.id"/>
+                    </t>
                     <div class="mg-form-page">
 
                         <!-- Pet Photo -->
@@ -2861,9 +2874,11 @@
                             <div class="mg-form-card-header">📸 Pet Photo</div>
                             <div style="padding:16px;text-align:center;">
                                 <t t-if="pet and pet.photo">
-                                    <img t-att-src="image_data_uri(pet.photo)" style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:12px;"/>
+                                    <img t-att-src="image_data_uri(pet.photo)"
+                                         style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:12px;"/>
                                 </t>
-                                <input type="file" name="photo" accept="image/*" class="mg-input" style="max-width:280px;"/>
+                                <input type="file" name="photo" accept="image/*" class="mg-input"
+                                       style="max-width:280px;"/>
                             </div>
                         </div>
 
@@ -2872,42 +2887,55 @@
                             <div class="mg-form-card-header">🐶 Basic Information</div>
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Pet Name <span class="req">*</span></label>
-                                    <input type="text" name="name" class="mg-input" required="required" t-att-value="pet and pet.name or ''"/>
+                                    <label class="mg-label">Pet Name
+                                        <span class="req">*</span>
+                                    </label>
+                                    <input type="text" name="name" class="mg-input" required="required"
+                                           t-att-value="pet and pet.name or ''"/>
                                 </div>
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Pet Type <span class="req">*</span></label>
+                                    <label class="mg-label">Pet Type
+                                        <span class="req">*</span>
+                                    </label>
                                     <select name="pet_type" class="mg-input" required="required">
                                         <option value="">Select Type</option>
                                         <t t-foreach="pet_types" t-as="pt">
-                                            <option t-att-value="pt[0]" t-att-selected="pet and pet.pet_type == pt[0]"><t t-esc="pt[1]"/></option>
+                                            <option t-att-value="pt[0]" t-att-selected="pet and pet.pet_type == pt[0]">
+                                                <t t-esc="pt[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Breed</label>
-                                    <input type="text" name="breed" class="mg-input" t-att-value="pet and pet.breed or ''"/>
+                                    <input type="text" name="breed" class="mg-input"
+                                           t-att-value="pet and pet.breed or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Gender</label>
                                     <select name="gender" class="mg-input">
                                         <option value="">Select Gender</option>
                                         <t t-foreach="genders" t-as="g">
-                                            <option t-att-value="g[0]" t-att-selected="pet and pet.gender == g[0]"><t t-esc="g[1]"/></option>
+                                            <option t-att-value="g[0]" t-att-selected="pet and pet.gender == g[0]">
+                                                <t t-esc="g[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Color</label>
-                                    <input type="text" name="color" class="mg-input" t-att-value="pet and pet.color or ''"/>
+                                    <input type="text" name="color" class="mg-input"
+                                           t-att-value="pet and pet.color or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Date of Birth</label>
-                                    <input type="date" name="date_of_birth" class="mg-input" t-att-value="pet and pet.date_of_birth or ''"/>
+                                    <input type="date" name="date_of_birth" class="mg-input"
+                                           t-att-value="pet and pet.date_of_birth or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Weight (kg)</label>
-                                    <input type="text" name="weight" class="mg-input" t-att-value="pet and pet.weight or ''"/>
+                                    <input type="text" name="weight" class="mg-input"
+                                           t-att-value="pet and pet.weight or ''"/>
                                 </div>
                             </div>
                         </div>
@@ -2918,11 +2946,13 @@
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
                                     <label class="mg-label">Microchip Number</label>
-                                    <input type="text" name="microchip_number" class="mg-input" t-att-value="pet and pet.microchip_number or ''"/>
+                                    <input type="text" name="microchip_number" class="mg-input"
+                                           t-att-value="pet and pet.microchip_number or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">License Number</label>
-                                    <input type="text" name="license_number" class="mg-input" t-att-value="pet and pet.license_number or ''"/>
+                                    <input type="text" name="license_number" class="mg-input"
+                                           t-att-value="pet and pet.license_number or ''"/>
                                 </div>
                             </div>
                         </div>
@@ -2933,42 +2963,57 @@
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
                                     <label class="mg-label">Last Vaccination Date</label>
-                                    <input type="date" name="last_vaccination_date" class="mg-input" t-att-value="pet and pet.last_vaccination_date or ''"/>
+                                    <input type="date" name="last_vaccination_date" class="mg-input"
+                                           t-att-value="pet and pet.last_vaccination_date or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Next Vaccination Date</label>
-                                    <input type="date" name="next_vaccination_date" class="mg-input" t-att-value="pet and pet.next_vaccination_date or ''"/>
+                                    <input type="date" name="next_vaccination_date" class="mg-input"
+                                           t-att-value="pet and pet.next_vaccination_date or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Veterinarian Name</label>
-                                    <input type="text" name="veterinarian" class="mg-input" t-att-value="pet and pet.veterinarian or ''"/>
+                                    <input type="text" name="veterinarian" class="mg-input"
+                                           t-att-value="pet and pet.veterinarian or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Vet Phone</label>
-                                    <input type="tel" name="vet_phone" class="mg-input" t-att-value="pet and pet.vet_phone or ''"/>
+                                    <input type="tel" name="vet_phone" class="mg-input"
+                                           t-att-value="pet and pet.vet_phone or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Medical Conditions</label>
-                                    <textarea name="medical_conditions" class="mg-input"><t t-esc="pet and pet.medical_conditions or ''"/></textarea>
+                                    <textarea name="medical_conditions" class="mg-input">
+                                        <t t-esc="pet and pet.medical_conditions or ''"/>
+                                    </textarea>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Allergies</label>
-                                    <textarea name="allergies" class="mg-input"><t t-esc="pet and pet.allergies or ''"/></textarea>
+                                    <textarea name="allergies" class="mg-input">
+                                        <t t-esc="pet and pet.allergies or ''"/>
+                                    </textarea>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Special Needs</label>
-                                    <textarea name="special_needs" class="mg-input"><t t-esc="pet and pet.special_needs or ''"/></textarea>
+                                    <textarea name="special_needs" class="mg-input">
+                                        <t t-esc="pet and pet.special_needs or ''"/>
+                                    </textarea>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Notes</label>
-                                    <textarea name="notes" class="mg-input"><t t-esc="pet and pet.notes or ''"/></textarea>
+                                    <textarea name="notes" class="mg-input">
+                                        <t t-esc="pet and pet.notes or ''"/>
+                                    </textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mg-form-submit-bar">
-                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)" class="mg-cancel-link">Cancel</a>
-                        <button type="submit" class="mg-submit-btn" style="background:linear-gradient(135deg,#0d9e6e,#065f46);">
+                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)"
+                           class="mg-cancel-link">Cancel
+                        </a>
+                        <button type="submit" class="mg-submit-btn"
+                                style="background:linear-gradient(135deg,#0d9e6e,#065f46);">
                             <t t-if="page_name == 'create_pet'">Add Pet 🐾</t>
                             <t t-if="page_name == 'edit_pet'">Update Pet</t>
                         </button>
@@ -3557,7 +3602,10 @@
             <t t-call="community_management.mygate_mobile_styles"/>
             <div class="mg-app-wrapper">
                 <div class="mg-topbar">
-                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else member.flat_id.id)" class="mg-topbar-back"><i class="fa fa-arrow-left"></i></a>
+                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else member.flat_id.id)"
+                       class="mg-topbar-back">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
                     <div class="mg-topbar-left" style="flex:1;margin-left:10px;">
                         <div>
                             <div class="mg-topbar-title">
@@ -3579,8 +3627,12 @@
                             <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:12px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
                                 <i class="fa fa-id-card" style="color:#1d4ed8;font-size:1.5rem;"></i>
                                 <div>
-                                    <div style="font-size:0.72rem;text-transform:uppercase;font-weight:700;color:#1e40af;letter-spacing:0.5px;">Resident ID</div>
-                                    <div style="font-size:1.1rem;font-weight:800;color:#1e3a8a;"><t t-esc="member.resident_id"/></div>
+                                    <div style="font-size:0.72rem;text-transform:uppercase;font-weight:700;color:#1e40af;letter-spacing:0.5px;">
+                                        Resident ID
+                                    </div>
+                                    <div style="font-size:1.1rem;font-weight:800;color:#1e3a8a;">
+                                        <t t-esc="member.resident_id"/>
+                                    </div>
                                 </div>
                             </div>
                         </t>
@@ -3590,11 +3642,21 @@
                                 <div class="mg-form-card-header">📱 QR Code Access</div>
                                 <div style="padding:16px;text-align:center;">
                                     <div style="display:inline-block;padding:12px;background:#fff;border-radius:12px;border:1px solid #e5e7eb;box-shadow:var(--mg-shadow);margin-bottom:12px;">
-                                        <img t-att-src="image_data_uri(member.qr_code_image)" style="width:150px;height:150px;object-fit:contain;"/>
+                                        <img t-att-src="image_data_uri(member.qr_code_image)"
+                                             style="width:150px;height:150px;object-fit:contain;"/>
                                     </div>
                                     <div style="display:flex;gap:8px;">
-                                        <a t-att-href="'/my/family-member/view-qr/%s' % member.id" class="mg-action-btn outline-primary" style="flex:1;font-size:0.82rem;padding:9px;"><i class="fa fa-eye"></i> View</a>
-                                        <a t-att-href="'/my/family-member/download-qr/%s' % member.id" class="mg-action-btn success" style="flex:1;font-size:0.82rem;padding:9px;"><i class="fa fa-download"></i> Download</a>
+                                        <a t-att-href="'/my/family-member/view-qr/%s' % member.id"
+                                           class="mg-action-btn outline-primary"
+                                           style="flex:1;font-size:0.82rem;padding:9px;">
+                                            <i class="fa fa-eye"></i>
+                                            View
+                                        </a>
+                                        <a t-att-href="'/my/family-member/download-qr/%s' % member.id"
+                                           class="mg-action-btn success" style="flex:1;font-size:0.82rem;padding:9px;">
+                                            <i class="fa fa-download"></i>
+                                            Download
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -3605,9 +3667,11 @@
                             <div class="mg-form-card-header">📸 Profile Photo</div>
                             <div style="padding:16px;text-align:center;">
                                 <t t-if="member and member.photo">
-                                    <img t-att-src="image_data_uri(member.photo)" style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:3px solid #e5e7eb;"/>
+                                    <img t-att-src="image_data_uri(member.photo)"
+                                         style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:3px solid #e5e7eb;"/>
                                 </t>
-                                <input type="file" name="photo" accept="image/*" class="mg-input" style="max-width:280px;"/>
+                                <input type="file" name="photo" accept="image/*" class="mg-input"
+                                       style="max-width:280px;"/>
                             </div>
                         </div>
 
@@ -3616,15 +3680,23 @@
                             <div class="mg-form-card-header">👤 Personal Information</div>
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Full Name <span class="req">*</span></label>
-                                    <input type="text" name="name" class="mg-input" required="required" t-att-value="member and member.name or ''"/>
+                                    <label class="mg-label">Full Name
+                                        <span class="req">*</span>
+                                    </label>
+                                    <input type="text" name="name" class="mg-input" required="required"
+                                           t-att-value="member and member.name or ''"/>
                                 </div>
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Member Type <span class="req">*</span></label>
+                                    <label class="mg-label">Member Type
+                                        <span class="req">*</span>
+                                    </label>
                                     <select name="member_type" class="mg-input" required="required">
                                         <option value="">Select Type</option>
                                         <t t-foreach="member_types" t-as="type">
-                                            <option t-att-value="type[0]" t-att-selected="member and member.member_type == type[0]"><t t-esc="type[1]"/></option>
+                                            <option t-att-value="type[0]"
+                                                    t-att-selected="member and member.member_type == type[0]">
+                                                <t t-esc="type[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
@@ -3633,44 +3705,59 @@
                                     <select name="gender" class="mg-input">
                                         <option value="">Select Gender</option>
                                         <t t-foreach="genders" t-as="gender">
-                                            <option t-att-value="gender[0]" t-att-selected="member and member.gender == gender[0]"><t t-esc="gender[1]"/></option>
+                                            <option t-att-value="gender[0]"
+                                                    t-att-selected="member and member.gender == gender[0]">
+                                                <t t-esc="gender[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Date of Birth</label>
-                                    <input type="date" name="date_of_birth" class="mg-input" t-att-value="member and member.date_of_birth or ''"/>
+                                    <input type="date" name="date_of_birth" class="mg-input"
+                                           t-att-value="member and member.date_of_birth or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Relationship</label>
                                     <select name="relationship" class="mg-input">
                                         <option value="">Select Relationship</option>
                                         <t t-foreach="relationships" t-as="rel">
-                                            <option t-att-value="rel[0]" t-att-selected="member and member.relationship == rel[0]"><t t-esc="rel[1]"/></option>
+                                            <option t-att-value="rel[0]"
+                                                    t-att-selected="member and member.relationship == rel[0]">
+                                                <t t-esc="rel[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Aadhaar Number</label>
-                                    <input type="text" name="aadhaar_number" maxlength="12" class="mg-input" placeholder="12-digit number" t-att-value="member and member.aadhaar_number or ''"/>
+                                    <input type="text" name="aadhaar_number" maxlength="12" class="mg-input"
+                                           placeholder="12-digit number"
+                                           t-att-value="member and member.aadhaar_number or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Email</label>
-                                    <input type="email" name="email" class="mg-input" t-att-value="member and member.email or ''"/>
+                                    <input type="email" name="email" class="mg-input"
+                                           t-att-value="member and member.email or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Phone</label>
-                                    <input type="tel" name="phone" class="mg-input" t-att-value="member and member.phone or ''"/>
+                                    <input type="tel" name="phone" class="mg-input"
+                                           t-att-value="member and member.phone or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Notes</label>
-                                    <textarea name="notes" class="mg-input"><t t-esc="member and member.notes or ''"/></textarea>
+                                    <textarea name="notes" class="mg-input">
+                                        <t t-esc="member and member.notes or ''"/>
+                                    </textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mg-form-submit-bar">
-                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else member.flat_id.id)" class="mg-cancel-link">Cancel</a>
+                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else member.flat_id.id)"
+                           class="mg-cancel-link">Cancel
+                        </a>
                         <button type="submit" class="mg-submit-btn">
                             <t t-if="page_name == 'create_family_member'">Save Member</t>
                             <t t-if="page_name == 'edit_family_member'">Update Details</t>
@@ -3689,29 +3776,49 @@
             <t t-call="community_management.mygate_mobile_styles"/>
             <div class="mg-app-wrapper">
                 <div class="mg-topbar" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
-                    <a t-att-href="'/my/my-properties?property_id=%s' % member.flat_id.id" class="mg-topbar-back"><i class="fa fa-arrow-left"></i></a>
+                    <a t-att-href="'/my/my-properties?property_id=%s' % member.flat_id.id" class="mg-topbar-back">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
                     <div class="mg-topbar-left" style="flex:1;margin-left:10px;">
                         <div class="mg-topbar-title">📱 QR Access Code</div>
                     </div>
                 </div>
                 <div style="padding:24px 16px;text-align:center;">
-                    <div class="mg-card" style="display:inline-block;width:100%;max-width:300px;padding:24px;text-align:center;">
+                    <div class="mg-card"
+                         style="display:inline-block;width:100%;max-width:300px;padding:24px;text-align:center;">
                         <t t-if="member.qr_code_image">
                             <div style="background:#fff;padding:16px;border-radius:12px;display:inline-block;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
-                                <img t-att-src="image_data_uri(member.qr_code_image)" style="width:200px;height:200px;object-fit:contain;"/>
+                                <img t-att-src="image_data_uri(member.qr_code_image)"
+                                     style="width:200px;height:200px;object-fit:contain;"/>
                             </div>
                         </t>
                         <t t-else="">
-                            <div style="background:#fef3c7;border-radius:12px;padding:20px;margin-bottom:16px;color:#92400e;font-weight:600;">⚠️ QR Code not generated yet</div>
+                            <div style="background:#fef3c7;border-radius:12px;padding:20px;margin-bottom:16px;color:#92400e;font-weight:600;">
+                                ⚠️ QR Code not generated yet
+                            </div>
                         </t>
-                        <h3 style="font-weight:800;color:#111;margin-bottom:6px;"><t t-esc="member.name"/></h3>
+                        <h3 style="font-weight:800;color:#111;margin-bottom:6px;">
+                            <t t-esc="member.name"/>
+                        </h3>
                         <div style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;color:#1e40af;border-radius:20px;padding:4px 14px;font-size:0.82rem;font-weight:700;margin-bottom:16px;">
-                            <i class="fa fa-id-card"></i> <t t-esc="member.resident_id or 'No ID'"/>
+                            <i class="fa fa-id-card"></i>
+                            <t t-esc="member.resident_id or 'No ID'"/>
                         </div>
-                        <div style="font-size:0.82rem;color:#6b7280;margin-bottom:20px;"><i class="fa fa-home mr-1"></i><t t-esc="member.flat_id.name or 'N/A'"/></div>
+                        <div style="font-size:0.82rem;color:#6b7280;margin-bottom:20px;">
+                            <i class="fa fa-home mr-1"></i>
+                            <t t-esc="member.flat_id.name or 'N/A'"/>
+                        </div>
                         <div style="display:flex;gap:8px;">
-                            <a t-att-href="'/my/my-properties?property_id=%s' % member.flat_id.id" class="mg-action-btn outline-primary" style="flex:1;font-size:0.85rem;"><i class="fa fa-arrow-left"></i> Back</a>
-                            <a t-att-href="'/my/family-member/download-qr/%s' % member.id" class="mg-action-btn success" style="flex:1;font-size:0.85rem;"><i class="fa fa-download"></i> Download</a>
+                            <a t-att-href="'/my/my-properties?property_id=%s' % member.flat_id.id"
+                               class="mg-action-btn outline-primary" style="flex:1;font-size:0.85rem;">
+                                <i class="fa fa-arrow-left"></i>
+                                Back
+                            </a>
+                            <a t-att-href="'/my/family-member/download-qr/%s' % member.id" class="mg-action-btn success"
+                               style="flex:1;font-size:0.85rem;">
+                                <i class="fa fa-download"></i>
+                                Download
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -3728,11 +3835,15 @@
             <t t-call="community_management.mygate_mobile_styles"/>
             <div class="mg-app-wrapper">
                 <div class="mg-topbar" style="background:linear-gradient(135deg,#0d9e6e,#065f46);">
-                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)" class="mg-topbar-back"><i class="fa fa-arrow-left"></i></a>
+                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)"
+                       class="mg-topbar-back">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
                     <div class="mg-topbar-left" style="flex:1;margin-left:10px;">
                         <div>
                             <div class="mg-topbar-title">
-                                🐾 <t t-if="page_name == 'create_pet'">Add New Pet</t>
+                                🐾
+                                <t t-if="page_name == 'create_pet'">Add New Pet</t>
                                 <t t-if="page_name == 'edit_pet'">Edit Pet</t>
                             </div>
                         </div>
@@ -3740,7 +3851,9 @@
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                    <t t-if="page_name == 'create_pet'"><input type="hidden" name="flat_id" t-att-value="flat.id"/></t>
+                    <t t-if="page_name == 'create_pet'">
+                        <input type="hidden" name="flat_id" t-att-value="flat.id"/>
+                    </t>
                     <div class="mg-form-page">
 
                         <!-- Pet Photo -->
@@ -3748,9 +3861,11 @@
                             <div class="mg-form-card-header">📸 Pet Photo</div>
                             <div style="padding:16px;text-align:center;">
                                 <t t-if="pet and pet.photo">
-                                    <img t-att-src="image_data_uri(pet.photo)" style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:12px;"/>
+                                    <img t-att-src="image_data_uri(pet.photo)"
+                                         style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:12px;"/>
                                 </t>
-                                <input type="file" name="photo" accept="image/*" class="mg-input" style="max-width:280px;"/>
+                                <input type="file" name="photo" accept="image/*" class="mg-input"
+                                       style="max-width:280px;"/>
                             </div>
                         </div>
 
@@ -3759,42 +3874,55 @@
                             <div class="mg-form-card-header">🐶 Basic Information</div>
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Pet Name <span class="req">*</span></label>
-                                    <input type="text" name="name" class="mg-input" required="required" t-att-value="pet and pet.name or ''"/>
+                                    <label class="mg-label">Pet Name
+                                        <span class="req">*</span>
+                                    </label>
+                                    <input type="text" name="name" class="mg-input" required="required"
+                                           t-att-value="pet and pet.name or ''"/>
                                 </div>
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Pet Type <span class="req">*</span></label>
+                                    <label class="mg-label">Pet Type
+                                        <span class="req">*</span>
+                                    </label>
                                     <select name="pet_type" class="mg-input" required="required">
                                         <option value="">Select Type</option>
                                         <t t-foreach="pet_types" t-as="pt">
-                                            <option t-att-value="pt[0]" t-att-selected="pet and pet.pet_type == pt[0]"><t t-esc="pt[1]"/></option>
+                                            <option t-att-value="pt[0]" t-att-selected="pet and pet.pet_type == pt[0]">
+                                                <t t-esc="pt[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Breed</label>
-                                    <input type="text" name="breed" class="mg-input" t-att-value="pet and pet.breed or ''"/>
+                                    <input type="text" name="breed" class="mg-input"
+                                           t-att-value="pet and pet.breed or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Gender</label>
                                     <select name="gender" class="mg-input">
                                         <option value="">Select Gender</option>
                                         <t t-foreach="genders" t-as="g">
-                                            <option t-att-value="g[0]" t-att-selected="pet and pet.gender == g[0]"><t t-esc="g[1]"/></option>
+                                            <option t-att-value="g[0]" t-att-selected="pet and pet.gender == g[0]">
+                                                <t t-esc="g[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Color</label>
-                                    <input type="text" name="color" class="mg-input" t-att-value="pet and pet.color or ''"/>
+                                    <input type="text" name="color" class="mg-input"
+                                           t-att-value="pet and pet.color or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Date of Birth</label>
-                                    <input type="date" name="date_of_birth" class="mg-input" t-att-value="pet and pet.date_of_birth or ''"/>
+                                    <input type="date" name="date_of_birth" class="mg-input"
+                                           t-att-value="pet and pet.date_of_birth or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Weight (kg)</label>
-                                    <input type="text" name="weight" class="mg-input" t-att-value="pet and pet.weight or ''"/>
+                                    <input type="text" name="weight" class="mg-input"
+                                           t-att-value="pet and pet.weight or ''"/>
                                 </div>
                             </div>
                         </div>
@@ -3805,11 +3933,13 @@
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
                                     <label class="mg-label">Microchip Number</label>
-                                    <input type="text" name="microchip_number" class="mg-input" t-att-value="pet and pet.microchip_number or ''"/>
+                                    <input type="text" name="microchip_number" class="mg-input"
+                                           t-att-value="pet and pet.microchip_number or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">License Number</label>
-                                    <input type="text" name="license_number" class="mg-input" t-att-value="pet and pet.license_number or ''"/>
+                                    <input type="text" name="license_number" class="mg-input"
+                                           t-att-value="pet and pet.license_number or ''"/>
                                 </div>
                             </div>
                         </div>
@@ -3820,42 +3950,57 @@
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
                                     <label class="mg-label">Last Vaccination Date</label>
-                                    <input type="date" name="last_vaccination_date" class="mg-input" t-att-value="pet and pet.last_vaccination_date or ''"/>
+                                    <input type="date" name="last_vaccination_date" class="mg-input"
+                                           t-att-value="pet and pet.last_vaccination_date or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Next Vaccination Date</label>
-                                    <input type="date" name="next_vaccination_date" class="mg-input" t-att-value="pet and pet.next_vaccination_date or ''"/>
+                                    <input type="date" name="next_vaccination_date" class="mg-input"
+                                           t-att-value="pet and pet.next_vaccination_date or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Veterinarian Name</label>
-                                    <input type="text" name="veterinarian" class="mg-input" t-att-value="pet and pet.veterinarian or ''"/>
+                                    <input type="text" name="veterinarian" class="mg-input"
+                                           t-att-value="pet and pet.veterinarian or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Vet Phone</label>
-                                    <input type="tel" name="vet_phone" class="mg-input" t-att-value="pet and pet.vet_phone or ''"/>
+                                    <input type="tel" name="vet_phone" class="mg-input"
+                                           t-att-value="pet and pet.vet_phone or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Medical Conditions</label>
-                                    <textarea name="medical_conditions" class="mg-input"><t t-esc="pet and pet.medical_conditions or ''"/></textarea>
+                                    <textarea name="medical_conditions" class="mg-input">
+                                        <t t-esc="pet and pet.medical_conditions or ''"/>
+                                    </textarea>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Allergies</label>
-                                    <textarea name="allergies" class="mg-input"><t t-esc="pet and pet.allergies or ''"/></textarea>
+                                    <textarea name="allergies" class="mg-input">
+                                        <t t-esc="pet and pet.allergies or ''"/>
+                                    </textarea>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Special Needs</label>
-                                    <textarea name="special_needs" class="mg-input"><t t-esc="pet and pet.special_needs or ''"/></textarea>
+                                    <textarea name="special_needs" class="mg-input">
+                                        <t t-esc="pet and pet.special_needs or ''"/>
+                                    </textarea>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Notes</label>
-                                    <textarea name="notes" class="mg-input"><t t-esc="pet and pet.notes or ''"/></textarea>
+                                    <textarea name="notes" class="mg-input">
+                                        <t t-esc="pet and pet.notes or ''"/>
+                                    </textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mg-form-submit-bar">
-                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)" class="mg-cancel-link">Cancel</a>
-                        <button type="submit" class="mg-submit-btn" style="background:linear-gradient(135deg,#0d9e6e,#065f46);">
+                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else pet.flat_id.id)"
+                           class="mg-cancel-link">Cancel
+                        </a>
+                        <button type="submit" class="mg-submit-btn"
+                                style="background:linear-gradient(135deg,#0d9e6e,#065f46);">
                             <t t-if="page_name == 'create_pet'">Add Pet 🐾</t>
                             <t t-if="page_name == 'edit_pet'">Update Pet</t>
                         </button>
@@ -3873,11 +4018,15 @@
             <t t-call="community_management.mygate_mobile_styles"/>
             <div class="mg-app-wrapper">
                 <div class="mg-topbar" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
-                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else vehicle.flat_id.id)" class="mg-topbar-back"><i class="fa fa-arrow-left"></i></a>
+                    <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else vehicle.flat_id.id)"
+                       class="mg-topbar-back">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
                     <div class="mg-topbar-left" style="flex:1;margin-left:10px;">
                         <div>
                             <div class="mg-topbar-title">
-                                🚗 <t t-if="page_name == 'create_vehicle'">Add Vehicle</t>
+                                🚗
+                                <t t-if="page_name == 'create_vehicle'">Add Vehicle</t>
                                 <t t-if="page_name == 'edit_vehicle'">Edit Vehicle</t>
                             </div>
                         </div>
@@ -3885,16 +4034,20 @@
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                    <t t-if="page_name == 'create_vehicle'"><input type="hidden" name="flat_id" t-att-value="flat.id"/></t>
+                    <t t-if="page_name == 'create_vehicle'">
+                        <input type="hidden" name="flat_id" t-att-value="flat.id"/>
+                    </t>
                     <div class="mg-form-page">
                         <!-- Vehicle Photo -->
                         <div class="mg-form-card">
                             <div class="mg-form-card-header">📸 Vehicle Photo</div>
                             <div style="padding:16px;text-align:center;">
                                 <t t-if="vehicle and vehicle.vehicle_photo">
-                                    <img t-att-src="image_data_uri(vehicle.vehicle_photo)" style="width:140px;height:100px;border-radius:12px;object-fit:cover;margin-bottom:12px;"/>
+                                    <img t-att-src="image_data_uri(vehicle.vehicle_photo)"
+                                         style="width:140px;height:100px;border-radius:12px;object-fit:cover;margin-bottom:12px;"/>
                                 </t>
-                                <input type="file" name="vehicle_photo" accept="image/*" class="mg-input" style="max-width:280px;"/>
+                                <input type="file" name="vehicle_photo" accept="image/*" class="mg-input"
+                                       style="max-width:280px;"/>
                             </div>
                         </div>
 
@@ -3903,46 +4056,63 @@
                             <div class="mg-form-card-header">🔖 Vehicle Information</div>
                             <div class="mg-form-body">
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Registration Number <span class="req">*</span></label>
+                                    <label class="mg-label">Registration Number
+                                        <span class="req">*</span>
+                                    </label>
                                     <input type="text" name="vehicle_number" class="mg-input" required="required"
                                            style="text-transform:uppercase;letter-spacing:2px;font-weight:700;"
-                                           placeholder="e.g. TN01AB1234" t-att-value="vehicle and vehicle.vehicle_number or ''"/>
+                                           placeholder="e.g. TN01AB1234"
+                                           t-att-value="vehicle and vehicle.vehicle_number or ''"/>
                                 </div>
                                 <div class="mg-form-group">
-                                    <label class="mg-label">Vehicle Type <span class="req">*</span></label>
+                                    <label class="mg-label">Vehicle Type
+                                        <span class="req">*</span>
+                                    </label>
                                     <select name="vehicle_type" class="mg-input" required="required">
                                         <option value="">Select Type</option>
                                         <t t-foreach="vehicle_types" t-as="vt">
-                                            <option t-att-value="vt[0]" t-att-selected="vehicle and vehicle.vehicle_type == vt[0]"><t t-esc="vt[1]"/></option>
+                                            <option t-att-value="vt[0]"
+                                                    t-att-selected="vehicle and vehicle.vehicle_type == vt[0]">
+                                                <t t-esc="vt[1]"/>
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Make (Brand)</label>
-                                    <input type="text" name="make" class="mg-input" placeholder="e.g. Maruti, Hyundai" t-att-value="vehicle and vehicle.make or ''"/>
+                                    <input type="text" name="make" class="mg-input" placeholder="e.g. Maruti, Hyundai"
+                                           t-att-value="vehicle and vehicle.make or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Model</label>
-                                    <input type="text" name="model" class="mg-input" placeholder="e.g. Swift, i20" t-att-value="vehicle and vehicle.model or ''"/>
+                                    <input type="text" name="model" class="mg-input" placeholder="e.g. Swift, i20"
+                                           t-att-value="vehicle and vehicle.model or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Year</label>
-                                    <input type="number" name="year" class="mg-input" placeholder="e.g. 2022" t-att-value="vehicle and vehicle.year or ''"/>
+                                    <input type="number" name="year" class="mg-input" placeholder="e.g. 2022"
+                                           t-att-value="vehicle and vehicle.year or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Color</label>
-                                    <input type="text" name="color" class="mg-input" placeholder="e.g. White, Silver" t-att-value="vehicle and vehicle.color or ''"/>
+                                    <input type="text" name="color" class="mg-input" placeholder="e.g. White, Silver"
+                                           t-att-value="vehicle and vehicle.color or ''"/>
                                 </div>
                                 <div class="mg-form-group">
                                     <label class="mg-label">Notes</label>
-                                    <textarea name="notes" class="mg-input"><t t-esc="vehicle and vehicle.notes or ''"/></textarea>
+                                    <textarea name="notes" class="mg-input">
+                                        <t t-esc="vehicle and vehicle.notes or ''"/>
+                                    </textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mg-form-submit-bar">
-                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else vehicle.flat_id.id)" class="mg-cancel-link">Cancel</a>
-                        <button type="submit" class="mg-submit-btn" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
+                        <a t-att-href="'/my/my-properties?property_id=%s' % (flat.id if flat else vehicle.flat_id.id)"
+                           class="mg-cancel-link">Cancel
+                        </a>
+                        <button type="submit" class="mg-submit-btn"
+                                style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
                             <t t-if="page_name == 'create_vehicle'">Add Vehicle 🚗</t>
                             <t t-if="page_name == 'edit_vehicle'">Update Vehicle</t>
                         </button>
