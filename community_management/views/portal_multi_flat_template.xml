@@ -1529,20 +1529,34 @@
                     <!--                        <span class="mg-nav-label">Passes</span>-->
                     <!--                    </a>-->
                     <!-- CENTER: Quick Invite -->
-                    <a href="/my/guest-invite/create" class="mg-nav-item center-action">
-                        <div class="mg-nav-center-btn">
-                            <i class="fa fa-plus" style="font-size:1.2rem;"></i>
-                        </div>
-                        <span class="mg-nav-label" style="color:#1a73e8;font-weight:800;">Invite</span>
+                    <!--                    <a href="/my/guest-invite/create" class="mg-nav-item center-action">-->
+                    <!--                        <div class="mg-nav-center-btn">-->
+                    <!--                            <i class="fa fa-plus" style="font-size:1.2rem;"></i>-->
+                    <!--                        </div>-->
+                    <!--                        <span class="mg-nav-label" style="color:#1a73e8;font-weight:800;">Invite</span>-->
+                    <!--                    </a>-->
+                    <a href="/my/tickets"
+                       t-attf-class="mg-nav-item #{'active' if page_name == 'tickets' else ''}">
+                        <span class="mg-nav-icon">
+                            <i class="fa fa-ticket"></i>
+                        </span>
+                        <span class="mg-nav-label">My Tickets</span>
+                    </a>
+                    <a href="/helpdesk_ticket"
+                       t-attf-class="mg-nav-item #{'active' if page_name == 'helpdesk_ticket' else ''}">
+                        <span class="mg-nav-icon">
+                            <i class="fa fa-life-ring"></i>
+                        </span>
+                        <span class="mg-nav-label">Helpdesk</span>
                     </a>
                     <!-- AMENITIES -->
-                    <a href="/my/my-properties"
-                       t-attf-class="mg-nav-item #{'active' if page_name in ['amenity_booking','service_booking'] else ''}">
-                        <span class="mg-nav-icon">
-                            <i class="fa fa-th-large"></i>
-                        </span>
-                        <span class="mg-nav-label">Amenities</span>
-                    </a>
+                    <!--                    <a href="/my/my-properties"-->
+                    <!--                       t-attf-class="mg-nav-item #{'active' if page_name in ['amenity_booking','service_booking'] else ''}">-->
+                    <!--                        <span class="mg-nav-icon">-->
+                    <!--                            <i class="fa fa-th-large"></i>-->
+                    <!--                        </span>-->
+                    <!--                        <span class="mg-nav-label">Amenities</span>-->
+                    <!--                    </a>-->
                     <a href="/resident/request"
                        t-attf-class="mg-nav-item #{'active' if page_name == 'resident_request' else ''}">
                         <span class="mg-nav-icon">
