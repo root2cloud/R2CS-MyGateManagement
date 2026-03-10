@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== PLOT VIEWS ==================== -->
+
+    <record id="view_property_plot_list" model="ir.ui.view">
+        <field name="name">property.plot.list</field>
+        <field name="model">property.plot</field>
+        <field name="arch" type="xml">
+            <list string="Plots / Farm Lands"
+                  decoration-success="status == 'available'"
+                  decoration-info="status == 'reserved'"
+                  decoration-warning="status == 'booked'"
+                  decoration-danger="status == 'sold'">
+                <field name="name"/>
+                <field name="venture_id"/>
+                <field name="size"/>
+                <field name="uom"/>
+                <field name="base_price"/>
+                <field name="customer_id"/>
+                <field name="status"
+                       widget="badge"
+                       decoration-success="status == 'available'"
+                       decoration-info="status == 'reserved'"
+                       decoration-warning="status == 'booked'"
+                       decoration-danger="status == 'sold'"/>
+            </list>
+        </field>
+    </record>
+
+
+
+    <record id="view_property_plot_form" model="ir.ui.view">
+        <field name="name">property.plot.form</field>
+        <field name="model">property.plot</field>
+        <field name="arch" type="xml">
+            <form string="Plot Details">
+                <header>
+                    <button name="action_reserve" string="Reserve" type="object" class="oe_highlight"
+                            invisible="status != 'available'"/>
+
+                    <button name="action_book" string="Book" type="object" class="oe_highlight"
+                            invisible="status != 'reserved'"/>
+
+                    <button name="action_create_sale_order" string="Create Sale Order" type="object" class="oe_highlight"
+                            invisible="status != 'booked'"/>
+
+                    <field name="status" widget="statusbar" statusbar_visible="available,reserved,booked,sold"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Plot Number"/>
+                        <h1>
+                            <field name="name" placeholder="e.g., Plot A-12"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Property Details">
+                            <field name="venture_id"/>
+                            <label for="size" string="Dimensions"/>
+                            <div class="o_row">
+                                <field name="size"/>
+                                <field name="uom"/>
+                            </div>
+                            <field name="facing"/>
+                        </group>
+                        <group string="Sales &amp; Ownership">
+                            <field name="base_price" widget="monetary"/>
+                            <field name="customer_id" required="status in ['booked', 'sold']"/>
+                            <field name="sale_order_id" invisible="not sale_order_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- ==================== VENTURE VIEWS ==================== -->
+
+    <record id="view_property_venture_list" model="ir.ui.view">
+        <field name="name">property.venture.list</field>
+        <field name="model">property.venture</field>
+        <field name="arch" type="xml">
+            <list string="Ventures">
+                <field name="name"/>
+                <field name="location"/>
+                <field name="total_area"/>
+                <field name="total_plots"/>
+                <field name="available_plots"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_property_venture_form" model="ir.ui.view">
+        <field name="name">property.venture.form</field>
+        <field name="model">property.venture</field>
+        <field name="arch" type="xml">
+            <form string="Venture Details">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Venture Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g., Sunrise Farms Phase 1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="location"/>
+                            <field name="total_area"/>
+                        </group>
+                        <group>
+                            <field name="total_plots"/>
+                            <field name="available_plots"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Farm Lands / Plots" name="plots">
+                            <field name="plot_ids">
+                                <!-- Odoo 18: editable inline list -->
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="size"/>
+                                    <field name="uom"/>
+                                    <field name="facing"/>
+                                    <field name="base_price"/>
+                                    <field name="status"
+                                           widget="badge"
+                                           decoration-success="status == 'available'"
+                                           decoration-info="status == 'reserved'"
+                                           decoration-warning="status == 'booked'"
+                                           decoration-danger="status == 'sold'"/>
+                                    <field name="customer_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- Odoo 18: <chatter/> replaces oe_chatter div block -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- ==================== ACTIONS ==================== -->
+
+    <record id="action_property_venture" model="ir.actions.act_window">
+        <field name="name">Ventures</field>
+        <field name="res_model">property.venture</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_property_plot" model="ir.actions.act_window">
+        <field name="name">All Plots</field>
+        <field name="res_model">property.plot</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!-- ==================== MENU ITEMS ==================== -->
+
+
+
+    <menuitem id="menu_venture_list"
+              name="Ventures"
+              parent="menu_community_management_root"
+              action="action_property_venture"
+              sequence="10"/>
+
+    <menuitem id="menu_plot_list"
+              name="All Plots"
+              parent="menu_community_management_root"
+              action="action_property_plot"
+              sequence="20"/>
+
+</odoo>

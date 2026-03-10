@@ -315,3 +315,11 @@ access_community_post_portal_user,community.post,model_community_post,base.group
 access_community_post_like_portal_user,community.post.like,model_community_post_like,base.group_portal,1,0,0,0
 access_community_post_view_portal_user,community.post.view,model_community_post_view,base.group_portal,1,0,0,0
 access_community_post_comment_portal_user,community.post.comment,model_community_post_comment,base.group_portal,1,0,0,0
+
+
+access_room_booking_csd,access.room.booking.csd,model_mygate_room_booking,,1,1,1,1
+access_mygate_room_admin,access.mygate.room.admin,model_mygate_room,base.group_system,1,1,1,1
+access_membership_card,membership.card.access,model_membership_card_request,,1,1,1,1
+
+access_property_venture,property.venture.access,model_property_venture,,1,1,1,1
+access_property_plot,property.plot.access,model_property_plot,,1,1,1,1

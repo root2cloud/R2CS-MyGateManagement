@@ -5,7 +5,7 @@
     'author': 'Regonda Soujanya',
     'category': 'Community',
     'application': True,
-    'depends': ['base', 'web', 'website', 'portal', 'account', 'mail', 'contacts'],
+    'depends': ['base', 'web', 'website', 'portal', 'account', 'mail', 'contacts', 'sale_management'],
     # Added website dependency for portal features
     'data': [
         'security/security_groups.xml',
@@ -20,6 +20,7 @@
         'views/visiting_help_views.xml',
 
         'data/pet_cron.xml',
+        'data/booking_sequence.xml',
         'security/pet_security.xml',
 
         'views/community_views.xml',
@@ -91,6 +92,11 @@
 
         # 'views/assets.xml',
         'data/overdue_reminder_cron.xml',
+        'views/conctable_data_views.xml',
+        'views/mygate_room_booking.xml',
+        'views/membership_card_views.xml',
+        'views/property_venture_views.xml',
+        'reports/property_plot_report.xml',
 
     ],
     'assets': {

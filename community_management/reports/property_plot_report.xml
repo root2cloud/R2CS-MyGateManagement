@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_property_plot" model="ir.actions.report">
+        <field name="name">Plot Details</field>
+        <field name="model">property.plot</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">community_management.report_property_plot_document</field>
+        <field name="report_file">community_management.report_property_plot_document</field>
+        <field name="print_report_name">'Plot - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_property_plot"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_property_plot_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <div class="oe_structure"/>
+                        <h2 class="mt-4">
+                            Plot Details: <span t-field="doc.name"/>
+                        </h2>
+
+                        <div class="row mt-4 mb-4" id="informations">
+                            <div class="col-auto col-3 mw-100 mb-2">
+                                <strong>Venture:</strong>
+                                <p class="m-0" t-field="doc.venture_id.name"/>
+                            </div>
+                            <div class="col-auto col-3 mw-100 mb-2">
+                                <strong>Status:</strong>
+                                <p class="m-0" t-field="doc.status"/>
+                            </div>
+                            <div t-if="doc.customer_id" class="col-auto col-3 mw-100 mb-2">
+                                <strong>Customer / Owner:</strong>
+                                <p class="m-0" t-field="doc.customer_id.name"/>
+                            </div>
+                            <div t-if="doc.sale_order_id" class="col-auto col-3 mw-100 mb-2">
+                                <strong>Sale Order:</strong>
+                                <p class="m-0" t-field="doc.sale_order_id.name"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm o_main_table table-bordered mt-4">
+                            <thead style="display: table-row-group">
+                                <tr>
+                                    <th name="th_size" class="text-start">Dimensions</th>
+                                    <th name="th_facing" class="text-start">Facing</th>
+                                    <th name="th_price" class="text-end">Base Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="sale_tbody">
+                                <tr>
+                                    <td>
+                                        <span t-field="doc.size"/> <span t-field="doc.uom"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="doc.facing"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-esc="doc.base_price" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="oe_structure"/>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

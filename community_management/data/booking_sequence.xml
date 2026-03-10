@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="seq_mygate_room_booking" model="ir.sequence">
+            <field name="name">Room Booking Sequence</field>
+            <field name="code">mygate.room.booking</field>
+            <field name="prefix">BKG/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
+
+        <record id="seq_membership_card_request" model="ir.sequence">
+            <field name="name">Membership Card Request Sequence</field>
+            <field name="code">membership.card.request</field>
+            <field name="prefix">MCR/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_approval_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.approval.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_submit" string="Submit for Verification"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+
+                    <button name="action_approve" string="Approve"
+                            type="object" class="btn-success"
+                            invisible="state != 'submitted' or is_approver == False"/>
+
+                    <button name="action_reject" string="Reject"
+                            type="object" class="btn-danger"
+                            invisible="state != 'submitted' or is_approver == False"/>
+
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                            type="object" invisible="state not in ['approved', 'rejected']"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
+                </header>
+            </xpath>
+
+            <xpath expr="//group[@name='misc']" position="after">
+                <group string="Address Verification Workflow" name="verification_group">
+                    <group>
+                        <field name="approver_one_id" readonly="state != 'draft'"/>
+                        <field name="approver_two_id" readonly="state != 'draft'"/>
+                        <field name="is_approver" invisible="1"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <xpath expr="//field[@name='street']" position="attributes">
+                <attribute name="readonly">state != 'draft'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="readonly">state != 'draft'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='email']" position="attributes">
+                <attribute name="readonly">state != 'draft'</attribute>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
