@@ -92,7 +92,7 @@
 
         # 'views/assets.xml',
         'data/overdue_reminder_cron.xml',
-        # 'views/conctable_data_views.xml',
+        'views/conctable_data_views.xml',
         'views/mygate_room_booking.xml',
         'views/membership_card_views.xml',
         'views/property_venture_views.xml',

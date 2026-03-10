@@ -38,7 +38,7 @@ from . import corpus_fund
 
 
 from . import saas_dashboard
-# from . import conctable_data
+from . import conctable_data
 from . import mygate_room_booking
 from . import membership_card
 from . import property_venture
